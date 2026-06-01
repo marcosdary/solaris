@@ -4,8 +4,6 @@ from typing import Dict
 from settings import settings
 import argparse
 
-
-
 class File:
     def __init__(self, name: str, dist_dir: str):
         self.docx = DocxTemplate(settings.DIR_DATA / name)
@@ -53,7 +51,7 @@ if __name__ == "__main__":
         "--cv",
         required=True,
         choices=["portuguese.docx", "english.docx"],
-        help="Argumento para saber qual o currículo será enviado as informações."
+        help="Argumento para saber qual o currículo será enviado as informações. Ex.:Lorem ipsum dolor sit amet. Qui nostrum odio ex.."
     )
 
     parser.add_argument(
