@@ -1,93 +1,137 @@
-from docxtpl import DocxTemplate, RichText
-import re
-from typing import Dict
-from settings import settings
-import argparse
+from fastapi import (
+    FastAPI,
+    Request,
+    status
+)
+from fastapi.exceptions import (
+    HTTPException,
+    RequestValidationError
+)
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-class File:
-    def __init__(self, name: str, dist_dir: str):
-        self.docx = DocxTemplate(settings.DIR_DATA / name)
-        self.dist_dir = dist_dir
-    
-    def save_file(self, data) -> None:
-        self.docx.render(context=data)
-        self.docx.save(f"{settings.DIST_PATH}/{self.dist_dir}/cv.docx")
-    
-class LoadingInformation:
-    def add_text_file(self, text: str) -> RichText:
-        rt = RichText()
-        words = re.split(r"(\*\*.*?\*\*)", text)
+# API
+from src.api import v1
 
-        for word in words:
-            if word.startswith('**') and word.endswith('**'):
-                rt.add(
-                    word[2:-2], 
-                    bold=True, 
-                    font="eastAsia:Times New Roman",
-                    size=16,
-                    color="000000"
-                )
-                continue
-            
-            rt.add(
-                word,
-                font="eastAsia:Times New Roman",
-                size=16,
-                color="000000"
-            )
-            
-        return rt
-    
-    def info(self, rt: RichText) -> Dict[str, RichText]:
-        return {
-            "RESUME": rt
+
+# Schemas
+from src.schemas import IndexSchema
+
+# Inicializa a aplicação FastAPI
+app = FastAPI(
+    title="Auto CV",
+    version="0.1.0",
+    description="""
+API responsável pela integração para inserção de informações ao currículo
+"""
+)
+
+# Configuração de CORS
+#
+# allow_origins:
+#   Define quais origens podem acessar a API.
+#
+# allow_methods:
+#   Métodos HTTP permitidos.
+#
+# allow_headers:
+#   Headers permitidos nas requisições.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
+
+# Registra as rotas REST da API v1
+app.include_router(
+    v1.router,
+    prefix="/api/v1",
+    tags=["API"]
+)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError
+):
+    """
+    Manipula erros de validação do FastAPI/Pydantic.
+
+    Args:
+        request:
+            Requisição HTTP recebida.
+
+        exc:
+            Exceção de validação lançada pelo FastAPI.
+
+    Returns:
+        JSONResponse:
+            Resposta padronizada contendo os erros.
+    """
+
+    # Formata os erros de validação
+    messages = [
+        {
+            "msg": error["msg"],
+            "loc": error["loc"]
         }
+        for error in exc.errors()
+    ]
 
-if __name__ == "__main__":
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        content={
+            "detail": messages
+        }
+    )
+ 
+@app.exception_handler(HTTPException)
+async def http_exception_handler(
+    request: Request,
+    exc: HTTPException
+):
+    """
+    Manipula exceções HTTP customizadas.
 
-    parser = argparse.ArgumentParser()
+    Args:
+        request:
+            Requisição HTTP recebida.
 
-    parser.add_argument(
-        "--cv",
-        required=True,
-        choices=["portuguese.docx", "english.docx"],
-        help="Argumento para saber qual o currículo será enviado as informações. Ex.:Lorem ipsum dolor sit amet. Qui nostrum odio ex.."
+        exc:
+            Exceção HTTP lançada pela aplicação.
+
+    Returns:
+        JSONResponse:
+            Resposta padronizada contendo detalhes do erro.
+    """
+
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "detail": [
+                {
+                    "msg": exc.detail
+                }
+            ],
+        },
     )
 
-    parser.add_argument(
-        "--dir",
-        required=True,
-        choices=["Portuguese", "English"],
-        help="Argumento para saber qual local será salvo o novo currículo."
+
+@app.get(
+    "/",
+    tags=["Index"],
+    response_model=IndexSchema,
+    summary="Endpoint inicial da API",
+    description="Retorna informações básicas da API, como versão e status de integração."
+)
+def index():
+    """
+    Endpoint inicial da aplicação.
+    """
+
+    return IndexSchema(
+        version="1.0.0",
+        message="Integração com Auto CV"
     )
-
-    parser.add_argument(
-        "--info",
-        required=True,
-        help="Informações necessárias para incluir ao corpo do arquivo"
-    )
-
-
-    args = parser.parse_args()
-
-    
-
-    dist_dir = args.dir
-    cv = args.cv
-    info = args.info
-  
-    loading_information = LoadingInformation()
-
-    rt = loading_information.add_text_file(info)
-    data = loading_information.info(rt)
-
-    file = File(
-        name=cv,
-        dist_dir=dist_dir
-    )
-
-    file.save_file(data)
-
-
-   
-    
