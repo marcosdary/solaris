@@ -1,7 +1,4 @@
 from functools import lru_cache
-from pydantic import Field
-from pathlib import Path
-from typing import Annotated, Optional
 from pydantic_settings import (
     BaseSettings,
     SettingsConfigDict
@@ -23,8 +20,9 @@ class Settings(BaseSettings):
         extra="ignore"
     )
     DIST_PATH: str
-
-    DIR_DATA: Annotated[Optional[Path], Field(default=Path(__file__).parent.parent.parent / "data")]  
+    SECRET_KEY: str
+    CLIENT_ID: str
+    REDIRECT_URI: str
 
 @lru_cache(maxsize=1)
 def get_settings():

@@ -4,7 +4,7 @@ from typing import Dict, Optional
 import subprocess
 
 class FileService:
-    def __init__(self, cv: str, filename: str, dist_path: str, dirname: Optional[Path]):
+    def __init__(self, cv: str, filename: str, dist_path: str, dirname: Path):
         self.cv = cv
         self.filename = filename
         self.dirname = dirname
