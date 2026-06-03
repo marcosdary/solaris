@@ -1,3 +1,7 @@
+import os
+
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 from fastapi import (
     FastAPI,
     Request,
@@ -9,6 +13,7 @@ from fastapi.exceptions import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.sessions import SessionMiddleware
 
 # API
 from src.api import v1
@@ -41,6 +46,11 @@ app.add_middleware(
     allow_origins=["*"],
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
+)
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key="secret"
 )
 
 # Registra as rotas REST da API v1

@@ -16,4 +16,5 @@ class PayloadSchema(BaseSchema):
     cv: FileDocx
     dirname: Dir
     info: str
+    save_google_drive: Annotated[Optional[bool], Field(default=False)]
     pdf: Annotated[Optional[bool], Field(default=False)]

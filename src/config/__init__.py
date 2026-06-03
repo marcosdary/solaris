@@ -1,7 +1,9 @@
 from src.config.constants import (
     Dir, 
     FileDocx, 
+    ProjectPaths,
+    MimeTypes,
+    TypeDir,
     SCOPES, 
-    BASE_DIR, 
-    DIR_DATA)
+)
 from src.config.settings import get_settings, Settings 

@@ -1,23 +1,26 @@
 from docxtpl import DocxTemplate, RichText
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict
 import subprocess
 
+from src.config import TypeDir, ProjectPaths
+
 class FileService:
-    def __init__(self, cv: str, filename: str, dist_path: str, dirname: Path):
+    def __init__(self, cv: str, filename: str, dirname: Path):
         self.cv = cv
         self.filename = filename
         self.dirname = dirname
-        self.dist_path = dist_path
-        self.docx = DocxTemplate(self.dirname / self.cv)
+        self.dist_path = ProjectPaths.DIR_UPLOAD.value
+       
+        self.docx = DocxTemplate(ProjectPaths.DIR_DATA.value / self.cv)
 
     @property
     def full_file_path(self):
-        return f"{self.dist_path}/{self.filename}.docx"
+        return f"{self.dist_path}/{self.dirname}/{TypeDir.DOCX.value}/{self.filename}.docx"
     
     @property
     def path_from_pdf(self):
-        return f"{self.dist_path}/pdf"
+        return f"{self.dist_path}/{self.dirname}/{TypeDir.PDF.value}"
 
     def save_file(self, data: Dict[str, RichText]) -> None:
         self.docx.render(context=data)
@@ -36,4 +39,5 @@ class FileService:
             ],
             check=True
         )
+
         

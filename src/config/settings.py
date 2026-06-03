@@ -19,10 +19,11 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore"
     )
-    DIST_PATH: str
     SECRET_KEY: str
     CLIENT_ID: str
     REDIRECT_URI: str
+    ID_DIR_PORTUGUESE_PDF: str
+    ID_DIR_PORTUGUESE_DOCX: str
 
 @lru_cache(maxsize=1)
 def get_settings():
