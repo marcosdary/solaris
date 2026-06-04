@@ -4,12 +4,13 @@ from fastapi import (
     status
 )
 
-from src.config import MimeTypes, get_settings
+from src.config import MimeTypes, get_settings, get_drive_service
 from src.schemas import PayloadSchema, ResponseSchema
 from src.services import (
     FileService, 
     LoadingInfoService,
-    drive
+    DriveActionsService,
+    delete_files
 )
 
 router = APIRouter()
@@ -21,7 +22,7 @@ router = APIRouter()
 )
 async def cv(
     schema: PayloadSchema,
-    creds = Depends(drive.get_drive_service),
+    creds = Depends(get_drive_service),
     settings = Depends(get_settings)
 ) -> ResponseSchema: 
     file_service = FileService(
@@ -37,28 +38,34 @@ async def cv(
     
     file_service.save_file(data)
     
+    paths = list() 
+
     dist_path = file_service.full_file_path
     mimetype = MimeTypes.docx.value
     filename = f"{schema.filename}.docx"
     parents = [settings.ID_DIR_PORTUGUESE_DOCX,]
 
+    paths.append(dist_path)
+
     if schema.pdf:
         file_service.save_from_pdf()
-        dist_path = f"{file_service.path_from_pdf}/{schema.filename}.pdf" 
-        mimetype = MimeTypes.pdf.value
         filename = f"{schema.filename}.pdf"
-        parents = [settings.ID_DIR_PORTUGUESE_PDF,]
+        dist_path = f"{file_service.path_from_pdf}/{filename}" 
+        mimetype = MimeTypes.pdf.value
+        
+        paths.append(dist_path)
 
-    drive_actions_service = drive.DriveActionsService(creds=creds)
+        parents = [settings.ID_DIR_PORTUGUESE_PDF,]
     
-    id_google_drive = drive_actions_service.upload(
-        filepath=file_service.full_file_path,
+    drive_actions_service = DriveActionsService(creds=creds)
+
+    upload = drive_actions_service.upload(
+        filepath=dist_path,
         filename=filename,
         mimetype=mimetype,
         parents=parents
     )
+    
+    delete_files(paths=paths)
 
-    return ResponseSchema(
-        dist_path=dist_path,
-        id_google_drive=id_google_drive
-    )
+    return upload

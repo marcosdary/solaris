@@ -19,9 +19,6 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore"
     )
-    SECRET_KEY: str
-    CLIENT_ID: str
-    REDIRECT_URI: str
     ID_DIR_PORTUGUESE_PDF: str
     ID_DIR_PORTUGUESE_DOCX: str
 

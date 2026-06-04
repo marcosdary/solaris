@@ -6,7 +6,7 @@ import subprocess
 from src.config import TypeDir, ProjectPaths
 
 class FileService:
-    def __init__(self, cv: str, filename: str, dirname: Path):
+    def __init__(self, cv: str, filename: str, dirname: str):
         self.cv = cv
         self.filename = filename
         self.dirname = dirname

@@ -1,5 +1,5 @@
 from googleapiclient.errors import HttpError
-from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaFileUpload 
 from typing import List
 
 class DriveActionsService:
@@ -17,13 +17,17 @@ class DriveActionsService:
 
             file = (
                 service.files()
-                .create(body=file_metadata, media_body=media, fields="id")
+                .create(
+                    body=file_metadata, 
+                    media_body=media, 
+                    fields="id,name,mimeType,size,webViewLink"
+                )
                 .execute()
             )
+            
+            return file
 
         except HttpError as exc:
-            file = None
             raise Exception(f"Erro externo do servidor: {exc}")
         
-        finally:
-            return file.get("id")
+

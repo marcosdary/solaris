@@ -1,5 +1,5 @@
 from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
+from google_auth_oauthlib.flow import InstalledAppFlow 
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
@@ -13,11 +13,6 @@ class DriveAuthService:
 
     def authenticate(self):
         creds = None
-        print(
-            self.__path_token,
-            self.__path_credentials,
-            self.__scopes
-        )
         if self.__path_token.exists():
             creds = Credentials.from_authorized_user_file(self.__path_token, self.__scopes)
 

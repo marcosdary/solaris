@@ -1,5 +1,5 @@
 [project]
-name = "automatizar-geracao-curriculo"
+name = "autocv"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -7,17 +7,23 @@ requires-python = ">=3.12"
 dependencies = [
     "docxtpl>=0.20.2",
     "fastapi[standard]>=0.136.3",
-    "ffmpeg-python>=0.2.0",
-    "itsdangerous>=2.2.0",
+    "google-api-python-client>=2.197.0",
+    "google-auth>=2.53.0",
+    "google-auth-oauthlib>=1.4.0",
     "pydantic-settings>=2.14.1",
     "uvicorn>=0.48.0",
 ]
 
 [[tool.mypy.overrides]]
-module = "docxtpl"
+module = [
+    "docxtpl",
+    "googleapiclient.*",
+    "google_auth_oauthlib.*",
+]
 ignore_missing_imports = true
 
 [dependency-groups]
 dev = [
     "mypy>=2.1.0",
+    "pytest>=9.0.3",
 ]
