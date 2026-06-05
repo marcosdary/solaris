@@ -5,6 +5,7 @@ from src.config.constants import (
     MimeTypes,
     TypeDir,
     SCOPES, 
+    initialize_directories
 )
 from src.config.settings import get_settings, Settings 
 from src.config.drive import get_drive_service

@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 # API
 from src.api import v1
+from src.config import initialize_directories
 
 
 # Schemas
@@ -138,3 +139,5 @@ def index():
         version="1.0.0",
         message="Integração com Auto CV"
     )
+
+initialize_directories()

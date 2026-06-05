@@ -27,3 +27,13 @@ SCOPES = (
     "https://www.googleapis.com/auth/drive.file",
 )
 
+
+def initialize_directories():
+    """
+    Inicializa os diretórios necessários para o armazenamento dos arquivos.
+    """
+
+    for dir in Dir:
+        for type_dir in TypeDir:
+            path = ProjectPaths.DIR_UPLOAD.value / dir.value / type_dir.value
+            path.mkdir(parents=True, exist_ok=True)
