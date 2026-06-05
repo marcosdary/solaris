@@ -27,4 +27,44 @@ def test_payload_schema_invalid_cv(faker):
     try:
         PayloadSchema(**data)
     except ValueError as e:
-        assert str(e) == "Invalid cv value: invalid.docx. Allowed values are: ['portuguese.docx', 'english.docx']"
+        assert "Inválido valor: invalid.docx. Os valores permitidos são: ['english.docx', 'portuguese.docx']" in str(e) 
+
+def test_payload_schema_invalid_dir(faker):
+    data = {
+        "info": faker.paragraph(),
+        "cv": "portuguese.docx",
+        "dirname": "invalid_dir",
+        "pdf": True
+    }
+    
+    try:
+        PayloadSchema(**data)
+    except ValueError as e:
+        assert "Inválido valor: invalid_dir. Os valores permitidos são: ['english', 'portuguese']" in str(e)
+
+def test_payload_schema_invalid_info():
+    data = {
+        "info": 12345,
+        "cv": "portuguese.docx",
+        "dirname": "portuguese",
+        "pdf": True
+    }
+    
+    try:
+        PayloadSchema(**data)
+    except TypeError as e:
+        assert "Campo invalido." in str(e)
+
+def test_payload_schema_invalid_pdf():
+    data = {
+        "info": "Some info",
+        "cv": "portuguese.docx",
+        "dirname": "portuguese",
+        "pdf": "not_a_boolean"
+    }
+    
+    try:
+        PayloadSchema(**data)
+    except TypeError as e:
+        assert "Campo invalido." in str(e)
+
