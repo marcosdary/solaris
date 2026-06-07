@@ -4,7 +4,7 @@ from pydantic import Field, AliasChoices, BeforeValidator
 from src.schemas.base import BaseSchema
 from src.schemas.validators import Validators
 class ResponseSchema(BaseSchema):
-    id: Annotated[str, BeforeValidator(Validators.validate_uuid), Field(alias=AliasChoices("id"))]
+    id: Annotated[str, Field(alias=AliasChoices("id"))]
     name: Annotated[str, BeforeValidator(Validators.validate_string), Field(alias=AliasChoices("name"))]
     mimetype: Annotated[str, BeforeValidator(Validators.validate_mimetype), Field(alias=AliasChoices("mimeType"))]
     size: Annotated[int, Field(alias=AliasChoices("size"))]
