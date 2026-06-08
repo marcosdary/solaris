@@ -39,6 +39,7 @@ src/
 - Python 3.12 ou superior
 - uv instalado
 - LibreOffice instalado, apenas se usar `pdf: true`
+- Projeto no Google Cloud para google drive
 
 ## Configuracao Local
 
@@ -51,13 +52,13 @@ uv sync
 Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-DIST_PATH=/caminho/para/salvar/curriculos
+DIST_PATH=/caminho/para/salvar/google/drive
 ```
 
 Exemplo:
 
 ```env
-DIST_PATH=/home/usuario/Documentos/Curriculos
+DIST_PATH=/1aOsYKIC6YYCzwWCtZVTknA1f9ClDk9zD
 ```
 
 Os templates base ficam em:
@@ -109,7 +110,6 @@ Campos:
 | `cv` | string | sim | `portuguese.docx`, `english.docx` |
 | `dirname` | string | sim | `portuguese`, `english` |
 | `info` | string | sim | Texto que sera aplicado ao campo `RESUME` |
-| `filename` | string | nao | Nome do arquivo gerado, sem extensao |
 | `pdf` | boolean | nao | `true` para converter tambem para PDF |
 
 Exemplo com `curl`:
@@ -120,7 +120,6 @@ curl -X POST http://127.0.0.1:8000/api/v1 \
   -d '{
     "cv": "portuguese.docx",
     "dirname": "portuguese",
-    "filename": "cv_portugues",
     "info": "**Desenvolvedor Python** com experiencia em automacao de documentos.",
     "pdf": false
   }'
@@ -130,25 +129,29 @@ Resposta esperada:
 
 ```json
 {
-  "dist_path": "/caminho/para/salvar/curriculos/portuguese/cv_portugues.docx"
+  "id": "id",
+  "name": "nome_do_arquivo.extensao",
+  "mimetype": "tipo/arquivo",
+  "size": 0,
+  "web_view_link": "link_de_acesso.com"
 }
 ```
 
-## Saida dos Arquivos
+## Saída dos Arquivos
 
 O arquivo `.docx` e salvo em:
 
 ```text
-{DIST_PATH}/{dirname}/{filename}.docx
+{DIST_PATH}/{dirname}/docx/{filename}.docx
 ```
 
 Quando `pdf` for `true`, a conversao usa LibreOffice em modo headless e salva o PDF em:
 
 ```text
-{DIST_PATH}/{dirname}/pdf/
+{DIST_PATH}/{dirname}/pdf/{filename}.pdf
 ```
 
-## Formatacao do Texto
+## Formatação do Texto
 
 Trechos entre `**` sao renderizados em negrito no documento:
 
@@ -164,7 +167,20 @@ O `LoadingInfoService` transforma esse texto em `RichText` e monta o contexto:
 }
 ```
 
-## Validacao
+## Validação
+
+Rodar os testes:
+
+```bash
+uv run pytest
+```
+
+Rodar apenas uma pasta ou arquivo de teste:
+
+```bash
+uv run pytest tests/services
+uv run pytest tests/services/test_file.py
+```
 
 Rodar checagem de tipos:
 
