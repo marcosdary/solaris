@@ -1,6 +1,7 @@
 from docxtpl import DocxTemplate, RichText
 from typing import Dict
 import subprocess
+from pathlib import Path
 
 from src.config import TypeDir, ProjectPaths
 
@@ -25,18 +26,28 @@ class FileService:
         self.docx.render(context=data)
         self.docx.save(self.full_file_path)
     
+    def validate_before_pdf(self) -> None:
+        full_file_path = Path(self.full_file_path)
+        path_from_pdf = Path(self.path_from_pdf)
+
+        if not full_file_path.is_file():
+            raise FileNotFoundError(f"Arquivo não encontrado para conversão: {full_file_path}")
+
+        if not path_from_pdf.is_dir():
+            raise FileNotFoundError(f"Pasta de destino não encontrada para conversão: {path_from_pdf}")
+
     def save_from_pdf(self) -> None:
-        subprocess.run(
-            [
-                "libreoffice",
-                "--headless",
-                "--convert-to",
-                "pdf",
-                "--outdir",
-                self.path_from_pdf,
-                self.full_file_path
-            ],
-            check=True
-        )
+        self.validate_before_pdf()
+
+        cmd = [
+            "libreoffice",
+            "--headless",
+            "--convert-to",
+            TypeDir.PDF.value,
+            "--outdir",
+            self.path_from_pdf,
+            self.full_file_path
+        ]
+        subprocess.run(cmd, check=True)
 
         

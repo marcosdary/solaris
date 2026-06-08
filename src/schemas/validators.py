@@ -1,18 +1,6 @@
-from uuid import UUID
-
 from src.config import Dir, FileDocx, MimeTypes
 
 class Validators:
-
-    @staticmethod
-    def validate_uuid(value: str) -> str:
-        if not isinstance(value, str):
-            raise TypeError("Campo invalido.")
-        try:
-            UUID(value)
-        except ValueError:
-            raise TypeError("Campo invalido.")
-        return value
 
     @staticmethod
     def validate_string(value: str) -> str:

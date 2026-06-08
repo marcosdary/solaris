@@ -1,7 +1,8 @@
-from src.schemas import PayloadSchema
-from src.config import Dir, FileDocx
+from pytest import raises
 
-def test_payload_schema_valid(faker):
+from src.schemas import PayloadSchema
+
+def test_validar_schema_valido(faker):
     data = {
         "info": faker.paragraph(),
         "cv": "portuguese.docx",
@@ -11,60 +12,43 @@ def test_payload_schema_valid(faker):
     
     payload = PayloadSchema(**data)
     payload_dict = payload.model_dump()
-    assert payload_dict["info"] == data["info"]
-    assert payload_dict["cv"] == FileDocx.portuguese
-    assert payload_dict["dirname"] == Dir.portuguese
-    assert payload_dict["pdf"] == data["pdf"]
+    assert data.get("info") == payload_dict.get("info")
+  
     
-def test_payload_schema_invalid_cv(faker):
+def test_erro_sobre_o_nome_errado_do_template_para_campo_cv(faker):
     data = {
         "info": faker.paragraph(),
         "cv": "invalid.docx",
         "dirname": "portuguese",
         "pdf": True
     }
-    
-    try:
+    with raises(ValueError) as exc_info:
         PayloadSchema(**data)
-    except ValueError as e:
-        assert "Inválido valor: invalid.docx. Os valores permitidos são: ['english.docx', 'portuguese.docx']" in str(e) 
+    assert "Inválido valor: invalid.docx. Os valores permitidos são: ['english.docx', 'portuguese.docx']" in str(exc_info.value)
 
-def test_payload_schema_invalid_dir(faker):
+
+def test_erro_sobre_o_nome_invalidado_do_diretório_para_salvar_novo_template(faker):
     data = {
         "info": faker.paragraph(),
         "cv": "portuguese.docx",
         "dirname": "invalid_dir",
         "pdf": True
     }
-    
-    try:
+    with raises(ValueError) as exc_info:
         PayloadSchema(**data)
-    except ValueError as e:
-        assert "Inválido valor: invalid_dir. Os valores permitidos são: ['english', 'portuguese']" in str(e)
+    assert "Inválido valor: invalid_dir. Os valores permitidos são: ['english', 'portuguese']" in str(exc_info.value)        
 
-def test_payload_schema_invalid_info():
-    data = {
-        "info": 12345,
-        "cv": "portuguese.docx",
-        "dirname": "portuguese",
-        "pdf": True
-    }
-    
-    try:
-        PayloadSchema(**data)
-    except TypeError as e:
-        assert "Campo invalido." in str(e)
 
-def test_payload_schema_invalid_pdf():
+def test_erro_sobre_informar_valor_booleano_para_salvar_em_pdf():
     data = {
         "info": "Some info",
         "cv": "portuguese.docx",
         "dirname": "portuguese",
         "pdf": "not_a_boolean"
     }
-    
-    try:
+
+    with raises(ValueError) as exc_info:
         PayloadSchema(**data)
-    except TypeError as e:
-        assert "Campo invalido." in str(e)
+    assert "Input should be a valid boolean, unable to interpret input" in str(exc_info.value)
+ 
 

@@ -13,7 +13,7 @@ def loading_info_service():
     return LoadingInfoService()
 
 @fixture(scope="session")
-def test_add_text_file(faker,loading_info_service):
+def test_add_text_file(faker, loading_info_service):
     text = f"**bold** {faker.text()}"
     rt = loading_info_service.add_text_file(text)
     return loading_info_service.info(rt)

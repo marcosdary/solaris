@@ -9,7 +9,6 @@ class Dir(Enum):
     english = "english"
     portuguese = "portuguese"
 
-
 class ProjectPaths(Enum):
     DIR_DATA = Path(__file__).parent.parent.parent / "data"
     BASE_DIR =  Path(__file__).parent.parent.parent
