@@ -14,6 +14,19 @@ def test_validar_schema_valido(faker):
     payload_dict = payload.model_dump()
     assert data.get("info") == payload_dict.get("info")
   
+def test_gerar_nome_padrao_para_filename(faker):
+    data = {
+        "info": faker.paragraph(),
+        "cv": "portuguese.docx",
+        "dirname": "portuguese",
+        "pdf": True
+    }
+
+    payload = PayloadSchema(**data)
+
+    assert payload.filename.startswith("curriculo_")
+    assert "." not in payload.filename
+
     
 def test_erro_sobre_o_nome_errado_do_template_para_campo_cv(faker):
     data = {
@@ -51,4 +64,3 @@ def test_erro_sobre_informar_valor_booleano_para_salvar_em_pdf():
         PayloadSchema(**data)
     assert "Input should be a valid boolean, unable to interpret input" in str(exc_info.value)
  
-

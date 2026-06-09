@@ -43,7 +43,6 @@ async def cv(
     dist_path = file_service.full_file_path
     mimetype = MimeTypes.docx.value
     filename = f"{schema.filename}.docx"
-    parents = [settings.ID_DIR_PORTUGUESE_DOCX,]
 
     paths.append(dist_path)
 
@@ -54,16 +53,16 @@ async def cv(
         mimetype = MimeTypes.pdf.value
         
         paths.append(dist_path)
-
-        parents = [settings.ID_DIR_PORTUGUESE_PDF,]
     
-    drive_actions_service = DriveActionsService(creds=creds)
+    drive_actions_service = DriveActionsService(
+        creds=creds,
+        settings=settings
+    )
 
     upload = drive_actions_service.upload(
         filepath=dist_path,
         filename=filename,
-        mimetype=mimetype,
-        parents=parents
+        mimetype=mimetype
     )
     
     delete_files(paths=paths)

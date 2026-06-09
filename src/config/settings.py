@@ -19,8 +19,8 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore"
     )
-    ID_DIR_PORTUGUESE_PDF: str
-    ID_DIR_PORTUGUESE_DOCX: str
+    ID_DIR_PDF: str
+    ID_DIR_DOCX: str
 
 @lru_cache(maxsize=1)
 def get_settings():

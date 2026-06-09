@@ -6,11 +6,14 @@ from src.config import Dir, FileDocx
 from src.schemas.base import BaseSchema
 from src.schemas.validators import Validators
 
+def default_filename() -> str:
+    return f"cv_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
+
 class PayloadSchema(BaseSchema):
     filename: Annotated[
         str, 
         Field(
-            default=f"cv_{datetime.now().timestamp()}",
+            default_factory=default_filename,
             frozen=True
         )
     ]
