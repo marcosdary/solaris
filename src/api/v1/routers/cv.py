@@ -4,7 +4,7 @@ from fastapi import (
     status
 )
 
-from src.config import MimeTypes, get_settings, get_drive_service
+from src.config import MimeTypes, get_settings, DriveAuth
 from src.schemas import PayloadSchema, ResponseSchema
 from src.services import (
     FileService, 
@@ -15,6 +15,12 @@ from src.services import (
 
 router = APIRouter()
 
+def get_creds(
+    settings=Depends(get_settings)
+):
+    drive_auth = DriveAuth()
+    return drive_auth(settings)
+
 @router.post(
     "", 
     status_code=status.HTTP_201_CREATED, 
@@ -22,8 +28,8 @@ router = APIRouter()
 )
 async def cv(
     schema: PayloadSchema,
-    creds = Depends(get_drive_service),
-    settings = Depends(get_settings)
+    settings = Depends(get_settings),
+    creds = Depends(get_creds)
 ) -> ResponseSchema: 
     file_service = FileService(
         cv=schema.cv.value,

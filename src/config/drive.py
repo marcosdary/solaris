@@ -3,15 +3,23 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
-from src.config import SCOPES, ProjectPaths
+from src.config import SCOPES, ProjectPaths, Settings
 
-class DriveAuthService:
+class DriveAuth:
     def __init__(self):
         self.__scopes = SCOPES
         self.__path_token = ProjectPaths.BASE_DIR.value / "tokens.json"
         self.__path_credentials = ProjectPaths.BASE_DIR.value / "credentials.json"
 
-    def authenticate(self):
+    @property
+    def path_token(self):
+        return self.__path_token
+    
+    @property
+    def path_credentials(self):
+        return self.__path_credentials
+
+    def __authenticate(self):
         creds = None
         if self.__path_token.exists():
             creds = Credentials.from_authorized_user_file(self.__path_token, self.__scopes)
@@ -29,7 +37,9 @@ class DriveAuthService:
 
         return build("drive", "v3", credentials=creds)
     
-
-def get_drive_service():
-    drive_auth_service = DriveAuthService()
-    return drive_auth_service.authenticate()
+    def __call__(self, settings: Settings):
+        if not (self.__path_credentials.exists() and self.path_token.exists()):
+            self.__path_credentials = settings.CREDENTIALS_FILE
+            self.__path_token = settings.TOKEN_FILE
+        
+        return self.__authenticate()

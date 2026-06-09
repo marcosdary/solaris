@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     )
     ID_DIR_PDF: str
     ID_DIR_DOCX: str
+    CREDENTIALS_FILE: str
+    TOKEN_FILE: str
 
 @lru_cache(maxsize=1)
 def get_settings():

@@ -8,4 +8,4 @@ from src.config.constants import (
     initialize_directories
 )
 from src.config.settings import get_settings, Settings 
-from src.config.drive import get_drive_service
+from src.config.drive import DriveAuth
