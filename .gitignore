@@ -222,5 +222,5 @@ credentials.json
 tokens.json
 
 # Others 
-data/
+
 .agents/
