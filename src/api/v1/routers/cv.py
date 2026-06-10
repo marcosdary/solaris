@@ -33,7 +33,6 @@ async def cv(
 ) -> ResponseSchema: 
     file_service = FileService(
         cv=schema.cv.value,
-        dirname=schema.dirname.value,
         filename=schema.filename
     )
 

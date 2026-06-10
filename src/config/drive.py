@@ -38,7 +38,7 @@ class DriveAuth:
         return build("drive", "v3", credentials=creds)
     
     def __call__(self, settings: Settings):
-        if not (self.__path_credentials.exists() and self.path_token.exists()):
+        if not self.__path_credentials.exists():
             self.__path_credentials = settings.CREDENTIALS_FILE
             self.__path_token = settings.TOKEN_FILE
         

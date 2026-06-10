@@ -1,4 +1,4 @@
-from src.config import Dir, FileDocx, MimeTypes
+from src.config import FileDocx, MimeTypes
 
 class Validators:
 
@@ -14,14 +14,6 @@ class Validators:
             return FileDocx(value)
         except ValueError:
             allowed_values = [cv.value for cv in FileDocx]
-            raise ValueError(f"Inválido valor: {value}. Os valores permitidos são: {allowed_values}")
-        
-    @staticmethod
-    def validate_dir(value: str) -> Dir:
-        try:
-            return Dir(value)
-        except ValueError:
-            allowed_values = [dir.value for dir in Dir]
             raise ValueError(f"Inválido valor: {value}. Os valores permitidos são: {allowed_values}")
         
     @staticmethod

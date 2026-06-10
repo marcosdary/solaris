@@ -6,21 +6,20 @@ from pathlib import Path
 from src.config import TypeDir, ProjectPaths
 
 class FileService:
-    def __init__(self, cv: str, filename: str, dirname: str):
+    def __init__(self, cv: str, filename: str):
         self.cv = cv
         self.filename = filename
-        self.dirname = dirname
         self.dist_path = ProjectPaths.DIR_UPLOAD.value
        
         self.docx = DocxTemplate(ProjectPaths.DIR_DATA.value / self.cv)
 
     @property
     def full_file_path(self):
-        return f"{self.dist_path}/{self.dirname}/{TypeDir.DOCX.value}/{self.filename}.docx"
+        return f"{self.dist_path}/{TypeDir.DOCX.value}/{self.filename}.docx"
     
     @property
     def path_from_pdf(self):
-        return f"{self.dist_path}/{self.dirname}/{TypeDir.PDF.value}"
+        return f"{self.dist_path}/{TypeDir.PDF.value}"
 
     def save_file(self, data: Dict[str, RichText]) -> None:
         self.docx.render(context=data)
