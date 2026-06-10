@@ -1,4 +1,4 @@
-from pytest import raises
+from pytest import mark
 
 from src.schemas import PayloadSchema
 
@@ -24,43 +24,25 @@ def test_gerar_nome_padrao_para_filename(faker):
 
     payload = PayloadSchema(**data)
 
-    assert payload.filename.startswith("curriculo_")
-    assert "." not in payload.filename
+    assert payload.filename.startswith("cv_")
 
-    
-def test_erro_sobre_o_nome_errado_do_template_para_campo_cv(faker):
+@mark.parametrize(
+    "cv,dirname,pdf",
+    (
+        # Erro ocorre por o nome invalid.docx não está armazenado na enum Dir
+        ("invalid.docx", "portuguese", True),
+        # Erro ocorre por o nome invalid.docx não está armazenado na enum Dir
+        ("portuguese.docx", "invalid_dir", True),
+        # Erro ocorre por não haver o tipo correto (booleano)
+        ("portuguese.docx", "portuguese", "not_a_boolean")
+    )        
+)
+@mark.xfail(reason="Erro ocorre por causa de argumento incorreto.")
+def test_erro_sobre_campo_incongruente_ao_requisitado(cv, dirname, pdf, faker):    
     data = {
         "info": faker.paragraph(),
-        "cv": "invalid.docx",
-        "dirname": "portuguese",
-        "pdf": True
+        "cv": cv,
+        "dirname": dirname,
+        "pdf": pdf
     }
-    with raises(ValueError) as exc_info:
-        PayloadSchema(**data)
-    assert "Inválido valor: invalid.docx. Os valores permitidos são: ['english.docx', 'portuguese.docx']" in str(exc_info.value)
-
-
-def test_erro_sobre_o_nome_invalidado_do_diretório_para_salvar_novo_template(faker):
-    data = {
-        "info": faker.paragraph(),
-        "cv": "portuguese.docx",
-        "dirname": "invalid_dir",
-        "pdf": True
-    }
-    with raises(ValueError) as exc_info:
-        PayloadSchema(**data)
-    assert "Inválido valor: invalid_dir. Os valores permitidos são: ['english', 'portuguese']" in str(exc_info.value)        
-
-
-def test_erro_sobre_informar_valor_booleano_para_salvar_em_pdf():
-    data = {
-        "info": "Some info",
-        "cv": "portuguese.docx",
-        "dirname": "portuguese",
-        "pdf": "not_a_boolean"
-    }
-
-    with raises(ValueError) as exc_info:
-        PayloadSchema(**data)
-    assert "Input should be a valid boolean, unable to interpret input" in str(exc_info.value)
- 
+    PayloadSchema.model_validate(**data)

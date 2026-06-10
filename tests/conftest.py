@@ -2,7 +2,7 @@ from pytest import fixture
 from faker import Faker
 
 from src.services import LoadingInfoService
-from src.config import get_drive_service, Settings
+from src.config import DriveAuth, Settings
 
 @fixture(scope="session")
 def faker():
@@ -21,7 +21,8 @@ def test_add_text_file(faker, loading_info_service):
 
 @fixture(scope="session")
 def drive_service():
-    creds = get_drive_service()
+    drive = DriveAuth()
+    creds = drive()
     return creds
 
 
