@@ -1,5 +1,5 @@
 import { CVForm } from "./components/CVForm";
-import { BackendStatus } from "./components/BackendStatus";
+import { ServerStatus } from "./components/ServerStatus";
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
             Auto CV
           </h1>
 
-          <BackendStatus />
+          <ServerStatus />
 
           <p className="mt-3 text-slate-600">
             Gere currículos profissionais em poucos
