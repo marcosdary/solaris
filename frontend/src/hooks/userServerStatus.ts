@@ -10,8 +10,6 @@ export function useServerStatus() {
   const [status, setStatus] =
     useState<ServerStatus>("connecting");
 
-  console.log(baseWS);
-
   const socketRef = useRef<WebSocket | null>(null);
   const lastPongRef = useRef<number>(0);
 
