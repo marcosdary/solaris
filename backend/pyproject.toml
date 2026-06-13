@@ -18,11 +18,10 @@ dependencies = [
 [[tool.mypy.overrides]]
 module = [
     "docxtpl",
-    "googleapiclient.*",
     "google_auth_oauthlib.*",
+    "googleapiclient.*"
 ]
 ignore_missing_imports = true
-
 
 
 [dependency-groups]
@@ -30,4 +29,9 @@ dev = [
     "faker>=40.21.0",
     "mypy>=2.1.0",
     "pytest>=9.0.3",
+    "reportlab>=4.5.1",
 ]
+
+[tool.mypy]
+mypy_path = ["."]
+cache_dir = ".mypy_cache"
