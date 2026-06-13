@@ -6,9 +6,6 @@ export interface CVPayload {
 }
 
 export interface CVResponse {
-  id: string;
   name: string;
   mimetype: string;
-  size: number;
-  web_view_link: string;
 }

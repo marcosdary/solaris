@@ -20,8 +20,8 @@ export function useServerStatus() {
 
     function connect() {
       setStatus("connecting");
-
-      const ws = new WebSocket(baseWS);
+      
+      const ws = new WebSocket(`${baseWS}/api/v1/ws/health`);
 
       socketRef.current = ws;
 
