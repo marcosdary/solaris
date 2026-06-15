@@ -13,7 +13,7 @@ def faker():
 def loading_info_service():
     return LoadingInfoService()
 
-@fixture(scope="module")
+@fixture(scope="function")
 def filename(faker):
     return faker.file_name(extension="")
 

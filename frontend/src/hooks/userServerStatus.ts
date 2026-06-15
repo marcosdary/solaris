@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { baseWS } from "../services/api";
+import { settings } from "../config/settings";
 
 export type ServerStatus =
   | "connecting"
@@ -21,7 +21,7 @@ export function useServerStatus() {
     function connect() {
       setStatus("connecting");
       
-      const ws = new WebSocket(`${baseWS}/api/v1/ws/health`);
+      const ws = new WebSocket(`${settings.baseWS}/api/v1/ws/health`);
 
       socketRef.current = ws;
 

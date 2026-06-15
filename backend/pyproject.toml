@@ -32,6 +32,9 @@ dev = [
     "reportlab>=4.5.1",
 ]
 
+[tool.pytest.ini_options]
+cache_dir = ".pytest_cache"
+
 [tool.mypy]
 mypy_path = ["."]
 cache_dir = ".mypy_cache"

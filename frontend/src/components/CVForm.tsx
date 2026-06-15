@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { baseURL } from "../services/api";
+import { requestRouteCv } from "../services/api";
 import type { CVPayload, CVResponse } from "../types/cv";
 import { Loading } from "./Loading";
 import { ResultCard } from "./ResultCard";
@@ -25,17 +25,7 @@ export function CVForm() {
     setResult(null);
 
     try {
-      const response = await fetch(
-        `${baseURL}/api/v1/cv`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(form)
-        }
-      );
-      const data = await response.json();
+      const data: CVResponse = await requestRouteCv(form);
       setResult(data);
     } catch (error) {
       console.error(error);

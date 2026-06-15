@@ -31,7 +31,7 @@ src/
 ├── services/
 │   ├── file.py                # Renderizacao, salvamento e PDF
 │   └── loading_info.py        # Montagem do RichText para o template
-└── main.py                    # Aplicacao FastAPI
+└── __init__.py                    # Aplicacao FastAPI
 ```
 
 ## Requisitos
@@ -73,7 +73,7 @@ Os templates devem conter a variavel `{{r RESUME}}`, pois o projeto envia um `Ri
 ## Executando a API
 
 ```bash
-uv run uvicorn src.main:app --reload
+uv run uvicorn app:app --reload
 ```
 
 URLs principais:
@@ -97,7 +97,6 @@ Payload:
 ```json
 {
   "cv": "portuguese.docx",
-  "dirname": "portuguese",
   "info": "**Desenvolvedor Python** com experiencia em FastAPI, automacao e integracoes.",
   "pdf": false
 }
@@ -119,7 +118,6 @@ curl -X POST http://127.0.0.1:8000/api/v1 \
   -H "Content-Type: application/json" \
   -d '{
     "cv": "portuguese.docx",
-    "dirname": "portuguese",
     "info": "**Desenvolvedor Python** com experiencia em automacao de documentos.",
     "pdf": false
   }'
@@ -129,11 +127,8 @@ Resposta esperada:
 
 ```json
 {
-  "id": "id",
   "name": "nome_do_arquivo.extensao",
-  "mimetype": "tipo/arquivo",
-  "size": 0,
-  "web_view_link": "link_de_acesso.com"
+  "mimetype": "tipo/arquivo"
 }
 ```
 
@@ -142,13 +137,13 @@ Resposta esperada:
 O arquivo `.docx` e salvo em:
 
 ```text
-{DIST_PATH}/{dirname}/docx/{filename}.docx
+{DIST_PATH}/docx/{filename}.docx
 ```
 
 Quando `pdf` for `true`, a conversao usa LibreOffice em modo headless e salva o PDF em:
 
 ```text
-{DIST_PATH}/{dirname}/pdf/{filename}.pdf
+{DIST_PATH}/pdf/{filename}.pdf
 ```
 
 ## Formatação do Texto
@@ -178,18 +173,18 @@ uv run pytest
 Rodar apenas uma pasta ou arquivo de teste:
 
 ```bash
-uv run pytest tests/services
-uv run pytest tests/services/test_file.py
+uv run pytest tests/unit/services
+uv run pytest tests/unit/services/test_file.py
 ```
 
 Rodar checagem de tipos:
 
 ```bash
-uv run mypy src
+uv run mypy app
 ```
 
 Se o mypy reclamar que um arquivo foi encontrado com dois nomes de modulo, execute com bases explicitas:
 
 ```bash
-uv run mypy --explicit-package-bases src
+uv run mypy --explicit-package-bases app
 ```
