@@ -133,5 +133,3 @@ def index():
         version="1.0.0",
         message="Integração com Auto CV"
     )
-
-initialize_directories()

@@ -1,12 +1,12 @@
 from docxtpl import DocxTemplate, RichText
 from typing import Dict
 import subprocess
-from pathlib import Path
 
-from app.config import TypeDir, ProjectPaths
+from app.config import TypeDir, ProjectPaths, initialize_directories
 
 class FileService:
     def __init__(self, cv: str, filename: str):
+        initialize_directories()
         self.cv = cv
         self.filename = filename
         self.dist_path = ProjectPaths.DIR_UPLOAD.value

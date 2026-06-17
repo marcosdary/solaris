@@ -1,46 +1,58 @@
-from googleapiclient.errors import HttpError
-from googleapiclient.http import MediaFileUpload 
-from typing import List
 from pathlib import Path
+import requests
+from base64 import b64encode
 
-from app.config import MimeTypes, Settings
-from app.schemas import ResponseSchema
+from app.config import Settings
 
 class DriveActionsService:
-    def __init__(self, creds, settings: Settings) -> None:
-        self.creds = creds
+    def __init__(self, settings: Settings) -> None:
         self.settings = settings
 
-    def upload(self, filepath: Path, filename: str, mimetype: str) -> ResponseSchema:
+    def upload(self, filepath: Path, mimetype: str) -> dict:
         try:
-            service = self.creds
-            parents = self.__get_parents_for_mimetype(mimetype=mimetype)
-            file_metadata = {
-                "name": filename,
-                "parents": parents
-            }  
-            media = MediaFileUpload(filepath, mimetype=mimetype)
-
-            file = (
-                service.files()
-                .create(
-                    body=file_metadata, 
-                    media_body=media, 
-                    fields="name,mimeType"
+            if not filepath.exists():
+                raise FileNotFoundError(
+                    f"Arquivo não encontrado em: {filepath}"
                 )
-                .execute()
+
+            # Lê e converte para Base64
+            with open(filepath, "rb") as f:
+                file_b64 = b64encode(f.read()).decode("utf-8")
+
+            url = (
+                f"https://script.google.com/macros/s/"
+                f"{self.settings.APP_SCRIPT_KEY}/exec"
             )
-            
-            return file
 
-        except HttpError as exc:
-            raise Exception(f"Erro externo do servidor: {exc}")
-        
+            payload = {
+                "key": self.settings.API_KEY,
+                "mimetype": mimetype,
+                "content": file_b64,
+            }
 
-    def __get_parents_for_mimetype(self, mimetype: str) -> List[str]:
-        if MimeTypes.docx.value == mimetype:
-            return [self.settings.ID_DIR_DOCX,]
-        
-        return [self.settings.ID_DIR_PDF,]
-        
+            response = requests.post(
+                url,
+                json=payload,  
+                timeout=60
+            )
 
+            response.raise_for_status()
+
+            data = response.json()
+
+            if not data.get("success"):
+                raise Exception(
+                    f"Erro interno no script do Google: {data.get('error')}"
+                )
+
+            return data
+
+        except requests.exceptions.RequestException as exc:
+            raise Exception(
+                f"Erro na comunicação com o servidor: {exc}"
+            )
+
+        except Exception as exc:
+            raise Exception(
+                f"Erro externo do servidor: {exc}"
+            )

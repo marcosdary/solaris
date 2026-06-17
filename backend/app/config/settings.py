@@ -19,10 +19,9 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore"
     )
-    ID_DIR_PDF: str
-    ID_DIR_DOCX: str
-    CREDENTIALS_FILE: str
-    TOKEN_FILE: str
+    
+    API_KEY: str
+    APP_SCRIPT_KEY: str
 
 @lru_cache(maxsize=1)
 def get_settings():

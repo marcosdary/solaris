@@ -25,6 +25,7 @@ def test_upload_no_google_drive_para_arquivo_docx(drive_service, tmp_dir, faker,
         mimetype=mimetype
     )
     assert response == {
+        "success": True,
         "name": filename_docx,
         "mimeType": mimetype
     }
@@ -50,6 +51,7 @@ def test_upload_no_google_drive_para_arquivo_pdf(drive_service, tmp_dir, faker, 
     )
 
     assert response == {
+        "success": True,
         "name": filename_pdf,
         "mimeType": mimetype
     }

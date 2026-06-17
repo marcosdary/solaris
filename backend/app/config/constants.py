@@ -19,10 +19,6 @@ class MimeTypes(Enum):
     docx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     pdf = "application/pdf"
 
-SCOPES = (
-    "https://www.googleapis.com/auth/drive.file",
-)
-
 
 def initialize_directories():
     """
