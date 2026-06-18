@@ -5,12 +5,13 @@ from fastapi import (
     HTTPException
 )
 
-from app.config import MimeTypes, get_settings
+from app.config import get_settings
 from app.schemas import PayloadSchema, ResponseSchema
 from app.services import (
-    FileService, 
-    LoadingInfoService,
-    DriveActionsService,
+    SaveFileService, 
+    LoadInfoToFileService,
+    DriveUploadService,
+    FileService,
     delete_files
 )
 
@@ -27,45 +28,44 @@ async def cv(
     settings = Depends(get_settings)
 ) -> ResponseSchema: 
     try:
-        file_service = FileService(
-            cv=schema.cv.value,
-            filename=schema.filename
+        # Carregar as informações para um arquivo docx
+        load_info_to_file = LoadInfoToFileService()
+        # Dicinários com as informações do RichText para 'RESUME'
+        payload = load_info_to_file.payload_from_rich(text=schema.info)
+
+        # Inicializar o arquivo, com base nas especicações do template, assim como
+        # incluir a classe DocxTemplate e o nome do arquivo, sem a extensão
+        file = FileService(template=schema.cv)
+
+        # Salvar arquivo no caminho especificado
+        file_save = SaveFileService(
+            file=file
         )
 
-        loading_info_service = LoadingInfoService()
-        
-        rt = loading_info_service.add_text_file(schema.info)
-        data = loading_info_service.info(rt=rt)
-        
-        file_service.save_file(data)
-        
-        paths = list() 
+        # Salva arquivo docx
+        file_save.save_docx_file(payload)
 
-        dist_path = file_service.full_file_path
-        filename = f"{schema.filename}.docx"
-        mimetype = MimeTypes.docx.value
+        # Mimetype e filename para docx
+        mimetype = file.mimetype_to_docx
+        filepath = file_save.path_from_docx / file.docx_filename
 
-        paths.append(dist_path)
+        # Caminhos para apagar
+        paths = [filepath,]
 
         if schema.pdf:
-            file_service.save_from_pdf()
-            filename = f"{schema.filename}.pdf"
-            mimetype = MimeTypes.pdf.value
-            dist_path = file_service.path_from_pdf / filename
-            
-            paths.append(dist_path)
-        
-        drive_actions_service = DriveActionsService(
-            settings=settings
-        )
+            file_save.save_pdf_file()
 
-        upload = drive_actions_service.upload(
-            filepath=dist_path,
-            mimetype=mimetype
-        )
+            # Mimetype e filename para pdf
+            mimetype = file.mimetype_to_pdf
+            filepath = file_save.path_from_pdf / file.pdf_filename
+            paths.append(filepath)
+
+        # Realizar upload na nuvem do Google Drive
+        drive_upload = DriveUploadService(settings)
+        response = drive_upload.upload(filepath=filepath, mimetype=mimetype)
 
         delete_files(paths=paths)
-        return upload
+        return response
     
     except Exception as exc:
         raise HTTPException(

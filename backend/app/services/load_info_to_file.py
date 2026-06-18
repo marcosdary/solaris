@@ -3,8 +3,8 @@ import re
 
 from typing import Dict
 
-class LoadingInfoService:
-    def add_text_file(self, text: str) -> RichText:
+class LoadInfoToFileService:
+    def __add_text_to_rich(self, text: str) -> RichText:
         rt = RichText()
         words = re.split(r"(\*\*.*?\*\*)", text)
 
@@ -28,7 +28,8 @@ class LoadingInfoService:
             
         return rt
     
-    def info(self, rt: RichText) -> Dict[str, RichText]:
+    def payload_from_rich(self, text: str) -> Dict[str, RichText]:
+        rich = self.__add_text_to_rich(text)
         return {
-            "RESUME": rt
+            "RESUME": rich
         }

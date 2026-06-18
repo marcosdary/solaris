@@ -1,14 +1,13 @@
 from docx import Document
-from pytest import mark, raises
+from pytest import mark
 from pathlib import Path
 from reportlab.pdfgen import canvas
 
-from app.services import DriveActionsService
+from app.services import DriveUploadService
 from app.config import MimeTypes
 
-def test_upload_no_google_drive_para_arquivo_docx(drive_service, tmp_dir, faker, filename, settings):
-    drive_actions = DriveActionsService(
-        creds=drive_service,
+def test_upload_no_google_drive_para_arquivo_docx(tmp_dir, faker, filename, settings):
+    drive_actions = DriveUploadService(
         settings=settings
     )
     filename_docx = f"{filename}.docx"
@@ -31,7 +30,7 @@ def test_upload_no_google_drive_para_arquivo_docx(drive_service, tmp_dir, faker,
     }
 
 def test_upload_no_google_drive_para_arquivo_pdf(drive_service, tmp_dir, faker, filename, settings):
-    drive_actions = DriveActionsService(
+    drive_actions = DriveUploadService(
         creds=drive_service,
         settings=settings
     )
@@ -58,7 +57,7 @@ def test_upload_no_google_drive_para_arquivo_pdf(drive_service, tmp_dir, faker, 
 
 @mark.xfail(reason="O erro ocorre devido ao fato de não ter criado o arquivo doc")
 def test_erro_devido_ao_fato_do_arquivo_docx_nao_foi_criado(drive_service, tmp_dir, filename, settings):
-    drive_actions = DriveActionsService(
+    drive_actions = DriveUploadService(
         creds=drive_service,
         settings=settings
     )
@@ -73,7 +72,7 @@ def test_erro_devido_ao_fato_do_arquivo_docx_nao_foi_criado(drive_service, tmp_d
 
 @mark.xfail(reason="O erro ocorre devido ao fato de não ter criado o arquivo pdf")
 def test_erro_devido_ao_fato_do_arquivo_pdf_nao_foi_criado(drive_service, tmp_dir, filename, settings):
-    drive_actions = DriveActionsService(
+    drive_actions = DriveUploadService(
         creds=drive_service,
         settings=settings
     )

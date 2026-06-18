@@ -6,4 +6,4 @@ from app.schemas.validators import Validators
 
 class ResponseSchema(BaseSchema):
     name: Annotated[str, BeforeValidator(Validators.validate_string), Field(alias=AliasChoices("name"))]
-    mimetype: Annotated[str, BeforeValidator(Validators.validate_mimetype), Field(alias=AliasChoices("mimeType"))]
+    mimetype: Annotated[str, BeforeValidator(Validators.validate_mimetype), Field(alias=AliasChoices("mimeType", "mimetype"))]

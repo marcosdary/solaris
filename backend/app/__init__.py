@@ -1,7 +1,3 @@
-import os
-
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-
 from fastapi import (
     FastAPI,
     Request,
@@ -133,3 +129,5 @@ def index():
         version="1.0.0",
         message="Integração com Auto CV"
     )
+
+initialize_directories()

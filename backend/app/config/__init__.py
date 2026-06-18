@@ -1,8 +1,8 @@
 from app.config.constants import ( 
-    FileDocx, 
-    ProjectPaths,
+    TemplateFile, 
+    DirPaths,
     MimeTypes,
-    TypeDir,
+    TypeFolder,
     initialize_directories
 )
 from app.config.settings import get_settings, Settings 

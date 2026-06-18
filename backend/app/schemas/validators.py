@@ -1,4 +1,4 @@
-from app.config import FileDocx, MimeTypes
+from app.config import TemplateFile, MimeTypes
 
 class Validators:
 
@@ -9,11 +9,11 @@ class Validators:
         return value
     
     @staticmethod
-    def validate_cv(value: str) -> FileDocx:
+    def validate_cv(value: str) -> TemplateFile:
         try:
-            return FileDocx(value)
+            return TemplateFile(value)
         except ValueError:
-            allowed_values = [cv.value for cv in FileDocx]
+            allowed_values = [cv.value for cv in TemplateFile]
             raise ValueError(f"Inválido valor: {value}. Os valores permitidos são: {allowed_values}")
         
     @staticmethod

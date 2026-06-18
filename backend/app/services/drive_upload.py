@@ -4,7 +4,7 @@ from base64 import b64encode
 
 from app.config import Settings
 
-class DriveActionsService:
+class DriveUploadService:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
 

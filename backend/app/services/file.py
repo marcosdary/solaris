@@ -1,52 +1,30 @@
-from docxtpl import DocxTemplate, RichText
-from typing import Dict
-import subprocess
+from docxtpl import DocxTemplate
+from uuid import uuid4
 
-from app.config import TypeDir, ProjectPaths, initialize_directories
+from app.config import DirPaths, MimeTypes, TemplateFile
 
 class FileService:
-    def __init__(self, cv: str, filename: str):
-        initialize_directories()
-        self.cv = cv
-        self.filename = filename
-        self.dist_path = ProjectPaths.DIR_UPLOAD.value
-       
-        self.docx = DocxTemplate(ProjectPaths.DIR_DATA.value / self.cv)
-
-    @property
-    def full_file_path(self):
-        return self.dist_path / TypeDir.DOCX.value / f"{self.filename}.docx"
+    def __init__(self, template: TemplateFile):
+        self.template = template
+        self.__docx_template = DocxTemplate(DirPaths.DIR_DATA.value / self.template.value)
+        self.__basename = f"cv_{uuid4()}"
     
     @property
-    def path_from_pdf(self):
-        return self.dist_path / TypeDir.PDF.value
+    def docx_filename(self):
+        return f"{self.__basename}.docx"
 
-    def save_file(self, data: Dict[str, RichText]) -> None:
-        self.docx.render(context=data)
-        self.docx.save(self.full_file_path)
+    @property
+    def pdf_filename(self):
+        return f"{self.__basename}.pdf"
     
-    def validate_before_pdf(self) -> None:
-        full_file_path = self.full_file_path
-        path_from_pdf = self.path_from_pdf
+    @property
+    def mimetype_to_pdf(self):
+        return MimeTypes.pdf.value
+    
+    @property
+    def mimetype_to_docx(self):
+        return MimeTypes.docx.value
 
-        if not full_file_path.is_file():
-            raise FileNotFoundError(f"Arquivo não encontrado para conversão: {full_file_path}")
-
-        if not path_from_pdf.is_dir():
-            raise FileNotFoundError(f"Pasta de destino não encontrada para conversão: {path_from_pdf}")
-
-    def save_from_pdf(self) -> None:
-        self.validate_before_pdf()
-
-        cmd = [
-            "libreoffice",
-            "--headless",
-            "--convert-to",
-            TypeDir.PDF.value,
-            "--outdir",
-            self.path_from_pdf,
-            self.full_file_path
-        ]
-        subprocess.run(cmd, check=True)
-
-        
+    @property
+    def docx_template(self):
+        return self.__docx_template

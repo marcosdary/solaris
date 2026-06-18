@@ -2,8 +2,8 @@ from pytest import fixture
 from faker import Faker
 from tempfile import TemporaryDirectory
 
-from app.services import LoadingInfoService
-from app.config import DriveAuth, Settings, ProjectPaths
+from app.services import LoadInfoToFileService
+from app.config import Settings, DirPaths
 
 @fixture(scope="session")
 def faker():
@@ -11,7 +11,7 @@ def faker():
 
 @fixture(scope="session")
 def loading_info_service():
-    return LoadingInfoService()
+    return LoadInfoToFileService()
 
 @fixture(scope="function")
 def filename(faker):
@@ -27,18 +27,11 @@ def text_file(faker, loading_info_service):
 def settings():
     return Settings()
 
-
-@fixture(scope="session")
-def drive_service(settings):
-    drive = DriveAuth()
-    creds = drive(settings)
-    return creds
-
 @fixture(scope="module")
 def paths():
-    return ProjectPaths
+    return DirPaths
 
-@fixture(scope="module")
+@fixture(scope="session")
 def tmp_dir():
     with TemporaryDirectory() as tmp_dir:
         yield tmp_dir
