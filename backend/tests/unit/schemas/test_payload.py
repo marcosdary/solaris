@@ -1,6 +1,6 @@
 from pytest import mark
 
-from app.schemas import PayloadSchema
+from app.schemas import  GenerateCVRequestSchema
 
 def test_validar_schema_valido(faker):
     data = {
@@ -9,7 +9,7 @@ def test_validar_schema_valido(faker):
         "pdf": True
     }
     
-    payload = PayloadSchema(**data)
+    payload =  GenerateCVRequestSchema(**data)
     payload_dict = payload.model_dump()
     assert data.get("info") == payload_dict.get("info")
   
@@ -20,7 +20,7 @@ def test_gerar_nome_padrao_para_filename(faker):
         "pdf": True
     }
 
-    payload = PayloadSchema(**data)
+    payload =  GenerateCVRequestSchema(**data)
 
     assert payload.filename.startswith("cv_")
 
@@ -42,4 +42,4 @@ def test_erro_sobre_campo_incongruente_ao_requisitado(cv, pdf, faker):
         "cv": cv,
         "pdf": pdf
     }
-    PayloadSchema.model_validate(**data)
+     GenerateCVRequestSchema.model_validate(**data)

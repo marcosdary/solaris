@@ -106,7 +106,7 @@ async def http_exception_handler(
         content={
             "detail": [
                 {
-                    "msg": exc.detail
+                    "msg": str(exc.detail)
                 }
             ],
         },

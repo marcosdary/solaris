@@ -1,6 +1,6 @@
 from pytest import mark
 
-from app.schemas import ResponseSchema
+from app.schemas import GenerateCVResponseSchema
 from app.config import MimeTypes
 
 def test_validar_schema_de_resposta(faker):
@@ -9,7 +9,7 @@ def test_validar_schema_de_resposta(faker):
         "mimeType": MimeTypes.docx.value
     }
     
-    response = ResponseSchema(**data)
+    response = GenerateCVResponseSchema(**data)
     response_dict = response.model_dump()
     assert response_dict["name"] == data["name"]
 
@@ -28,5 +28,5 @@ def test_erro_sobre_campo_incongruente_ao_requisito(mimetype, faker):
         "name": faker.file_name(),
         "mimeType": mimetype
     }    
-    ResponseSchema.model_validate(**data)
+    GenerateCVResponseSchema.model_validate(**data)
 
