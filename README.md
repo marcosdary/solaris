@@ -1,4 +1,4 @@
-# Auto CV
+# Autocv
 
 API em FastAPI para gerar curriculos em `.docx` a partir de templates do Word.
 
@@ -52,13 +52,15 @@ uv sync
 Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-DIST_PATH=/caminho/para/salvar/google/drive
+ID_DIR_PDF=ID_ONDE_A_PASTA_SE_LOCALIZAR
+ID_DIR_DOCX=ID_ONDE_A_PASTA_SE_LOCALIZAR
 ```
 
 Exemplo:
 
 ```env
-DIST_PATH=/1aOsYKIC6YYCzwWCtZVTknA1f9ClDk9zD
+ID_DIR_PDF=1aOsYKIC6YYC8wWCtZVTknA1f9ClDk9zD
+ID_DIR_DOCX=1aOsYKIC6YYC21wWCtZVTknA1f9ClDk9
 ```
 
 Os templates base ficam em:
@@ -81,6 +83,7 @@ URLs principais:
 ```text
 GET  /
 POST /api/v1
+GET /api/v1/ws/health
 GET  /docs
 ```
 
