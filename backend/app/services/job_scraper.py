@@ -26,7 +26,7 @@ class JobScraperService:
             country_indeed: Estado que deseja buscar as vagas de emprego para Indeed e Glassdoor. Ex.: Brazil*
             pages (int): Número de itens que serão retornadas na resposta. Ex.: 10
             hours_publi (int): Qual a horas serão buscadas as vagas. Ex.: 24hs antes
-            remote (bool): Se a vaga é para ser remoto.
+            is_remote (bool): Se a vaga é para ser remoto.
             job_type (str): Tipo de emprego, que foi normalizada para 'fulltime'
             linkedin_fetch_description (bool): Serão adicionadas informações da vagas do linkedin, como título e descrição.
             proxies (List[str]): _description_

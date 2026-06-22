@@ -2,11 +2,10 @@ from typing import Annotated, List, Optional
 from pydantic import BeforeValidator, Field
 
 from app.schemas.base import BaseSchema
-from app.config import JobSite
+from app.config import Sites
 from app.schemas.validators import Validators
 
-class JobSearchRequestSchema(BaseSchema):
-    sites: List[JobSite]
+class RequestSearchJobSchema(BaseSchema):
     search: str
     location: Annotated[str, Field(default="Brazil")]
     country_indeed: Annotated[str, Field(default="Brazil")]
@@ -15,3 +14,5 @@ class JobSearchRequestSchema(BaseSchema):
     is_remote: Annotated[Optional[bool], Field(default=False)]
     job_type: Annotated[Optional[str], Field(default="fulltime")]
     linkedin_fetch_description: Annotated[Optional[bool], Field(default=False)]
+
+    

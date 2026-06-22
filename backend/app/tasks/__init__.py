@@ -1,0 +1,1 @@
+from app.tasks.save_jobs_in_db_task import save_jobs_in_db_task

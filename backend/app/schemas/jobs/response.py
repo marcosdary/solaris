@@ -2,7 +2,7 @@ from typing import Union
 
 from app.schemas.base import BaseSchema
 
-class JobSchema(BaseSchema):
+class ResponseJobSchema(BaseSchema):
     id: str 
     site: str
     job_url : str 
