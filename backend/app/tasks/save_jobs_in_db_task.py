@@ -1,5 +1,6 @@
 from typing import List
 from sqlalchemy import select
+from pydantic import TypeAdapter
 
 from app.config import celery_app, PostgresSyncDB, get_settings
 from app.models import SearchJobModel, JobModel
@@ -50,10 +51,9 @@ def save_jobs_in_db_task():
         
         for search_job in list_search_job.root:
             site_mapping = build_site_mapping(search_job)
-            print(site_mapping)
-            """
+            
             job_scraper = JobScraperService(
-                sites=site_mapping.keys(),
+                sites=list(site_mapping.keys()),
                 search=search_job.search,
                 country_indeed=search_job.country_indeed,
                 hours_publi=search_job.hours_publi,
@@ -66,16 +66,15 @@ def save_jobs_in_db_task():
 
             jobs_df = job_scraper.get_jobs()
             records = jobs_df.to_dict(orient="records")
-
+            type_adapter = TypeAdapter(ListJobSchema)
+            job_datas = type_adapter.validate_python(records)
 
             job_models.extend(
                 create_job_models(
-                    jobs_data=records,
+                    jobs_data=job_datas,
                     search_job=search_job
                 )
             )
-            """
-
         
         session.add_all(job_models)
         session.commit()

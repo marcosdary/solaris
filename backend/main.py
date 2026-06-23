@@ -1,6 +1,7 @@
 from app.tasks import save_jobs_in_db_task
 
 from typing import List
+from pydantic import TypeAdapter
 from sqlalchemy import select
 
 from app.config import PostgresSyncDB, get_settings
@@ -37,6 +38,7 @@ def create_job_models(
 
 
 if __name__ == "__main__":
+    """
     settings = get_settings()
     postgres_db = PostgresSyncDB(url=settings.DB_URL)
 
@@ -65,18 +67,20 @@ if __name__ == "__main__":
             
             jobs_df = job_scraper.get_jobs()
             records = jobs_df.to_dict(orient="records")
-            
+            type_adapter = TypeAdapter(ListJobSchema)
+            job_datas = type_adapter.validate_python(records)
+
             job_models.extend(
                 create_job_models(
-                    jobs_data=records,
+                    jobs_data=job_datas,
                     search_job=search_job
                 )
             )
-        
+        print(job_datas.model_dump_json(indent=4))
         session.add_all(job_models)
         session.commit()
               
-        
+        """
 
 
 
@@ -85,5 +89,5 @@ if __name__ == "__main__":
 
 
 
-    # save_jobs_in_db_task.delay()
+    save_jobs_in_db_task.delay()
 
