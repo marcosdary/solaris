@@ -1,6 +1,6 @@
 create table site (
 	id varchar(255) primary key,
-	name varchar(255) not null,
+	name varchar(255) not null unique,
 	created_at timestamp default current_timestamp,
 	updated_at timestamp default current_timestamp
 );
@@ -28,7 +28,7 @@ create table search_job (
 	id varchar(255) primary key,
 	is_remote bool default false,
 	search varchar(800) not null,
-	hours_public int not null,
+	hours_publi int not null,
 	linkedin_fetch_description bool default false,
 	location varchar(255),
 	pages int not null,
@@ -41,6 +41,8 @@ create table search_job (
 create table search_job_site (
 	search_job_id varchar(255) not null,
 	site_id varchar(255) not null,
+	created_at timestamp default current_timestamp,
+	updated_at timestamp default current_timestamp,
 
 	primary key (search_job_id, site_id),
 
@@ -66,9 +68,19 @@ create index "idx_job_site" on job("site");
 
 select * from job;
 select * from site;
+select * from search_job;
 
-drop table search_job;
+delete from search_job where id in (
+	'ce881b43-604d-4eeb-b4ea-7e066b7c0e9e',
+	'3b1edf28-771c-41e1-aa2e-2097c25773af',
+	'5871359b-9258-4327-938f-d540659bd6be',
+	'b842d51f-4713-46bf-872e-8bad4228f7ff',
+	'260cc626-0789-47dc-b0fd-d0539fc2b1be'
+)
 drop table job;
+drop table search_job_site; 
+drop table site;
+drop table search_job;
 
 
 
