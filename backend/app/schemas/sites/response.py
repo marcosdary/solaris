@@ -2,7 +2,7 @@ from datetime import datetime
 
 from app.schemas.base import BaseSchema
 
-class ResponseDBSiteSchema(BaseSchema):
+class ResponseSiteSchema(BaseSchema):
     id: str 
     name: str
 

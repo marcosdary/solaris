@@ -1,11 +1,11 @@
-from typing import Union
+from typing import Union, List
 from datetime import datetime
 
 from app.schemas.base import BaseSchema
+from app.schemas.sites import ResponseSiteSchema
 
 class ResponseDBJobSchema(BaseSchema):
     id: str 
-    site_id: str
     job_url : str 
     title: str
     company: str 
@@ -17,7 +17,9 @@ class ResponseDBJobSchema(BaseSchema):
 
     created_at: datetime
     updated_at: datetime
-    
+
+
+    site: ResponseSiteSchema
 
 
 

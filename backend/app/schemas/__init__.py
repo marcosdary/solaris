@@ -7,9 +7,14 @@ from app.schemas.jobs import (
     ResponseDBJobSchema,
     ResponseJobSchema,
 )
-from app.schemas.sites import ResponseDBSiteSchema
+from app.schemas.sites import (
+    ResponseSiteSchema,
+    AddSiteSchema,
+    ListSiteSchema
+)
 from app.schemas.search_job import (
     InsertDBSearchJobSchema, 
     RequestSearchJobSchema, 
-    ResponseSearchJobSchema
+    ResponseSearchJobSchema,
+    ListSearchJobSchema
 )

@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 from typing import List, Optional
 
 from app.models import SearchJobModel, SiteModel, SearchJobSiteModel
@@ -12,7 +13,7 @@ class SearchJobAsyncRepository:
         self, 
         search: str,
         location: str,
-        country_indeed: str,
+        country_indeed: Optional[str],
         pages: int,
         hours_publi: int,
         is_remote: Optional[bool],
@@ -41,11 +42,11 @@ class SearchJobAsyncRepository:
         self.session.add(model)
         return model
     
-    async def select_by_id(self, id: str) -> SearchJobModel:
-        stmt = select(SearchJobModel).filter(SearchJobModel.id == id)
-        row = await self.session.scalar(stmt) 
-
-        if not row:
-            raise ValueError("Informação não encontrada.")
-        return row
+    async def select_all(self) -> List[SearchJobModel]:
+        stmt = select(SearchJobModel).options(
+            joinedload(SearchJobModel.search_job_sites)
+            .joinedload(SearchJobSiteModel.site)
+        )
+        rows = await self.session.execute(stmt) 
+        return rows.scalars().unique().all()
 

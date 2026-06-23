@@ -1,4 +1,5 @@
 from typing import Union
+from pydantic import Field
 
 from app.schemas.base import BaseSchema
 

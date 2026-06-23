@@ -49,7 +49,6 @@ class JobScraperService:
             search_term=self.search,
             location=self.location,
             results_wanted=self.pages,
-            country_indeed=self.country_indeed,
             hours_old=self.hours_publi,
             linkedin_fetch_description=self.linkedin_fetch_description,
             job_type=self.job_type,

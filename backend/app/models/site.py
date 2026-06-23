@@ -8,7 +8,7 @@ class SiteModel(BaseModel):
     __tablename__ = "site"
 
     id: Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
-    name: Mapped[str]
+    name: Mapped[str] = mapped_column(unique=True)
 
     jobs: Mapped["JobModel"] = relationship(
         back_populates="site"

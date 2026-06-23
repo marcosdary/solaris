@@ -17,7 +17,7 @@ class JobModel(BaseModel):
     job_function: Mapped[str] = mapped_column(nullable=True)
     description: Mapped[str]
 
-    site: Mapped["SiteModel"] = relationship(back_populates="jobs")
+    site: Mapped["SiteModel"] = relationship(back_populates="jobs", lazy="selectin")
 
     def __repr__(self):
         return (

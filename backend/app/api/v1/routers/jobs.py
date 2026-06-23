@@ -1,4 +1,5 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, List
+from sqlalchemy.exc import IntegrityError
 from fastapi import (
     APIRouter, 
     status,
@@ -8,10 +9,20 @@ from fastapi import (
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import TypeAdapter
 
-from app.schemas import ListJobSchema, RequestSearchJobSchema
+from app.schemas import (
+    RequestSearchJobSchema,
+    ResponseSiteSchema,
+    AddSiteSchema,
+    ListSiteSchema,
+    ResponseSearchJobSchema,
+    ListSearchJobSchema,
+    ResponseDBJobSchema,
+    ListJobSchema
+)
 from app.repositories import (
     SearchJobAsyncRepository, 
-    JobAsyncRepository
+    JobAsyncRepository,
+    SiteRepository
 )
 from app.config import (
     Settings, 
@@ -58,17 +69,41 @@ async def jobs(
 @router.post(
     "/add-filter", 
     status_code=status.HTTP_201_CREATED, 
-    response_model=RequestSearchJobSchema
+    response_model=ResponseSearchJobSchema
 )
 async def add_filter_jobs(
     request: RequestSearchJobSchema,
     session: AsyncSession = Depends(get_session),
-) -> RequestSearchJobSchema: 
+) -> ResponseSearchJobSchema: 
     try:
         search_job_repo = SearchJobAsyncRepository(session=session)
-        response = await search_job_repo.create(search=request)
+        response = await search_job_repo.create(**request.model_dump())
         await session.commit()
         return response
+    
+    except IntegrityError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"{exc.__class__.__name__} - Erro de integridade da informações."
+        )
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=str(exc)
+        )
+    
+@router.get(
+    "/filter", 
+    status_code=status.HTTP_201_CREATED, 
+    response_model=ListSearchJobSchema
+)
+async def select_filter_jobs(
+    session: AsyncSession = Depends(get_session),
+) -> ListSearchJobSchema: 
+    try:
+        search_job_repo = SearchJobAsyncRepository(session=session)
+        return await search_job_repo.select_all()
     
     except Exception as exc:
         raise HTTPException(
@@ -76,20 +111,72 @@ async def add_filter_jobs(
             detail=str(exc)
         )
 
+@router.post(
+    "/sites",
+    status_code=status.HTTP_201_CREATED, 
+    response_model=ResponseSiteSchema
+)
+async def add_site_for_job(
+    request: AddSiteSchema,
+    session: AsyncSession = Depends(get_session),
+) -> ResponseSiteSchema:
+    try:
+        site_repo = SiteRepository(session)
+        response = await site_repo.create(**request.model_dump())
+        await session.commit()
+        return response
+
+    except IntegrityError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"{exc.__class__.__name__} - Erro de integridade da informações."
+        )
+
+    except Exception as exc:
+        
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc)
+        )
+
+@router.get(
+    "/sites",
+    status_code=status.HTTP_200_OK, 
+    response_model=ListSiteSchema
+)
+async def select_sites(
+    session: AsyncSession = Depends(get_session),
+) -> ListSiteSchema:
+    try:
+        site_repo = SiteRepository(session)
+        return await site_repo.select_all()
+
+    except IntegrityError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"{exc.__class__.__name__} - Erro de integridade da informações."
+        )
+
+    except Exception as exc:
+        
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc)
+        )
+
 @router.get(
     "",
     status_code=status.HTTP_200_OK,
-    response_model=ListJobSchema
+    response_model=List[ResponseDBJobSchema]
 )
 async def get_jobs(
-    site: Sites,
     limit: int = 10, 
     page: int = 1,
     session: AsyncSession = Depends(get_session),
-):
+) -> List[ResponseDBJobSchema]:
     try:
         job_repo = JobAsyncRepository(session=session)
-        return await job_repo.select_all(site, page, limit)
+        return await job_repo.select_all(page, limit)
 
     except Exception as exc:
         raise HTTPException(

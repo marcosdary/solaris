@@ -23,5 +23,8 @@ class SearchJobModel(BaseModel):
         back_populates="search_job"
     )
 
+    @property
+    def sites(self):
+        return [item.site for item in self.search_job_sites]
     
     

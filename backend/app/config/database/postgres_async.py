@@ -20,7 +20,8 @@ class PostgresAsyncDB(BaseDB):
         )
         self._session_local = async_sessionmaker(
             autoflush=False, 
-            bind=self._engine
+            bind=self._engine,
+            expire_on_commit=False
         )
         super().__init__()
 
