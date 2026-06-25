@@ -24,3 +24,9 @@ class Validators:
             allowed_values = [mimetype.value for mimetype in MimeTypes]
             raise ValueError(f"Inválido valor: {value}. Os valores permitidos são: {allowed_values}")
         
+    @staticmethod
+    def validate_number(value: int) -> int:
+        if value <= 0:
+            raise ValueError(f"Inválido valor: {value}. Somente números maior que zero.")
+        return value
+        
