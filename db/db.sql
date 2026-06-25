@@ -67,15 +67,16 @@ create index "idx_job_updated_at" on job("updated_at");
 create index "idx_job_site" on job("site");
 
 select * from job;
-select * from site;
+select * from site where id = '2553d345-b12b-4a1f-9c4a-66f9e1a4ed3b';
 select * from search_job;
 
-delete from search_job where id in (
-	'ce881b43-604d-4eeb-b4ea-7e066b7c0e9e',
-	'3b1edf28-771c-41e1-aa2e-2097c25773af',
-	'5871359b-9258-4327-938f-d540659bd6be',
-	'b842d51f-4713-46bf-872e-8bad4228f7ff',
-	'260cc626-0789-47dc-b0fd-d0539fc2b1be'
+delete from job where id in (
+	'li-4430575115',
+	'li-4430998132',
+	'li-4432009440',
+	'li-4428958622',
+	'li-4432493490',
+	'li-4432482691'
 )
 drop table job;
 drop table search_job_site; 

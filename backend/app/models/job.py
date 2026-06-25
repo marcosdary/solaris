@@ -24,5 +24,5 @@ class JobModel(BaseModel):
             f"JobModel(id={self.id},site_id={self.site_id}," \
             f"job_url={self.job_url},title={self.job_function},company_url={self.company_url}," \
             f"company={self.company},location={self.location},job_level={self.job_level}," \
-            f"description={self.description})"
+            f"description={self.description[:10]}...)"
         )

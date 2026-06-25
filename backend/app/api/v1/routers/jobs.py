@@ -52,6 +52,7 @@ async def jobs(
     request: RequestSearchJobSchema
 ) -> ListJobSchema: 
     try:
+        print(request.model_dump_json(indent=4))
         job_scraper = JobScraperService(**request.model_dump())
         jobs_df = job_scraper.get_jobs()
         records = jobs_df.to_dict(orient="records")
