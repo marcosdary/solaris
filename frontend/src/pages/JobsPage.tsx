@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { JobCard } from "../components/JobCard";
+import { ServerStatus } from "../components/ServerStatus";
 import { JobSearchForm } from "../components/JobSearchForm";
 import { searchJobs } from "../services/api";
 
@@ -21,7 +22,7 @@ export default function JobsPage() {
       setJobs(result);
     } catch (error) {
       console.error(error);
-      alert("Erro ao buscar vagas");
+      alert(`Erro: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -34,11 +35,17 @@ export default function JobsPage() {
       <div className="mx-auto max-w-7xl px-6 py-10">
 
         {/* HEADER */}
-        <header className="mb-8 flex items-center justify-between">
+        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-slate-800">
-              Auto CV
-            </h1>
+            {/* Alinha o título e o ServerStatus na mesma linha */}
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-4xl font-bold text-slate-800 tracking-tight">
+                Auto CV
+              </h1>
+              <div className="mt-1">
+                <ServerStatus />
+              </div>
+            </div>
 
             <p className="mt-2 text-slate-600">
               Pesquise vagas em LinkedIn, Indeed e outras plataformas.
@@ -47,7 +54,7 @@ export default function JobsPage() {
 
           <Link
             to="/autocv"
-            className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
+            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 font-medium text-white shadow-sm transition hover:bg-blue-700"
           >
             Gerar Currículo
           </Link>

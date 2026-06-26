@@ -6,9 +6,7 @@ import { ResultCard } from "./ResultCard";
 
 export function CVForm() {
   const [loading, setLoading] = useState(false);
-
   const [result, setResult] = useState<CVResponse | null>(null);
-  const dirname = "portuguese";
 
   const [form, setForm] = useState<CVPayload>({
     info: "",
@@ -16,11 +14,11 @@ export function CVForm() {
     pdf: true,
   });
 
-  const handleSubmit = async (
-    e: React.SyntheticEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
+  // Descobre qual idioma exibir no select baseando-se no arquivo atual do estado
+  const currentLanguage = form.cv === "english.docx" ? "english" : "portuguese";
 
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setLoading(true);
     setResult(null);
 
@@ -33,15 +31,12 @@ export function CVForm() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   function handleLanguage(value: string) {
     setForm((old) => ({
       ...old,
-      cv:
-        value === "portuguese"
-          ? "portuguese.docx"
-          : "english.docx",
+      cv: value === "portuguese" ? "portuguese.docx" : "english.docx",
     }));
   }
 
@@ -49,41 +44,34 @@ export function CVForm() {
     <>
       <form
         onSubmit={handleSubmit}
-        className="rounded-2xl bg-white p-8 shadow-sm"
+        className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition-all"
       >
         <div className="space-y-6">
-
+          {/* SELEÇÃO DE IDIOMA */}
           <div>
-            <label className="mb-2 block font-medium text-slate-700">
+            <label htmlFor="language-select" className="mb-2 block font-medium text-slate-700">
               Em qual idioma deseja gerar seu currículo?
             </label>
-
             <select
-              className="w-full rounded-lg border p-3"
-              value={dirname}
-              onChange={(e) =>
-                handleLanguage(e.target.value)
-              }
+              id="language-select"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-slate-800 transition focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              value={currentLanguage} // Corrigido aqui: agora reflete o estado dinamicamente
+              onChange={(e) => handleLanguage(e.target.value)}
             >
-              <option value="portuguese">
-                Português
-              </option>
-
-              <option value="english">
-                Inglês
-              </option>
+              <option value="portuguese">Português</option>
+              <option value="english">Inglês</option>
             </select>
           </div>
 
+          {/* DESCRIÇÃO DA EXPERIÊNCIA */}
           <div>
-            <label className="mb-2 block font-medium text-slate-700">
-              Descreva sua experiência e as informações que
-              deseja incluir no currículo
+            <label htmlFor="experience-input" className="mb-2 block font-medium text-slate-700">
+              Descreva sua experiência e as informações que deseja incluir no currículo
             </label>
-
             <textarea
+              id="experience-input"
               rows={8}
-              className="w-full rounded-lg border p-3"
+              className="w-full rounded-xl border border-slate-200 p-3 text-slate-800 placeholder-slate-400 transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               placeholder="Ex.: Desenvolvedor Backend com experiência em Python, FastAPI, Docker..."
               value={form.info}
               onChange={(e) =>
@@ -95,9 +83,12 @@ export function CVForm() {
             />
           </div>
 
+          {/* CHECKBOX OPÇÃO EM PDF */}
           <div className="flex items-center gap-3">
             <input
+              id="pdf-checkbox"
               type="checkbox"
+              className="h-4 w-4 rounded border-slate-300 text-blue-600 transition focus:ring-blue-500"
               checked={form.pdf}
               onChange={(e) =>
                 setForm({
@@ -106,18 +97,18 @@ export function CVForm() {
                 })
               }
             />
-
-            <label>
+            <label htmlFor="pdf-checkbox" className="select-none text-sm font-medium text-slate-600 cursor-pointer">
               Gerar também uma versão em PDF
             </label>
           </div>
 
+          {/* BOTÃO DE SUBMIT */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
+            className="w-full rounded-xl bg-blue-600 py-3.5 font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Gerar Currículo
+            {loading ? "Gerando..." : "Gerar Currículo"}
           </button>
         </div>
       </form>
