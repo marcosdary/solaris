@@ -7,14 +7,14 @@ from app.config import DirPaths, MimeTypes, TemplateFile, TypeFolder
 
 
 class FileDocxService(FileService):
-    def __init__(self, template: TemplateFile, data: Dict[str, RichText]):
+    def __init__(self, template: TemplateFile, data: Dict[str, RichText], basename: str):
         self.template = template
         self.__docx_template = DocxTemplate(DirPaths.DIR_DATA.value / self.template.value)
         self.__folder_docx = TypeFolder.DOCX.value
         self.__folder_upload = DirPaths.DIR_UPLOAD.value
         self.data = data
 
-        super().__init__()
+        super().__init__(basename=basename)
 
     @property
     def filename(self):

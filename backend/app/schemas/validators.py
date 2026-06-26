@@ -1,3 +1,4 @@
+from math import isnan
 from app.config import TemplateFile, MimeTypes
 
 class Validators:
@@ -28,5 +29,11 @@ class Validators:
     def validate_number(value: int) -> int:
         if value <= 0:
             raise ValueError(f"Inválido valor: {value}. Somente números maior que zero.")
+        return value
+
+    @staticmethod
+    def nan_to_none(value):
+        if isinstance(value, float) and isnan(value):
+            return None
         return value
         

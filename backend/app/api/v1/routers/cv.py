@@ -1,3 +1,4 @@
+from uuid import uuid4
 from fastapi import (
     APIRouter, 
     Depends, 
@@ -26,6 +27,8 @@ async def cv(
     settings = Depends(get_settings)
 ) -> GenerateCVResponseSchema: 
     try:
+        _basename = f"cv_{uuid4()}"
+
         # Carregar as informações para um arquivo docx
         load_info_to_file = LoadInfoToFileService()
         # Dicinários com as informações do RichText para 'RESUME'
@@ -33,8 +36,12 @@ async def cv(
 
         # Inicializar o arquivo, com base nas especicações do template, assim como
         # incluir a classe DocxTemplate e o nome do arquivo, sem a extensão
-        file_docx = FileDocxService(template=request.cv, data=payload)
-        file_pdf = FilePDFService()
+        file_docx = FileDocxService(
+            template=request.cv, 
+            data=payload,
+            basename=_basename
+        )
+        file_pdf = FilePDFService(basename=_basename)
 
         # Salva arquivo docx
         file_docx.save()
@@ -44,12 +51,11 @@ async def cv(
         filepath = file_docx.path / file_docx.filename
 
         if request.pdf:
-            file_pdf.save()
+            file_pdf.save(filepath=filepath)
 
             # Mimetype e filename para pdf
             mimetype = file_pdf.mimetype
-            filepath = file_pdf.path_from_pdf / file_pdf.filename
-           
+            filepath = file_pdf.path / file_pdf.filename
 
         # Realizar upload na nuvem do Google Drive
         drive_upload = DriveUploadService(settings)
@@ -61,8 +67,16 @@ async def cv(
         file_docx.delete()
         return response
     
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=exc
+        )
+
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail=exc
         )
+    
+    

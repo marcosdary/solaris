@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
-from uuid import uuid4
 
 
 class FileService(ABC):
-    def __init__(self):
-        self._basename = f"cv_{uuid4()}"
+    def __init__(self, basename: str):
+        self._basename = basename
     
     @property
     @abstractmethod

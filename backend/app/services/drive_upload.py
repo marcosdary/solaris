@@ -12,7 +12,7 @@ class DriveUploadService:
         try:
             if not filepath.exists():
                 raise FileNotFoundError(
-                    f"Arquivo não encontrado em: {filepath}"
+                    f"Arquivo não encontrado em: {filepath.name}"
                 )
 
             # Lê e converte para Base64
@@ -27,6 +27,7 @@ class DriveUploadService:
             payload = {
                 "key": self.settings.API_KEY,
                 "mimetype": mimetype,
+                "filename": filepath.name,
                 "content": file_b64,
             }
 
@@ -53,6 +54,4 @@ class DriveUploadService:
             )
 
         except Exception as exc:
-            raise Exception(
-                f"Erro externo do servidor: {exc}"
-            )
+            raise 
