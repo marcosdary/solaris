@@ -8,4 +8,4 @@ from app.config.constants import (
 )
 from app.config.settings import get_settings, Settings 
 from app.config.database import PostgresAsyncDB, PostgresSyncDB
-from app.config.celery import celery_app
+
