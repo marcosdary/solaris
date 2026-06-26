@@ -8,11 +8,11 @@ export function CVForm() {
   const [loading, setLoading] = useState(false);
 
   const [result, setResult] = useState<CVResponse | null>(null);
+  const dirname = "portuguese";
 
   const [form, setForm] = useState<CVPayload>({
     info: "",
     cv: "portuguese.docx",
-    dirname: "portuguese",
     pdf: true,
   });
 
@@ -42,7 +42,6 @@ export function CVForm() {
         value === "portuguese"
           ? "portuguese.docx"
           : "english.docx",
-      dirname: value as "portuguese" | "english",
     }));
   }
 
@@ -61,7 +60,7 @@ export function CVForm() {
 
             <select
               className="w-full rounded-lg border p-3"
-              value={form.dirname}
+              value={dirname}
               onChange={(e) =>
                 handleLanguage(e.target.value)
               }

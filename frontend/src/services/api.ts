@@ -5,6 +5,7 @@ import type { JobSearchRequest, Job } from "../types/jobs"
 export async function requestRouteCv(
     form: CVPayload
 ): Promise<CVResponse> {
+    
     const response = await fetch(
         `${settings.baseURL}/api/v1/cv`,
         {
