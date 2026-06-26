@@ -5,13 +5,16 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "asyncpg>=0.31.0",
     "docxtpl>=0.20.2",
     "fastapi[standard]>=0.136.3",
-    "google-api-python-client>=2.197.0",
-    "google-auth>=2.53.0",
+    "psycopg2-binary>=2.9.12",
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.1",
+    "python-jobspy>=1.1.82",
+    "redis>=8.0.0",
     "requests>=2.34.2",
+    "sqlalchemy>=2.0.51",
     "uvicorn>=0.48.0",
 ]
 
@@ -29,6 +32,7 @@ dev = [
     "faker>=40.21.0",
     "mypy>=2.1.0",
     "pytest>=9.0.3",
+    "pytest-asyncio>=1.4.0",
     "reportlab>=4.5.1",
 ]
 

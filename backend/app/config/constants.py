@@ -19,6 +19,10 @@ class MimeTypes(Enum):
     docx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     pdf = "application/pdf"
 
+class Sites(str, Enum):
+    linkedin = "linkedin"
+    indeed = "indeed"
+
 
 def initialize_directories():
     """

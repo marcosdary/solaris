@@ -1,9 +1,13 @@
 from pytest import fixture
+from pytest_asyncio import fixture as async_fixture
 from faker import Faker
+from typing import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from tempfile import TemporaryDirectory
 
 from app.services import LoadInfoToFileService
-from app.config import Settings, DirPaths
+from app.config import Settings, DirPaths, PostgresAsyncDB, PostgresSyncDB
 
 @fixture(scope="session")
 def faker():
@@ -35,3 +39,20 @@ def paths():
 def tmp_dir():
     with TemporaryDirectory() as tmp_dir:
         yield tmp_dir
+
+@async_fixture(scope="function")
+async def async_session(
+    settings,
+) -> AsyncGenerator[AsyncSession, None]:
+    postgres_db = PostgresAsyncDB(settings.DB_TEST_URL)
+    async with postgres_db.get_session() as session:
+        yield session
+
+@fixture
+def session(
+    settings,
+):
+    postgres_db = PostgresSyncDB(settings.DB_TEST_URL)
+    with postgres_db.get_session() as session:
+        yield session    
+
