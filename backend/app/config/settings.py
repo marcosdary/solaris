@@ -22,9 +22,6 @@ class Settings(BaseSettings):
     
     API_KEY: str
     APP_SCRIPT_KEY: str
-    DB_URL: str
-    REDIS_URL: str
-    DB_TEST_URL: str
 
 @lru_cache(maxsize=1)
 def get_settings():
