@@ -4,12 +4,14 @@ from pathlib import Path
 class TemplateFile(Enum):
     english = "english.docx"
     portuguese = "portuguese.docx"
+    clt = "clt.docx"
 
 class DirPaths(Enum):
     DIR_DATA = Path(__file__).parent.parent.parent / "data"
     BASE_DIR =  Path(__file__).parent.parent.parent
     DIR_UPLOAD = Path(__file__).parent.parent.parent / "data" / "uploads" 
     DIR_FILES_TEMP = Path(__file__).parent.parent.parent / "data" / "temp"
+    DIR_TEMPLATES = Path(__file__).parent.parent.parent / "templates"
 
 class TypeFolder(Enum):
     PDF = "pdf"

@@ -6,10 +6,18 @@ from fastapi import (
     HTTPException
 )
 
-from app.config import get_settings
-from app.schemas import GenerateCVRequestSchema, GenerateCVResponseSchema
+from app.config import (
+    get_settings,
+    DirPaths
+)
+from app.schemas import (
+    GenerateCVRequestSchema, 
+    GenerateCVResponseSchema,
+    StructuredCVRequestSchema
+)
 from app.services import (
     LoadInfoToFileService,
+    LoadInfoToFilePDFService,
     DriveUploadService,
     FilePDFService,
     FileDocxService
@@ -79,4 +87,48 @@ async def cv(
             detail=exc
         )
     
+
+@router.post(
+    "/pdf", 
+    status_code=status.HTTP_201_CREATED, 
+    response_model=GenerateCVResponseSchema
+)
+async def generate_cv_to_pdf(
+    request: StructuredCVRequestSchema,
+    settings = Depends(get_settings)
+) -> GenerateCVResponseSchema: 
+    try:
+        _basename = f"pdf_{uuid4()}"
+        dirs_path = DirPaths
+
+        # Carregar as informações para um arquivo docx
+        load_info_to_file = LoadInfoToFilePDFService(dirs_path.DIR_TEMPLATES.value)
+
+        file_pdf = FilePDFService(basename=_basename)
+
+        text = load_info_to_file.load_info("resume.html", request.model_dump())
+        file_pdf.save_from_html(text=text)
+
+        # Mimetype e filename para pdf
+        mimetype = file_pdf.mimetype
+        filepath = file_pdf.path / file_pdf.filename
+
+        # Realizar upload na nuvem do Google Drive
+        drive_upload = DriveUploadService(settings)
+        response = drive_upload.upload(filepath=filepath, mimetype=mimetype)
+        
+        file_pdf.delete()
+
+        return response
     
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=exc
+        )
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=exc
+        )

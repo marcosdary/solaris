@@ -18,3 +18,12 @@ from app.schemas.search_job import (
     ResponseSearchJobSchema,
     ListSearchJobSchema
 )
+
+from app.schemas.structured_cv_request import (
+    StructuredCVRequestSchema,
+    CertificationSchema,
+    EducationSchema,
+    ExperienceSchema,
+    ProjectSchema,
+    ActivitySchema
+)

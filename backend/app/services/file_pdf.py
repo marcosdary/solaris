@@ -1,6 +1,7 @@
 import subprocess
 from os import remove
 from pathlib import Path
+from weasyprint import HTML
 
 from app.services.file import FileService
 from app.config import DirPaths, MimeTypes, TypeFolder
@@ -36,6 +37,11 @@ class FilePDFService(FileService):
             filepath
         ]
         subprocess.run(cmd, check=True)
+        return 
+    
+    def save_from_html(self, text: str):
+        distpath = self.path / self.filename
+        HTML(string=text).write_pdf(distpath)
         return 
     
     def delete(self):
