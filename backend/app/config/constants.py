@@ -7,6 +7,10 @@ class TemplateFile(Enum):
     resume_docx = "resume.docx"
     resume_html = "resume.html"
 
+class Language(Enum):
+    english = "english"
+    portuguese = "portuguese"
+
 class DirPaths(Enum):
     DIR_DATA = Path(__file__).parent.parent.parent / "data"
     BASE_DIR =  Path(__file__).parent.parent.parent

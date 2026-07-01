@@ -178,7 +178,7 @@
 
         <section class="section">
             <div class="section-title">
-                Resumo
+            {% if language.value == 'english' %}Summary{% else %}Resumo{% endif %}
             </div>
 
             {{ resume }}
@@ -189,7 +189,7 @@
         <section class="section">
 
             <div class="section-title">
-                Experiência Profissional
+                {% if language.value == 'english' %}Professional Experience{% else %}Experiência Profissional{% endif %}
             </div>
 
             {% for exp in experiences %}
@@ -236,7 +236,7 @@
         <section class="section">
 
             <div class="section-title">
-                Projetos
+                {% if language.value == 'english' %}Projects{% else %}Projetos{% endif %}
             </div>
 
             {% for pro in projects %}
@@ -294,7 +294,7 @@
         <section class="section">
 
             <div class="section-title">
-                Educação
+                {% if language.value == 'english' %}Education{% else %}Formação Acadêmica{% endif %}
             </div>
 
             {% for edu in educations %}
@@ -332,7 +332,7 @@
         <section class="section">
 
             <div class="section-title">
-                Certificações
+                {% if language.value == 'english' %}Certifications{% else %}Certificações{% endif %}
             </div>
 
             {% for cert in certifications %}

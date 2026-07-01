@@ -3,6 +3,7 @@ from pydantic import Field, field_serializer
 import re
 
 from app.schemas.base import BaseSchema
+from app.config import Language
 
 class ActivitySchema(BaseSchema):
     """Uma atividade/realização dentro de uma experiência profissional."""
@@ -52,6 +53,7 @@ class StructuredCVRequestSchema(BaseSchema):
     permitindo o envio estruturado de todas as seções do currículo
     em uma única requisição.
     """
+    language: Annotated[Optional[Language], Field(default=Language.portuguese)]
     name: Annotated[str, Field(min_length=1)]
     email: Annotated[str, Field(min_length=1)]
     role: Annotated[str, Field(min_length=1)]
