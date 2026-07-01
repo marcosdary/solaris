@@ -8,7 +8,8 @@ from fastapi import (
 
 from app.config import (
     get_settings,
-    DirPaths
+    DirPaths,
+    TemplateFile
 )
 from app.schemas import (
     GenerateCVRequestSchema, 
@@ -95,19 +96,20 @@ async def cv(
 )
 async def generate_cv_to_pdf(
     request: StructuredCVRequestSchema,
-    settings = Depends(get_settings)
+    settings = Depends(get_settings),
+    load_info_to_file = Depends(LoadInfoToFilePDFService)
 ) -> GenerateCVResponseSchema: 
     try:
         _basename = f"pdf_{uuid4()}"
-        dirs_path = DirPaths
+        template_dir = DirPaths.DIR_TEMPLATES.value
+       
+        template = TemplateFile.resume_html.value
+       
+        data = load_info_to_file.load_info(template=template, template_dir=template_dir, context=request.model_dump())
+    
+        file_pdf = FilePDFService(basename=_basename, data=data)
 
-        # Carregar as informações para um arquivo docx
-        load_info_to_file = LoadInfoToFilePDFService(dirs_path.DIR_TEMPLATES.value)
-
-        file_pdf = FilePDFService(basename=_basename)
-
-        text = load_info_to_file.load_info("resume.html", request.model_dump())
-        file_pdf.save_from_html(text=text)
+        file_pdf.save_from_html()
 
         # Mimetype e filename para pdf
         mimetype = file_pdf.mimetype
@@ -118,6 +120,47 @@ async def generate_cv_to_pdf(
         response = drive_upload.upload(filepath=filepath, mimetype=mimetype)
         
         file_pdf.delete()
+
+        return response
+    
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=exc
+        )
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=exc
+        )
+
+@router.post(
+    "/docx", 
+    status_code=status.HTTP_201_CREATED, 
+    response_model=GenerateCVResponseSchema
+)
+async def generate_cv_to_docx(
+    request: StructuredCVRequestSchema,
+    settings = Depends(get_settings)
+) -> GenerateCVResponseSchema: 
+    try:
+        _basename = f"docx_{uuid4()}"
+        template = TemplateFile.resume_docx
+
+        file_docx = FileDocxService(basename=_basename, template=template, data=request.model_dump())
+
+        file_docx.save_from_docx()
+
+        # Mimetype e filename para pdf
+        mimetype = file_docx.mimetype
+        filepath = file_docx.path / file_docx.filename
+
+        # Realizar upload na nuvem do Google Drive
+        drive_upload = DriveUploadService(settings)
+        response = drive_upload.upload(filepath=filepath, mimetype=mimetype)
+        
+        file_docx.delete()
 
         return response
     

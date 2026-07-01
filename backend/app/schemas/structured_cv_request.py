@@ -30,9 +30,10 @@ class EducationSchema(BaseSchema):
 class ProjectSchema(BaseSchema):
     """Seção PROJETOS — nome, descrição, período e lista de tecnologias."""
     name: Annotated[str, Field(min_length=1)]
-    description: Annotated[str, Field(min_length=1)]
+    github: Annotated[str, Field(min_length=1)]
+    description: Annotated[List[str], Field(min_length=1)]
     period: Annotated[str, Field(min_length=1)]
-    technologies: Annotated[List[str], Field(min_length=1)]
+    technologies: Annotated[Optional[List[str]], Field(default=None)]
 
 
 class CertificationSchema(BaseSchema):
@@ -53,6 +54,8 @@ class StructuredCVRequestSchema(BaseSchema):
     """
     name: Annotated[str, Field(min_length=1)]
     email: Annotated[str, Field(min_length=1)]
+    role: Annotated[str, Field(min_length=1)]
+    github: Annotated[Optional[str], Field(min_length=1, default=None)]
     linkedin: Annotated[str, Field(min_length=1)]
     phone: Annotated[str, Field(min_length=1)]
     location: Annotated[str, Field(min_length=1)]

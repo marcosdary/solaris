@@ -9,7 +9,7 @@ from app.config import DirPaths, MimeTypes, TemplateFile, TypeFolder
 class FileDocxService(FileService):
     def __init__(self, template: TemplateFile, data: Dict[str, RichText], basename: str):
         self.template = template
-        self.__docx_template = DocxTemplate(DirPaths.DIR_DATA.value / self.template.value)
+        self.__docx_template = DocxTemplate(DirPaths.DIR_TEMPLATES.value / self.template.value)
         self.__folder_docx = TypeFolder.DOCX.value
         self.__folder_upload = DirPaths.DIR_UPLOAD.value
         self.data = data
@@ -31,7 +31,13 @@ class FileDocxService(FileService):
     def save(self):
         self.__docx_template.render(context=self.data)
         self.__docx_template.save(self.path / self.filename)
-        return 
+        return
+
+    def save_from_docx(self):
+        distpath = self.path / self.filename
+        self.__docx_template.render(context=self.data)
+        self.__docx_template.save(distpath)
+        return  
     
     def delete(self):
         remove(self.path / self.filename)

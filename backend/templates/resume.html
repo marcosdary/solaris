@@ -2,395 +2,370 @@
 <html lang="pt-BR">
 
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 1.6cm;
+        }
 
-<style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 8pt;
+            line-height: 1.35;
+            color: #2b2b2b;
+            margin: 0;
+        }
 
-@page{
-    size:A4;
-    margin:1.6cm;
-}
+        .container {
+            width: 100%;
+        }
 
-body{
-    font-family:"Times New Roman", Times, serif;
-    font-size:8pt;
-    line-height:1.35;
-    color:#2b2b2b;
-    margin:0;
-}
+        header {
+            text-align: center;
+            margin-bottom: 18px;
+        }
 
-.container{
-    width:100%;
-}
+        h1 {
+            margin: 0;
+            font-size: 16pt;
+            color: #163c75;
+            font-weight: bold;
+        }
 
-header{
-    text-align:center;
-    margin-bottom:18px;
-}
+        .subtitle {
+            margin-top: 4px;
+            font-size: 9pt;
+            color: #555;
+        }
 
-h1{
-    margin:0;
-    font-size:16pt;
-    color:#163c75;
-    font-weight:bold;
-}
+        .contact {
+            margin-top: 8px;
+            font-size: 8pt;
+            color: #444;
+        }
 
-.subtitle{
-    margin-top:4px;
-    font-size:9pt;
-    color:#555;
-}
+        hr {
+            border: none;
+            border-top: 1px solid #163c75;
+            margin: 12px 0;
+        }
 
-.contact{
-    margin-top:8px;
-    font-size:8pt;
-    color:#444;
-}
+        .section {
+            margin-bottom: 14px;
+        }
 
-hr{
-    border:none;
-    border-top:1px solid #163c75;
-    margin:12px 0;
-}
+        .section-title {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 11pt;
+            font-weight: bold;
+            color: #163c75;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
 
-.section{
-    margin-bottom:14px;
-}
+        .item {
+            margin-bottom: 10px;
+        }
 
-.section-title{
-    font-family:"Times New Roman", Times, serif;
-    font-size:11pt;          /* Cabeçalhos */
-    font-weight:bold;
-    color:#163c75;
-    text-transform:uppercase;
-    margin-bottom:8px;
-}
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
 
-.item{
-    margin-bottom:10px;
-}
+        .company {
+            font-size: 8pt;
+            font-weight: bold;
+        }
 
-.row{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-}
+        .period {
+            font-size: 8pt;
+            color: #555;
+        }
 
-.company{
-    font-size:8pt;
-    font-weight:bold;
-}
+        .role {
+            font-size: 8pt;
+            font-weight: bold;
+        }
 
-.period{
-    font-size:8pt;
-    color:#555;
-}
+        .location {
+            font-size: 8pt;
+            color: #555;
+        }
 
-.role{
-    font-size:8pt;
-    font-weight:bold;
-}
+        .description {
+            font-size: 8pt;
+            text-align: justify;
+        }
 
-.location{
-    font-size:8pt;
-    color:#555;
-}
+        ul {
+            margin: 4px 0 0 16px;
+            padding: 0;
+        }
 
-.description{
-    font-size:8pt;
-    text-align:justify;
-}
+        li {
+            font-size: 8pt;
+            margin-bottom: 2px;
+        }
 
-ul{
-    margin:4px 0 0 16px;
-    padding:0;
-}
+        .tags {
+            margin: 5px 0;
+        }
 
-li{
-    font-size:8pt;
-    margin-bottom:2px;
-}
+        .tag {
+            display: inline-block;
+            border: 1px solid #163c75;
+            border-radius: 12px;
+            padding: 1px 6px;
+            margin-right: 4px;
+            margin-bottom: 3px;
+            font-size: 7pt;
+            color: #163c75;
+            background: #eef4ff;
+        }
 
-.tags{
-    margin:5px 0;
-}
+        .github {
+            margin-top: 3px;
+            margin-bottom: 6px;
+            font-size: 8pt;
+            color: #555;
+        }
 
-.tag{
-    display:inline-block;
-    border:1px solid #163c75;
-    border-radius:12px;
-    padding:1px 6px;
-    margin-right:4px;
-    margin-bottom:3px;
-    font-size:7pt;
-    color:#163c75;
-    background:#eef4ff;
-}
+        .github a {
+            color: #163c75;
+            text-decoration: none;
+        }
 
-</style>
-
+        .github a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-<header>
+        <header>
+            <h1>{{ name }}</h1>
 
-<h1>{{ name }}</h1>
+            <div class="subtitle">
+                {{ role}}
+            </div>
 
-<div class="subtitle">
-Full Stack Developer
-</div>
+            <div class="contact">
+                {{ email }}
+                •
+                {{ linkedin }}
+                •
+                {{ phone }}
+                •
+                {{ location }}
+            </div>
 
-<div class="contact">
+            {% if github %}
+            <div class="github">
+                <a href="{{ github }}">
+                    {{ github }}
+                </a>
+            </div>
+            {% endif %}
+        </header>
 
-{{ email }}
-•
-{{ linkedin }}
-•
-{{ phone }}
-•
-{{ location }}
+        <hr>
 
-</div>
+        <section class="section">
+            <div class="section-title">
+                Resumo
+            </div>
+
+            {{ resume }}
+        </section>
 
-</header>
+        <hr>
 
-<hr>
+        <section class="section">
 
-<section class="section">
+            <div class="section-title">
+                Experiência Profissional
+            </div>
 
-<div class="section-title">
-Resumo
-</div>
+            {% for exp in experiences %}
 
-{{ resume }}
+            <div class="item">
 
-</section>
+                <div class="row">
+                    <div class="company">
+                        {{ exp.company }}
+                    </div>
 
-<hr>
+                    <div class="period">
+                        {{ exp.period }}
+                    </div>
+                    
+                </div>
 
-<section class="section">
+                <div class="row">
+                    <div class="role">
+                        {{ exp.role }}
+                    </div>
 
-<div class="section-title">
-Experiência Profissional
-</div>
+                    <div class="location">
+                        {{ exp.location }}
+                    </div>
+                </div>
 
-{% for exp in experiences %}
+                <ul>
+                    {% for act in exp.activities %}
+                    <li>{{ act }}</li>
+                    {% endfor %}
+                </ul>
 
-<div class="item">
+            </div>
 
-<div class="row">
+            {% endfor %}
 
-<div class="company">
+        </section>
 
-{{ exp.company }}
+        {% if projects %}
 
-</div>
+        <hr>
 
-<div class="period">
+        <section class="section">
 
-{{ exp.period }}
+            <div class="section-title">
+                Projetos
+            </div>
 
-</div>
+            {% for pro in projects %}
 
-</div>
+            <div class="item">
 
-<div class="row">
+                <div class="row">
+                    <div class="company">
+                        {{ pro.name }}
+                    </div>
 
-<div class="role">
+                    <div class="period">
+                        {{ pro.period }}
+                    </div>
 
-{{ exp.role }}
+                </div>
+                
+                {% if pro.github %}
+                <div class="github">
+                    GitHub:
+                    <a href="{{ pro.github }}">
+                        {{ pro.github }}
+                    </a>
+                </div>
+                {% endif %}
 
-</div>
+                {% if pro.technologies %}
 
-<div class="location">
+                <div class="tags">
+                    {% for tech in pro.technologies %}
+                    <span class="tag">{{ tech }}</span>
+                    {% endfor %}
+                </div>
 
-{{ exp.location }}
+                {% endif %}
 
-</div>
+                <div class="description">
+                    <ul>
+                        {% for des in pro.description %}
+                        <li>{{ des }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
 
-</div>
+            </div>
 
-<ul>
+            {% endfor %}
 
-{% for act in exp.activities %}
+        </section>
 
-<li>{{ act }}</li>
+        {% endif %}
 
-{% endfor %}
+        <hr>
 
-</ul>
+        <section class="section">
 
-</div>
+            <div class="section-title">
+                Educação
+            </div>
 
-{% endfor %}
+            {% for edu in educations %}
 
-</section>
+            <div class="item">
 
-<hr>
+                <div class="row">
+                    <div class="company">
+                        {{ edu.institution }}
+                    </div>
 
-<section class="section">
+                    <div class="period">
+                        {{ edu.period }}
+                    </div>
+                </div>
 
-<div class="section-title">
+                <div class="row">
+                    <div class="role">
+                        {{ edu.degree }}
+                    </div>
 
-Projetos
+                    <div class="location">
+                        {{ edu.location }}
+                    </div>
+                </div>
 
-</div>
+            </div>
 
-{% for pro in projects %}
+            {% endfor %}
 
-<div class="item">
+        </section>
 
-<div class="row">
+        <hr>
 
-<div class="company">
+        <section class="section">
 
-{{ pro.name }}
+            <div class="section-title">
+                Certificações
+            </div>
 
-</div>
+            {% for cert in certifications %}
 
-<div class="period">
+            <div class="item">
 
-{{ pro.period }}
+                <div class="row">
+                    <div class="company">
+                        {{ cert.name }}
+                    </div>
 
-</div>
+                    <div class="period">
+                        {{ cert.period }}
+                    </div>
+                </div>
 
-</div>
+                <div class="row">
+                    <div class="role">
+                        {{ cert.institution }}
+                    </div>
 
-{% if pro.technologies %}
+                    <div class="location">
+                        {{ cert.location }}
+                    </div>
+                </div>
 
-<div class="tags">
+            </div>
 
-{% for tech in pro.technologies %}
+            {% endfor %}
 
-<span class="tag">{{ tech }}</span>
+        </section>
 
-{% endfor %}
-
-</div>
-
-{% endif %}
-
-<div class="description">
-
-{{ pro.description }}
-
-</div>
-
-</div>
-
-{% endfor %}
-
-</section>
-
-<hr>
-
-<section class="section">
-
-<div class="section-title">
-
-Educação
-
-</div>
-
-{% for edu in educations %}
-
-<div class="item">
-
-<div class="row">
-
-<div class="company">
-
-{{ edu.institution }}
-
-</div>
-
-<div class="period">
-
-{{ edu.period }}
-
-</div>
-
-</div>
-
-<div class="row">
-
-<div class="role">
-
-{{ edu.degree }}
-
-</div>
-
-<div class="location">
-
-{{ edu.location }}
-
-</div>
-
-</div>
-
-</div>
-
-{% endfor %}
-
-</section>
-
-<hr>
-
-<section class="section">
-
-<div class="section-title">
-
-Certificações
-
-</div>
-
-{% for cert in certifications %}
-
-<div class="item">
-
-<div class="row">
-
-<div class="company">
-
-{{ cert.name }}
-
-</div>
-
-<div class="period">
-
-{{ cert.period }}
-
-</div>
-
-</div>
-
-<div class="row">
-
-<div class="role">
-
-{{ cert.institution }}
-
-</div>
-
-<div class="location">
-
-{{ cert.location }}
-
-</div>
-
-</div>
-
-</div>
-
-{% endfor %}
-
-</section>
-
-</div>
+    </div>
 
 </body>
 

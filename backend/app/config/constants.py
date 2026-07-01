@@ -4,7 +4,8 @@ from pathlib import Path
 class TemplateFile(Enum):
     english = "english.docx"
     portuguese = "portuguese.docx"
-    clt = "clt.docx"
+    resume_docx = "resume.docx"
+    resume_html = "resume.html"
 
 class DirPaths(Enum):
     DIR_DATA = Path(__file__).parent.parent.parent / "data"
