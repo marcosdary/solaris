@@ -5,107 +5,139 @@ from fastapi import (
     status,
     HTTPException
 )
+from app.models import CVModel
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from typing import AsyncGenerator
 
 from app.config import (
     get_settings,
     DirPaths,
-    TemplateFile
+    TemplateFile,
+    Settings,
+    PostgresAsyncDB
 )
 from app.schemas import (
-    GenerateCVRequestSchema, 
     GenerateCVResponseSchema,
-    StructuredCVRequestSchema
+    StructuredCVSchema,
+    StructuredCVResponseSchema,
+    ListStructuredCVResponse
 )
 from app.services import (
-    LoadInfoToFileService,
     LoadInfoToFilePDFService,
     DriveUploadService,
-    FilePDFService,
-    FileDocxService
+    FilePDFService
 )
+
+async def get_session(
+    settings: Settings = Depends(get_settings),
+) -> AsyncGenerator[AsyncSession, None]:
+    postgres_db = PostgresAsyncDB(settings.DB_URL)
+    async with postgres_db.get_session() as session:
+        yield session
 
 router = APIRouter()
 
 @router.post(
     "", 
     status_code=status.HTTP_201_CREATED, 
-    response_model=GenerateCVResponseSchema
+    response_model=StructuredCVResponseSchema
 )
 async def cv(
-    request: GenerateCVRequestSchema,
-    settings = Depends(get_settings)
-) -> GenerateCVResponseSchema: 
+    schema: StructuredCVSchema,
+    session = Depends(get_session)
+) -> StructuredCVResponseSchema: 
     try:
-        _basename = f"cv_{uuid4()}"
-
-        # Carregar as informações para um arquivo docx
-        load_info_to_file = LoadInfoToFileService()
-        # Dicinários com as informações do RichText para 'RESUME'
-        payload = load_info_to_file.payload_from_rich(text=request.info)
-
-        # Inicializar o arquivo, com base nas especicações do template, assim como
-        # incluir a classe DocxTemplate e o nome do arquivo, sem a extensão
-        file_docx = FileDocxService(
-            template=request.cv, 
-            data=payload,
-            basename=_basename
-        )
-        file_pdf = FilePDFService(basename=_basename)
-
-        # Salva arquivo docx
-        file_docx.save()
-
-        # Mimetype e filename para docx
-        mimetype = file_docx.mimetype
-        filepath = file_docx.path / file_docx.filename
-
-        if request.pdf:
-            file_pdf.save(filepath=filepath)
-
-            # Mimetype e filename para pdf
-            mimetype = file_pdf.mimetype
-            filepath = file_pdf.path / file_pdf.filename
-
-        # Realizar upload na nuvem do Google Drive
-        drive_upload = DriveUploadService(settings)
-        response = drive_upload.upload(filepath=filepath, mimetype=mimetype)
-        
-        if request.pdf:
-            file_pdf.delete()
-
-        file_docx.delete()
-        return response
+        cv = CVModel.from_schema(schema)
+        session.add(cv)
+        await session.commit()
+        await session.refresh(cv)
+        return cv
     
-    except FileNotFoundError as exc:
+    except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail=exc
         )
 
+@router.get(
+    "", 
+    status_code=status.HTTP_200_OK, 
+    response_model=ListStructuredCVResponse
+)
+async def get_cv_all(
+    session = Depends(get_session)
+) -> ListStructuredCVResponse: 
+    try:
+        stmt = select(CVModel)
+        data = await session.scalars(stmt)
+
+        if not data : 
+            raise ValueError("Conteúdo não encontrado. Tente novamente.")
+        
+        return data
+    
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail=exc
         )
     
+@router.get(
+    "/{id}", 
+    status_code=status.HTTP_200_OK, 
+    response_model=StructuredCVResponseSchema
+)
+async def get_cv(
+    id: str,
+    session = Depends(get_session)
+) -> StructuredCVResponseSchema: 
+    try:
+        stmt = select(CVModel).filter(CVModel.id == id)
+        data = await session.scalar(stmt)
+
+        if not data : 
+            raise ValueError("Conteúdo não encontrado. Tente novamente.")
+        
+        return data
+    
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=exc
+        )
+
 
 @router.post(
-    "/pdf", 
+    "/pdf/{id}", 
     status_code=status.HTTP_201_CREATED, 
     response_model=GenerateCVResponseSchema
 )
 async def generate_cv_to_pdf(
-    request: StructuredCVRequestSchema,
+    id: str,
     settings = Depends(get_settings),
+    template: TemplateFile = TemplateFile.standard,
+    session: AsyncSession = Depends(get_session),
     load_info_to_file = Depends(LoadInfoToFilePDFService)
 ) -> GenerateCVResponseSchema: 
     try:
         _basename = f"pdf_{uuid4()}"
+        stmt = select(CVModel).filter(CVModel.id == id)
+        cv = await session.scalar(stmt)
+
+        if not cv : 
+            raise ValueError("Conteúdo não encontrado. Tente novamente.")
+
+        context = StructuredCVSchema.model_validate(cv)
+
         template_dir = DirPaths.DIR_TEMPLATES.value
+    
        
-        template = TemplateFile.resume_html.value
-       
-        data = load_info_to_file.load_info(template=template, template_dir=template_dir, context=request.model_dump())
+        data = load_info_to_file.load_info(
+            template=template.value, 
+            template_dir=template_dir, 
+            context=context.model_dump()
+        )
     
         file_pdf = FilePDFService(basename=_basename, data=data)
 
@@ -135,43 +167,5 @@ async def generate_cv_to_pdf(
             detail=exc
         )
 
-@router.post(
-    "/docx", 
-    status_code=status.HTTP_201_CREATED, 
-    response_model=GenerateCVResponseSchema
-)
-async def generate_cv_to_docx(
-    request: StructuredCVRequestSchema,
-    settings = Depends(get_settings)
-) -> GenerateCVResponseSchema: 
-    try:
-        _basename = f"docx_{uuid4()}"
-        template = TemplateFile.resume_docx
-
-        file_docx = FileDocxService(basename=_basename, template=template, data=request.model_dump())
-
-        file_docx.save_from_docx()
-
-        # Mimetype e filename para pdf
-        mimetype = file_docx.mimetype
-        filepath = file_docx.path / file_docx.filename
-
-        # Realizar upload na nuvem do Google Drive
-        drive_upload = DriveUploadService(settings)
-        response = drive_upload.upload(filepath=filepath, mimetype=mimetype)
-        
-        file_docx.delete()
-
-        return response
     
-    except FileNotFoundError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=exc
-        )
-
-    except Exception as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail=exc
-        )
+__all__ = ["router"]

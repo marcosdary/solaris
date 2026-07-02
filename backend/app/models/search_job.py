@@ -27,4 +27,4 @@ class SearchJobModel(BaseModel):
     def sites(self):
         return [item.site for item in self.search_job_sites]
     
-    
+__all__ = ["SearchJobModel"]

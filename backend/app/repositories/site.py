@@ -18,4 +18,4 @@ class SiteRepository:
         stmt = select(SiteModel)
         return await self.session.scalars(stmt)
     
-    
+__all__ = ["SiteRepository"]

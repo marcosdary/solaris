@@ -53,5 +53,8 @@ class DriveUploadService:
                 f"Erro na comunicação com o servidor: {exc}"
             )
 
-        except Exception as exc:
+        except Exception:
             raise 
+
+
+__all__ = ["DriveUploadService"]

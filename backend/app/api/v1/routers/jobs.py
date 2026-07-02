@@ -27,8 +27,7 @@ from app.repositories import (
 from app.config import (
     Settings, 
     get_settings, 
-    PostgresAsyncDB,
-    Sites
+    PostgresAsyncDB
 )
 from app.services import (
     JobScraperService
@@ -184,3 +183,5 @@ async def get_jobs(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail=str(exc)
         )
+
+__all__ = ["router"]

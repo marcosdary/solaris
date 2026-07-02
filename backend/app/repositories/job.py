@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from typing import List
 
 from app.models import JobModel
@@ -19,3 +18,5 @@ class JobAsyncRepository:
         
         rows = await self.session.scalars(stmt)
         return rows
+    
+__all__ = ["JobAsyncRepository"]

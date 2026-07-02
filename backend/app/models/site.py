@@ -3,7 +3,6 @@ from uuid import uuid4
 
 from app.models.base import BaseModel
 
-
 class SiteModel(BaseModel):
     __tablename__ = "site"
 
@@ -24,4 +23,4 @@ class SiteModel(BaseModel):
         return f"SiteModel(id={self.id},name={self.name})"
     
 
-    
+__all__ = ["SiteModel"]

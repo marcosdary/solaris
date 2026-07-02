@@ -1,0 +1,33 @@
+from uuid import uuid4
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.models.base import BaseModel
+from app.schemas import ProjectDescriptionSchema
+
+class ProjectDescriptionModel(BaseModel):
+    __tablename__ = "project_descriptions"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+
+    project_id: Mapped[str] = mapped_column(
+        ForeignKey("projects.id")
+    )
+
+    description: Mapped[str]
+
+    project: Mapped["ProjectModel"] = relationship(
+        back_populates="descriptions"
+    )
+
+    @classmethod
+    def from_schema(
+        cls,
+        schema: ProjectDescriptionSchema,
+    ) -> "ProjectDescriptionModel":
+        return cls(
+            id=f"pro_desc_{uuid4()}",
+            description=schema.description,
+        )
+
+__all__ = ["ProjectDescriptionModel"]

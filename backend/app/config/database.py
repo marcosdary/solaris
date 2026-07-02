@@ -1,12 +1,24 @@
+from abc import abstractmethod, ABC
 from typing import AsyncGenerator
-from contextlib import asynccontextmanager
+from sqlalchemy import create_engine
+from sqlalchemy.orm import (
+    sessionmaker, 
+    Session
+)
+from contextlib import (
+    asynccontextmanager, 
+    contextmanager
+)
 from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
     AsyncSession,
 )
 
-from app.config.database.base import BaseDB
+class BaseDB(ABC):
+
+    @abstractmethod
+    def get_session(self) -> Session: ...
 
 class PostgresAsyncDB(BaseDB):
 
@@ -36,6 +48,21 @@ class PostgresAsyncDB(BaseDB):
         finally:
             await db.close()
 
-    
+class PostgresSyncDB(BaseDB):
 
-            
+    def __init__(self, url: str):
+        self._engine = create_engine(url=url)
+        self._session_local = sessionmaker(autoflush=False, autocommit=False, bind=self._engine)
+        super().__init__()
+
+    @contextmanager
+    def get_session(self):
+        db = self._session_local()
+        try:
+            yield db
+        except Exception:
+            db.rollback()
+        finally:
+            db.close()
+
+        

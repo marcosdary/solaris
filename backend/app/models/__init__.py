@@ -1,4 +1,25 @@
-from app.models.job import JobModel
-from app.models.search_job import SearchJobModel
-from app.models.site import SiteModel
-from app.models.search_job_site import SearchJobSiteModel
+from .site import SiteModel
+from .job import JobModel
+from .search_job import SearchJobModel
+from .search_job_site import SearchJobSiteModel
+from .cv import CVModel
+from .experience import ExperienceModel
+from .experience_activity import ExperienceActivityModel
+from .certification import CertificationModel
+from .project import ProjectModel
+from .project_description import ProjectDescriptionModel
+from .project_technology import ProjectTechnologyModel
+
+__all__ = [
+    "SiteModel",
+    "JobModel",
+    "SearchJobModel",
+    "SearchJobSiteModel",
+    "CVModel",
+    "ExperienceModel",
+    "ExperienceActivityModel",
+    "CertificationModel",
+    "ProjectModel",
+    "ProjectDescriptionModel",
+    "ProjectTechnologyModel",
+]

@@ -23,3 +23,5 @@ class SearchJobSiteModel(BaseModel):
     site: Mapped["SiteModel"] = relationship(
         back_populates="search_job_sites"
     )
+
+__all__ = ["SearchJobSiteModel"]

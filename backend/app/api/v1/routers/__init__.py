@@ -1,3 +1,9 @@
-from app.api.v1.routers.ws import router as router_ws
-from app.api.v1.routers.cv import router as router_cv
-from app.api.v1.routers.jobs import router as router_jobs
+from .cv import router as cv_router
+from .ws import router as ws_router
+from .jobs import router as jobs_router
+
+__all__ = [
+    "cv_router",
+    "ws_router",
+    "jobs_router"
+]

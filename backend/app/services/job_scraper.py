@@ -57,3 +57,4 @@ class JobScraperService:
         )
         return jobs
     
+__all__ = ["JobScraperService"]

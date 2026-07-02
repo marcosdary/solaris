@@ -50,3 +50,4 @@ class SearchJobAsyncRepository:
         rows = await self.session.execute(stmt) 
         return rows.scalars().unique().all()
 
+__all__ = ["SearchJobAsyncRepository"]

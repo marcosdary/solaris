@@ -219,7 +219,7 @@
 
                 <ul>
                     {% for act in exp.activities %}
-                    <li>{{ act }}</li>
+                    <li>{{ act.description }}</li>
                     {% endfor %}
                 </ul>
 
@@ -263,11 +263,20 @@
                 </div>
                 {% endif %}
 
+                {% if pro.demo_url %}
+                <div class="github">
+                    Demo:
+                    <a href="{{ pro.demo_url }}">
+                        {{ pro.demo_url }}
+                    </a>
+                </div>
+                {% endif %}
+
                 {% if pro.technologies %}
 
                 <div class="tags">
                     {% for tech in pro.technologies %}
-                    <span class="tag">{{ tech }}</span>
+                    <span class="tag">{{ tech.technology }}</span>
                     {% endfor %}
                 </div>
 
@@ -275,8 +284,8 @@
 
                 <div class="description">
                     <ul>
-                        {% for des in pro.description %}
-                        <li>{{ des }}</li>
+                        {% for des in pro.descriptions %}
+                        <li>{{ des.description }}</li>
                         {% endfor %}
                     </ul>
                 </div>

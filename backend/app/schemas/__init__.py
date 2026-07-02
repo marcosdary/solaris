@@ -1,29 +1,78 @@
-from app.schemas.generate_cv_request import GenerateCVRequestSchema
-from app.schemas.generate_cv_response import GenerateCVResponseSchema
-from app.schemas.index import IndexSchema
-from app.schemas.jobs import (
+from .index import IndexSchema
+from .generate_cv import (
+    GenerateCVResponseSchema
+)
+from .job import (
     InsertDBJobSchema,
     ListJobSchema,
     ResponseDBJobSchema,
-    ResponseJobSchema,
+    ResponseJobSchema
 )
-from app.schemas.sites import (
-    ResponseSiteSchema,
-    AddSiteSchema,
-    ListSiteSchema
-)
-from app.schemas.search_job import (
-    InsertDBSearchJobSchema, 
-    RequestSearchJobSchema, 
+from .search_job import (
+    InsertDBSearchJobSchema,
+    ListSearchJobSchema,
+    RequestSearchJobSchema,
     ResponseSearchJobSchema,
-    ListSearchJobSchema
+    SearchJobSite
 )
-
-from app.schemas.structured_cv_request import (
-    StructuredCVRequestSchema,
-    CertificationSchema,
+from .cv_create import (
+    ActivitySchema,
     EducationSchema,
+    StructuredCVSchema,
+    CertificationSchema,
     ExperienceSchema,
     ProjectSchema,
-    ActivitySchema
+    ProjectDescriptionSchema,
+    ProjectTechnologySchema
 )
+from .cv_response import (
+    ActivityResponseSchema,
+    EducationResponseSchema,
+    StructuredCVResponseSchema,
+    CertificationResponseSchema,
+    ExperienceResponseSchema,
+    ProjectResponseSchema,
+    ListStructuredCVResponse,
+    StructuredCVSummarySchema
+)
+
+from .validators import Validators
+from .site import (
+    AddSiteSchema,
+    ListSiteSchema,
+    ResponseSiteSchema
+)
+
+__all__ = [
+    "IndexSchema",
+    "GenerateCVResponseSchema",
+    "InsertDBJobSchema",
+    "ListJobSchema",
+    "ResponseDBJobSchema",
+    "ResponseJobSchema",
+    "InsertDBSearchJobSchema",
+    "ListSearchJobSchema",
+    "RequestSearchJobSchema",
+    "ResponseSearchJobSchema",
+    "SearchJobSite",
+    "ActivitySchema",
+    "EducationSchema",
+    "StructuredCVSchema",
+    "CertificationSchema",
+    "ExperienceSchema",
+    "ProjectDescriptionSchema",
+    "ProjectTechnologySchema",
+    "ProjectSchema",
+    "Validators",
+    "AddSiteSchema",
+    "ListSiteSchema",
+    "ResponseSiteSchema",
+    "ActivityResponseSchema",
+    "EducationResponseSchema",
+    "StructuredCVResponseSchema",
+    "CertificationResponseSchema",
+    "ExperienceResponseSchema",
+    "ProjectResponseSchema",
+    "ListStructuredCVResponse",
+    "StructuredCVSummarySchema"
+]

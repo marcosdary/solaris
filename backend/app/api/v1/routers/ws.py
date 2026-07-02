@@ -16,3 +16,5 @@ async def websocket_health(websocket: WebSocket):
 
     except WebSocketDisconnect:
         print("Cliente desconectado")
+
+__all__ = ["router"]

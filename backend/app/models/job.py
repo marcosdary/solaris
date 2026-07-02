@@ -3,6 +3,7 @@ from sqlalchemy import ForeignKey
 
 from app.models.base import BaseModel
 
+
 class JobModel(BaseModel):
     __tablename__ = "job"
 
@@ -26,3 +27,5 @@ class JobModel(BaseModel):
             f"company={self.company},location={self.location},job_level={self.job_level}," \
             f"description={self.description[:10]}...)"
         )
+    
+__all__ = ["JobModel"]

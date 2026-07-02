@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 
-from app.api.v1.routers import router_cv, router_ws, router_jobs
+from app.api.v1.routers import cv_router, ws_router, jobs_router
 
 router = APIRouter()
 
-router.include_router(router_cv, prefix="/cv")
-router.include_router(router_ws, prefix="/ws")
-router.include_router(router_jobs, prefix="/jobs")
+router.include_router(cv_router, prefix="/cv")
+router.include_router(ws_router, prefix="/ws")
+router.include_router(jobs_router, prefix="/jobs")
 
 
 

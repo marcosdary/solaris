@@ -20,6 +20,7 @@ class Settings(BaseSettings):
         extra="ignore"
     )
     
+    DB_URL: str
     API_KEY: str
     APP_SCRIPT_KEY: str
 
@@ -36,3 +37,5 @@ def get_settings():
             Instância das configurações da aplicação.
     """
     return Settings()
+
+__all__ = ["Settings", "get_settings"]
