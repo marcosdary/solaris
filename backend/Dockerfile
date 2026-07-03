@@ -31,14 +31,6 @@ FROM debian:trixie-slim AS development
 
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    libreoffice-writer \
-    fonts-dejavu \
-    fonts-liberation \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* ;
-
 RUN groupadd --gid 1000 python \
   && useradd --uid 1000 --gid python --shell /bin/bash --create-home python ;
 
@@ -51,4 +43,4 @@ USER python
 ENTRYPOINT []
 WORKDIR /app
 
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "$PORT", "app.main:app"]
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "$PORT", "app:app"]

@@ -14,6 +14,8 @@ from app.config import (
     get_settings,
     DirPaths,
     TemplateFile,
+    CVCategory,
+    Language,
     Settings,
     PostgresAsyncDB
 )
@@ -66,10 +68,23 @@ async def cv(
     response_model=ListStructuredCVResponse
 )
 async def get_cv_all(
-    session = Depends(get_session)
+    session = Depends(get_session),
+    category: CVCategory = None,
+    language: Language = None
 ) -> ListStructuredCVResponse: 
     try:
-        stmt = select(CVModel)
+
+        filters = []
+
+        if category:
+            filters.append(CVModel.category == category)
+        
+        if language:
+            filters.append(CVModel.language == language)
+        
+        stmt = select(CVModel).filter(*filters)
+
+
         data = await session.scalars(stmt)
 
         if not data : 

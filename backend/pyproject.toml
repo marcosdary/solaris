@@ -11,10 +11,8 @@ dependencies = [
     "psycopg2-binary>=2.9.12",
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.1",
-    "python-jobspy>=1.1.82",
     "redis>=8.0.0",
     "requests>=2.34.2",
-    "ruff>=0.15.20",
     "sqlalchemy>=2.0.51",
     "uvicorn>=0.48.0",
     "weasyprint>=69.0",
@@ -36,6 +34,7 @@ dev = [
     "pytest>=9.0.3",
     "pytest-asyncio>=1.4.0",
     "reportlab>=4.5.1",
+    "ruff>=0.15.20",
 ]
 
 [tool.pytest.ini_options]
