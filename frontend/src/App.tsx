@@ -5,20 +5,32 @@ import {
 } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
-import JobsPage from "./pages/JobsPage";
+import FormCurriculumPage from "./pages/FormCurriculumPage";
+import CurriculumsPage from "./pages/CurriculumsPage"; 
+import CurriculumDetailsPage from "./pages/CurriculumDetailsPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route
-          path="/autocv"
+          path="/"
           element={<HomePage />}
         />
 
         <Route
-          path="/"
-          element={<JobsPage />}
+          path="/curriculums"
+          element={<CurriculumsPage />}
+        />
+
+        <Route
+          path="/curriculums/:id"
+          element={<CurriculumDetailsPage />}
+        />
+
+        <Route
+          path="/curriculums/form"
+          element={<FormCurriculumPage />}
         />
       </Routes>
     </BrowserRouter>
