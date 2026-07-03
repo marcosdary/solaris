@@ -23,7 +23,8 @@ from app.schemas import (
     GenerateCVResponseSchema,
     StructuredCVSchema,
     StructuredCVResponseSchema,
-    ListStructuredCVResponse
+    ListStructuredCVResponse,
+    StructuredCVSummarySchema
 )
 from app.services import (
     LoadInfoToFilePDFService,
@@ -43,12 +44,12 @@ router = APIRouter()
 @router.post(
     "", 
     status_code=status.HTTP_201_CREATED, 
-    response_model=StructuredCVResponseSchema
+    response_model=StructuredCVSummarySchema
 )
 async def cv(
     schema: StructuredCVSchema,
     session = Depends(get_session)
-) -> StructuredCVResponseSchema: 
+) -> StructuredCVSummarySchema: 
     try:
         cv = CVModel.from_schema(schema)
         session.add(cv)
@@ -182,5 +183,31 @@ async def generate_cv_to_pdf(
             detail=exc
         )
 
+@router.delete(
+    "/{id}", 
+    status_code=status.HTTP_200_OK, 
+    response_model=None
+)
+async def delete_cv(
+    id: str,
+    session = Depends(get_session)
+) -> None: 
+    try:
+        stmt = select(CVModel).filter(CVModel.id == id)
+        data = await session.scalar(stmt)
+
+        if not data : 
+            raise ValueError("Conteúdo não encontrado. Tente novamente.")
+        
+        await session.delete(data)
+        await session.commit()
+        
+        return 
+    
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=exc
+        )
     
 __all__ = ["router"]
