@@ -5,6 +5,7 @@ from .certification import CertificationModel
 from .project import ProjectModel
 from .project_description import ProjectDescriptionModel
 from .project_technology import ProjectTechnologyModel
+from .education import EducationModel
 
 __all__ = [
     "CVModel",
@@ -14,4 +15,5 @@ __all__ = [
     "ProjectModel",
     "ProjectDescriptionModel",
     "ProjectTechnologyModel",
+    "EducationModel",
 ]

@@ -24,6 +24,12 @@ from .cv_response import (
     StructuredCVSummarySchema
 )
 
+from .ws_messages import (
+    ActionType,
+    WSRequestSchema,
+    WSResponseSchema
+)
+
 from .validators import Validators
 
 __all__ = [
@@ -48,5 +54,8 @@ __all__ = [
     "ExperienceResponseSchema",
     "ProjectResponseSchema",
     "ListStructuredCVResponse",
-    "StructuredCVSummarySchema"
+    "StructuredCVSummarySchema",
+    "ActionType",
+    "WSRequestSchema",
+    "WSResponseSchema"
 ]
