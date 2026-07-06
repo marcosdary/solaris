@@ -1,14 +1,16 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { IEducationInput } from "../../types/cv-input";
+import type { IEducationInput } from "../../types/curriculumCreate";
 
 interface EducationFormProps {
   educations: IEducationInput[];
   setEducations: Dispatch<SetStateAction<IEducationInput[]>>;
+  mode: "create" | "edit";
 }
 
 export function EducationForm({
   educations,
   setEducations,
+  mode,
 }: EducationFormProps) {
   function addEducation() {
     setEducations((old) => [
@@ -24,7 +26,23 @@ export function EducationForm({
   }
 
   function removeEducation(index: number) {
-    setEducations((old) => old.filter((_, i) => i !== index));
+    if (mode === "create") {
+      setEducations((old) => old.filter((_, i) => i !== index));
+    } else {
+      setEducations((old) =>
+        old.map((item, i) =>
+          i === index ? { ...item, depreciated: true } : item
+        )
+      );
+    }
+  }
+
+  function restoreEducation(index: number) {
+    setEducations((old) =>
+      old.map((item, i) =>
+        i === index ? { ...item, depreciated: false } : item
+      )
+    );
   }
 
   function updateEducation(
@@ -60,7 +78,7 @@ export function EducationForm({
         </button>
       </div>
 
-      {educations.length === 0 && (
+      {educations.filter((e) => !e.depreciated).length === 0 && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
           <p className="text-sm font-medium text-red-700">
             ⚠ É necessário adicionar pelo menos uma formação acadêmica.
@@ -68,104 +86,136 @@ export function EducationForm({
         </div>
       )}
 
-      {educations.map((education, index) => (
-        <div
-          key={index}
-          className="space-y-4 rounded-xl border border-slate-200 p-5"
-        >
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium text-slate-700">
-              Formação {index + 1}
-            </h3>
+      {educations.map((education, index) => {
+        const isExcluded = mode === "edit" && education.depreciated;
 
-            <button
-              type="button"
-              onClick={() => removeEducation(index)}
-              className="text-sm text-red-600 transition hover:text-red-700"
-            >
-              Remover
-            </button>
-          </div>
+        return (
+          <div
+            key={index}
+            className={`space-y-4 rounded-xl border p-5 ${
+              isExcluded
+                ? "border-slate-200 bg-slate-100 opacity-50"
+                : "border-slate-200"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <h3
+                className={`font-medium text-slate-700 ${
+                  isExcluded ? "line-through" : ""
+                }`}
+              >
+                Formação {index + 1}
+                {isExcluded && (
+                  <span className="ml-2 text-xs font-normal text-red-500">
+                    (Removido)
+                  </span>
+                )}
+              </h3>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Instituição*
-            </label>
+              {isExcluded ? (
+                <button
+                  type="button"
+                  onClick={() => restoreEducation(index)}
+                  className="text-sm text-green-600 transition hover:text-green-700"
+                >
+                  Restaurar
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => removeEducation(index)}
+                  className="text-sm text-red-600 transition hover:text-red-700"
+                >
+                  Remover
+                </button>
+              )}
+            </div>
 
-            <input
-              className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-              value={education.institution}
-              onChange={(e) =>
-                updateEducation(index, "institution", e.target.value)
-              }
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Curso*
-            </label>
-
-            <input
-              className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-              value={education.degree}
-              onChange={(e) =>
-                updateEducation(index, "degree", e.target.value)
-              }
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Local*
-            </label>
-
-            <input
-              className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-              value={education.location}
-              onChange={(e) =>
-                updateEducation(index, "location", e.target.value)
-              }
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Data de Início*
+                Instituição*
               </label>
 
               <input
-                type="date"
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-                value={education.start_date}
+                value={education.institution}
                 onChange={(e) =>
-                  updateEducation(index, "start_date", e.target.value)
+                  updateEducation(index, "institution", e.target.value)
                 }
+                disabled={isExcluded}
               />
             </div>
 
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Data de Término
+                Curso*
               </label>
 
               <input
-                type="date"
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-                value={education.end_date ?? ""}
+                value={education.degree}
                 onChange={(e) =>
-                  updateEducation(
-                    index,
-                    "end_date",
-                    e.target.value || null
-                  )
+                  updateEducation(index, "degree", e.target.value)
                 }
+                disabled={isExcluded}
               />
             </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Local*
+              </label>
+
+              <input
+                className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                value={education.location}
+                onChange={(e) =>
+                  updateEducation(index, "location", e.target.value)
+                }
+                disabled={isExcluded}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Data de Início*
+                </label>
+
+                <input
+                  type="date"
+                  className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                  value={education.start_date}
+                  onChange={(e) =>
+                    updateEducation(index, "start_date", e.target.value)
+                  }
+                  disabled={isExcluded}
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Data de Término
+                </label>
+
+                <input
+                  type="date"
+                  className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                  value={education.end_date ?? ""}
+                  onChange={(e) =>
+                    updateEducation(
+                      index,
+                      "end_date",
+                      e.target.value || null
+                    )
+                  }
+                  disabled={isExcluded}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </section>
   );
 }

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
-import type { ICurriculumResponse } from "../types/cv";
+import type { ICurriculumResponse } from "../types/curriculumResponse";
+import { ActionButtons } from "../components/ButtonActions";
 
 interface Props {
   curriculum: ICurriculumResponse;
@@ -58,13 +59,11 @@ export function CurriculumDetails({
               </div>
             </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={onDelete}
-                className="rounded-xl bg-red-600 px-5 py-3 font-medium text-white hover:bg-red-700"
-              >
-                Excluir
-              </button>
+            <div className="mt-5">
+              <ActionButtons
+                onDelete={onDelete}
+                data={curriculum}
+              />
             </div>
 
           </div>
@@ -111,9 +110,13 @@ export function CurriculumDetails({
                       </p>
                     </div>
 
-                    <span className="text-sm text-slate-500">
-                      {experience.period}
-                    </span>
+                    <div className="flex flex-col items-end gap-3">
+                      <span className="text-sm text-slate-500">
+                        {experience.period}
+                      </span>
+
+    
+                    </div>
                   </div>
 
                   <ul className="mt-4 list-disc space-y-2 pl-6">
@@ -141,21 +144,24 @@ export function CurriculumDetails({
 
             <div className="space-y-6">
               {curriculum.educations.map((education) => (
-                <article key={education.id}>
-                  <h3 className="font-semibold">
-                    {education.degree}
-                  </h3>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold">
+                      {education.degree}
+                    </h3>
 
-                  <p>{education.institution}</p>
+                    <p>{education.institution}</p>
 
-                  <p className="text-sm text-slate-500">
-                    {education.location}
-                  </p>
+                    <p className="text-sm text-slate-500">
+                      {education.location}
+                    </p>
 
-                  <p className="text-sm text-slate-500">
-                    {education.period}
-                  </p>
-                </article>
+                    <p className="text-sm text-slate-500">
+                      {education.period}
+                    </p>
+                  </div>
+
+                </div>
               ))}
             </div>
           </section>
@@ -170,14 +176,17 @@ export function CurriculumDetails({
               <div className="space-y-8">
                 {curriculum.projects.map((project) => (
                   <article key={project.id}>
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-lg">
-                        {project.name}
-                      </h3>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold">
+                          {project.name}
+                        </h3>
 
-                      <span className="text-sm text-slate-500">
-                        {project.period}
-                      </span>
+                        <span className="text-sm text-slate-500">
+                          {project.period}
+                        </span>
+                      </div>
+
                     </div>
 
                     <div className="mt-3 flex gap-3">
@@ -242,17 +251,20 @@ export function CurriculumDetails({
 
               <div className="space-y-5">
                 {curriculum.certifications.map((certification) => (
-                  <article key={certification.id}>
-                    <h3 className="font-semibold">
-                      {certification.name}
-                    </h3>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-semibold">
+                        {certification.name}
+                      </h3>
 
-                    <p>{certification.institution}</p>
+                      <p>{certification.institution}</p>
 
-                    <p className="text-sm text-slate-500">
-                      {certification.period}
-                    </p>
-                  </article>
+                      <p className="text-sm text-slate-500">
+                        {certification.period}
+                      </p>
+                    </div>
+
+                  </div>
                 ))}
               </div>
             </section>

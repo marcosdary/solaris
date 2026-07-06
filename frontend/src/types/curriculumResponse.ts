@@ -5,7 +5,6 @@ export interface CVResponse {
   mimetype: string;
 }
 
-
 export interface ICurriculum {
   id: string;
   language: Language;

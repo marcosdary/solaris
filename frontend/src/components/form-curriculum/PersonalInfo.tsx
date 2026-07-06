@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import { CVCategory, Language } from "../../config/constants";
-import type { ICurriculumInput } from "../../types/cv-input";
+import type { ICurriculumInput } from "../../types/curriculumCreate";
 
 interface PersonalInfoProps {
   form: ICurriculumInput;

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { CVForm } from "../components/CVForm";
+import { CurriculumForm } from "../components/CurriculumForm";
 import { ServerStatus } from "../components/ServerStatus";
 
 export default function CurriculumFormPage() {
@@ -37,7 +37,7 @@ export default function CurriculumFormPage() {
           aria-label="Formulário de currículo"
           className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
         >
-          <CVForm />
+          <CurriculumForm />
         </section>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import type { ICurriculum } from "../../types/cv";
+import type { ICurriculum } from "../../types/curriculumResponse";
 
 interface Props {
   curriculum: ICurriculum;

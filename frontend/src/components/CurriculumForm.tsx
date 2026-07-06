@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import { requestRouteCv } from "../services/api";
+import { createCurriculum } from "../services/api";
 
 import { CVCategory, Language } from "../config/constants";
-import type { ICurriculumInput } from "../types/cv-input";
+import type { ICurriculumInput } from "../types/curriculumCreate";
 
 import { Loading } from "./Loading";
 import { CurriculumCard } from "./cards/CurriculumCard";
@@ -13,9 +13,9 @@ import { ExperienceForm } from "./form-curriculum/ExperienceForm";
 import { EducationForm } from "./form-curriculum/EducationForm";
 import { ProjectForm } from "./form-curriculum/ProjectForm";
 import { CertificationForm } from "./form-curriculum/CertificationForm";
-import type { ICurriculum } from "../types/cv";
+import type { ICurriculum } from "../types/curriculumResponse";
 
-export function CVForm() {
+export function CurriculumForm() {
   const [loading, setLoading] = useState(false);
 
   const [result, setResult] = useState<ICurriculum | null>(null);
@@ -50,7 +50,7 @@ export function CVForm() {
     setResult(null);
 
     try {
-      const response = await requestRouteCv(form);
+      const response = await createCurriculum(form);
 
       setResult(response);
     } catch (error) {
@@ -75,6 +75,7 @@ export function CVForm() {
 
         <ExperienceForm
           experiences={form.experiences}
+          mode="create"
           setExperiences={(experiences) =>
             setForm((old) => ({
               ...old,
@@ -88,6 +89,7 @@ export function CVForm() {
 
         <EducationForm
           educations={form.educations}
+          mode="create"
           setEducations={(educations) =>
             setForm((old) => ({
               ...old,
@@ -101,6 +103,7 @@ export function CVForm() {
 
         <ProjectForm
           projects={form.projects ?? []}
+          mode="create"
           setProjects={(projects) =>
             setForm((old) => ({
               ...old,
@@ -114,6 +117,7 @@ export function CVForm() {
 
         <CertificationForm
           certifications={form.certifications ?? []}
+          mode="create"
           setCertifications={(certifications) =>
             setForm((old) => ({
               ...old,

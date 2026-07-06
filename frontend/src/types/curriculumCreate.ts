@@ -18,6 +18,8 @@ export interface ICurriculumInput {
 }
 
 export interface IExperienceInput {
+  id?: string;
+  depreciated?: boolean | null;
   role: string;
   company: string;
   location: string;
@@ -31,6 +33,8 @@ export interface IExperienceActivityInput {
 }
 
 export interface IEducationInput {
+  id?: string;
+  depreciated?: boolean | null;
   institution: string;
   degree: string;
   location: string;
@@ -39,6 +43,8 @@ export interface IEducationInput {
 }
 
 export interface IProjectInput {
+  id?: string;
+  depreciated?: boolean | null;
   name: string;
   github: string | null;
   demo_url: string | null;
@@ -57,6 +63,8 @@ export interface IProjectTechnologyInput {
 }
 
 export interface ICertificationInput {
+  id?: string;
+  depreciated?: boolean | null;
   institution: string;
   name: string;
   location: string;
@@ -68,3 +76,4 @@ export interface SearchCurriculums {
   language: Language;
   category: CVCategory;
 }
+

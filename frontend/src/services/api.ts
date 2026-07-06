@@ -1,8 +1,9 @@
 import { settings } from "../config/settings";
-import type { ICurriculum, ICurriculumResponse } from "../types/cv";
-import type { ICurriculumInput, SearchCurriculums } from "../types/cv-input";
-
-export async function requestRouteCv(
+import type { ICurriculum, ICurriculumResponse } from "../types/curriculumResponse";
+import type { ICurriculumInput, SearchCurriculums } from "../types/curriculumCreate";
+import type { ICurriculumEdit } from "../types/curriculumEdit";
+ 
+export async function createCurriculum(
     form: ICurriculumInput
 ): Promise<ICurriculum> {
     
@@ -80,8 +81,6 @@ export async function deleteCurriculum(
         }
     );
 
-    console.log(response);
-
     if (!response.ok) {
         throw new Error(`Erro HTTP: ${response.status}`);
     }
@@ -89,3 +88,25 @@ export async function deleteCurriculum(
     return;
 }
 
+
+export async function updateCurriculum(
+    form: ICurriculumEdit
+): Promise<ICurriculum> {
+    
+    const response = await fetch(
+        `${settings.baseURL}/api/v1/cv`,
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+    }
+
+    return await response.json();
+}

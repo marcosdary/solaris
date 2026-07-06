@@ -1,4 +1,4 @@
-import type { CVResponse } from "../../types/cv";
+import type { CVResponse } from "../../types/curriculumResponse";
 
 interface Props {
   data: CVResponse;

@@ -1,4 +1,4 @@
-import { useServerStatus } from "../hooks/userServerStatus";
+import { useServerStatus } from "../hooks/useServerStatus";
 
 export function ServerStatus() {
   // Garante um valor padrão caso o hook retorne undefined/null inicialmente

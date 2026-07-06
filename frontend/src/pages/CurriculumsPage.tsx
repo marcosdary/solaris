@@ -7,8 +7,8 @@ import { CurriculumSearchForm } from "../components/page-curriculum/CurriculumSe
 
 import { searchCurriculums } from "../services/api";
 
-import type { ICurriculum } from "../types/cv";
-import type { SearchCurriculums } from "../types/cv-input";
+import type { ICurriculum } from "../types/curriculumResponse";
+import type { SearchCurriculums } from "../types/curriculumCreate";
 
 export default function CurriculumsPage() {
   const [curriculums, setCurriculums] = useState<ICurriculum[]>([]);

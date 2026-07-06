@@ -4,7 +4,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { CurriculumDetails } from "../components/CurriculumDetails";
 import { selectCurriculumByID, deleteCurriculum } from "../services/api";
 
-import type { ICurriculumResponse } from "../types/cv";
+import type { ICurriculumResponse } from "../types/curriculumResponse";
 
 export default function CurriculumDetailsPage() {
     const { id } = useParams<{ id: string }>();

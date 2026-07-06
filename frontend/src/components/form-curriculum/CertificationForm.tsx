@@ -1,14 +1,16 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { ICertificationInput } from "../../types/cv-input";
+import type { ICertificationInput } from "../../types/curriculumCreate";
 
 interface CertificationFormProps {
   certifications: ICertificationInput[];
   setCertifications: Dispatch<SetStateAction<ICertificationInput[]>>;
+  mode: "create" | "edit";
 }
 
 export function CertificationForm({
   certifications,
   setCertifications,
+  mode,
 }: CertificationFormProps) {
   function addCertification() {
     setCertifications((old) => [
@@ -24,7 +26,23 @@ export function CertificationForm({
   }
 
   function removeCertification(index: number) {
-    setCertifications((old) => old.filter((_, i) => i !== index));
+    if (mode === "create") {
+      setCertifications((old) => old.filter((_, i) => i !== index));
+    } else {
+      setCertifications((old) =>
+        old.map((item, i) =>
+          i === index ? { ...item, depreciated: true } : item
+        )
+      );
+    }
+  }
+
+  function restoreCertification(index: number) {
+    setCertifications((old) =>
+      old.map((item, i) =>
+        i === index ? { ...item, depreciated: false } : item
+      )
+    );
   }
 
   function updateCertification(
@@ -66,104 +84,136 @@ export function CertificationForm({
         </p>
       )}
 
-      {certifications.map((certification, index) => (
-        <div
-          key={index}
-          className="space-y-4 rounded-xl border border-slate-200 p-5"
-        >
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium">
-              Certificação {index + 1}
-            </h3>
+      {certifications.map((certification, index) => {
+        const isExcluded = mode === "edit" && certification.depreciated;
 
-            <button
-              type="button"
-              onClick={() => removeCertification(index)}
-              className="text-sm text-red-600 hover:text-red-700"
-            >
-              Remover
-            </button>
-          </div>
+        return (
+          <div
+            key={index}
+            className={`space-y-4 rounded-xl border p-5 ${
+              isExcluded
+                ? "border-slate-200 bg-slate-100 opacity-50"
+                : "border-slate-200"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <h3
+                className={`font-medium ${
+                  isExcluded ? "line-through" : ""
+                }`}
+              >
+                Certificação {index + 1}
+                {isExcluded && (
+                  <span className="ml-2 text-xs font-normal text-red-500">
+                    (Removido)
+                  </span>
+                )}
+              </h3>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium">
-              Nome
-            </label>
+              {isExcluded ? (
+                <button
+                  type="button"
+                  onClick={() => restoreCertification(index)}
+                  className="text-sm text-green-600 hover:text-green-700"
+                >
+                  Restaurar
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => removeCertification(index)}
+                  className="text-sm text-red-600 hover:text-red-700"
+                >
+                  Remover
+                </button>
+              )}
+            </div>
 
-            <input
-              className="w-full rounded-lg border p-2"
-              value={certification.name}
-              onChange={(e) =>
-                updateCertification(index, "name", e.target.value)
-              }
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium">
-              Instituição
-            </label>
-
-            <input
-              className="w-full rounded-lg border p-2"
-              value={certification.institution}
-              onChange={(e) =>
-                updateCertification(index, "institution", e.target.value)
-              }
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium">
-              Local
-            </label>
-
-            <input
-              className="w-full rounded-lg border p-2"
-              value={certification.location}
-              onChange={(e) =>
-                updateCertification(index, "location", e.target.value)
-              }
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium">
-                Data de início
+                Nome
               </label>
 
               <input
-                type="date"
                 className="w-full rounded-lg border p-2"
-                value={certification.start_date}
+                value={certification.name}
                 onChange={(e) =>
-                  updateCertification(index, "start_date", e.target.value)
+                  updateCertification(index, "name", e.target.value)
                 }
+                disabled={isExcluded}
               />
             </div>
 
             <div>
               <label className="mb-1 block text-sm font-medium">
-                Data de término
+                Instituição
               </label>
 
               <input
-                type="date"
                 className="w-full rounded-lg border p-2"
-                value={certification.end_date ?? ""}
+                value={certification.institution}
                 onChange={(e) =>
-                  updateCertification(
-                    index,
-                    "end_date",
-                    e.target.value || null
-                  )
+                  updateCertification(index, "institution", e.target.value)
                 }
+                disabled={isExcluded}
               />
             </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                Local
+              </label>
+
+              <input
+                className="w-full rounded-lg border p-2"
+                value={certification.location}
+                onChange={(e) =>
+                  updateCertification(index, "location", e.target.value)
+                }
+                disabled={isExcluded}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Data de início
+                </label>
+
+                <input
+                  type="date"
+                  className="w-full rounded-lg border p-2"
+                  value={certification.start_date}
+                  onChange={(e) =>
+                    updateCertification(index, "start_date", e.target.value)
+                  }
+                  disabled={isExcluded}
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Data de término
+                </label>
+
+                <input
+                  type="date"
+                  className="w-full rounded-lg border p-2"
+                  value={certification.end_date ?? ""}
+                  onChange={(e) =>
+                    updateCertification(
+                      index,
+                      "end_date",
+                      e.target.value || null
+                    )
+                  }
+                  disabled={isExcluded}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </section>
   );
 }

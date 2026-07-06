@@ -2,16 +2,18 @@ import type { Dispatch, SetStateAction } from "react";
 import type {
   IExperienceActivityInput,
   IExperienceInput,
-} from "../../types/cv-input";
+} from "../../types/curriculumCreate";
 
 interface ExperienceFormProps {
   experiences: IExperienceInput[];
   setExperiences: Dispatch<SetStateAction<IExperienceInput[]>>;
+  mode: "create" | "edit";
 }
 
 export function ExperienceForm({
   experiences,
   setExperiences,
+  mode,
 }: ExperienceFormProps) {
   function addExperience() {
     setExperiences((old) => [
@@ -28,7 +30,23 @@ export function ExperienceForm({
   }
 
   function removeExperience(index: number) {
-    setExperiences((old) => old.filter((_, i) => i !== index));
+    if (mode === "create") {
+      setExperiences((old) => old.filter((_, i) => i !== index));
+    } else {
+      setExperiences((old) =>
+        old.map((item, i) =>
+          i === index ? { ...item, depreciated: true } : item
+        )
+      );
+    }
+  }
+
+  function restoreExperience(index: number) {
+    setExperiences((old) =>
+      old.map((item, i) =>
+        i === index ? { ...item, depreciated: false } : item
+      )
+    );
   }
 
   function updateExperience(
@@ -126,7 +144,7 @@ export function ExperienceForm({
         </button>
       </div>
 
-      {experiences.length === 0 && (
+      {experiences.filter((e) => !e.depreciated).length === 0 && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
           <p className="text-sm font-medium text-red-700">
             ⚠ É necessário adicionar pelo menos uma experiência profissional.
@@ -134,176 +152,210 @@ export function ExperienceForm({
         </div>
       )}
 
-      {experiences.map((experience, experienceIndex) => (
-        <div
-          key={experienceIndex}
-          className="space-y-5 rounded-xl border border-slate-200 p-5"
-        >
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium text-slate-700">
-              Experiência {experienceIndex + 1}
-            </h3>
+      {experiences.map((experience, experienceIndex) => {
+        const isExcluded = mode === "edit" && experience.depreciated;
 
-            <button
-              type="button"
-              onClick={() => removeExperience(experienceIndex)}
-              className="text-sm text-red-600 transition hover:text-red-700"
-            >
-              Remover
-            </button>
-          </div>
+        return (
+          <div
+            key={experienceIndex}
+            className={`space-y-5 rounded-xl border p-5 ${
+              isExcluded
+                ? "border-slate-200 bg-slate-100 opacity-50"
+                : "border-slate-200"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <h3
+                className={`font-medium text-slate-700 ${
+                  isExcluded ? "line-through" : ""
+                }`}
+              >
+                Experiência {experienceIndex + 1}
+                {isExcluded && (
+                  <span className="ml-2 text-xs font-normal text-red-500">
+                    (Removido)
+                  </span>
+                )}
+              </h3>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Cargo*
-            </label>
+              {isExcluded ? (
+                <button
+                  type="button"
+                  onClick={() => restoreExperience(experienceIndex)}
+                  className="text-sm text-green-600 transition hover:text-green-700"
+                >
+                  Restaurar
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => removeExperience(experienceIndex)}
+                  className="text-sm text-red-600 transition hover:text-red-700"
+                >
+                  Remover
+                </button>
+              )}
+            </div>
 
-            <input
-              className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-              value={experience.role}
-              onChange={(e) =>
-                updateExperience(
-                  experienceIndex,
-                  "role",
-                  e.target.value
-                )
-              }
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Empresa*
-            </label>
-
-            <input
-              className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-              value={experience.company}
-              onChange={(e) =>
-                updateExperience(
-                  experienceIndex,
-                  "company",
-                  e.target.value
-                )
-              }
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Local*
-            </label>
-
-            <input
-              className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-              value={experience.location}
-              onChange={(e) =>
-                updateExperience(
-                  experienceIndex,
-                  "location",
-                  e.target.value
-                )
-              }
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Data de Início*
+                Cargo*
               </label>
 
               <input
-                type="date"
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-                value={experience.start_date}
+                value={experience.role}
                 onChange={(e) =>
                   updateExperience(
                     experienceIndex,
-                    "start_date",
+                    "role",
                     e.target.value
                   )
                 }
+                disabled={isExcluded}
               />
             </div>
 
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Data de Término
+                Empresa*
               </label>
 
               <input
-                type="date"
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-                value={experience.end_date ?? ""}
+                value={experience.company}
                 onChange={(e) =>
                   updateExperience(
                     experienceIndex,
-                    "end_date",
-                    e.target.value || null
+                    "company",
+                    e.target.value
                   )
                 }
+                disabled={isExcluded}
               />
             </div>
-          </div>
 
-          <div className="space-y-3 rounded-lg border border-slate-100 bg-slate-50 p-4">
-            <div className="flex items-center justify-between">
-              <h4 className="font-medium text-slate-700">
-                Atividades
-              </h4>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Local*
+              </label>
 
-              <button
-                type="button"
-                onClick={() => addActivity(experienceIndex)}
-                className="text-sm font-medium text-blue-600 hover:text-blue-700"
-              >
-                + Adicionar Atividade
-              </button>
+              <input
+                className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                value={experience.location}
+                onChange={(e) =>
+                  updateExperience(
+                    experienceIndex,
+                    "location",
+                    e.target.value
+                  )
+                }
+                disabled={isExcluded}
+              />
             </div>
 
-            {experience.activities.length === 0 && (
-              <p className="text-sm text-slate-500">
-                Nenhuma atividade adicionada.
-              </p>
-            )}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Data de Início*
+                </label>
 
-            {experience.activities.map((activity, activityIndex) => (
-              <div
-                key={activityIndex}
-                className="flex items-start gap-2"
-              >
-                <textarea
-                  rows={3}
-                  className="flex-1 rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
-                  placeholder="Descreva a atividade..."
-                  value={activity.description}
+                <input
+                  type="date"
+                  className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                  value={experience.start_date}
                   onChange={(e) =>
-                    updateActivity(
+                    updateExperience(
                       experienceIndex,
-                      activityIndex,
+                      "start_date",
                       e.target.value
                     )
                   }
+                  disabled={isExcluded}
                 />
+              </div>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    removeActivity(
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Data de Término
+                </label>
+
+                <input
+                  type="date"
+                  className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                  value={experience.end_date ?? ""}
+                  onChange={(e) =>
+                    updateExperience(
                       experienceIndex,
-                      activityIndex
+                      "end_date",
+                      e.target.value || null
                     )
                   }
-                  className="rounded-lg px-3 py-2 text-red-600 hover:bg-red-50"
-                >
-                  ✕
-                </button>
+                  disabled={isExcluded}
+                />
               </div>
-            ))}
+            </div>
+
+            {!isExcluded && (
+              <div className="space-y-3 rounded-lg border border-slate-100 bg-slate-50 p-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-slate-700">
+                    Atividades
+                  </h4>
+
+                  <button
+                    type="button"
+                    onClick={() => addActivity(experienceIndex)}
+                    className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    + Adicionar Atividade
+                  </button>
+                </div>
+
+                {experience.activities.length === 0 && (
+                  <p className="text-sm text-slate-500">
+                    Nenhuma atividade adicionada.
+                  </p>
+                )}
+
+                {experience.activities.map((activity, activityIndex) => (
+                  <div
+                    key={activityIndex}
+                    className="flex items-start gap-2"
+                  >
+                    <textarea
+                      rows={3}
+                      className="flex-1 rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                      placeholder="Descreva a atividade..."
+                      value={activity.description}
+                      onChange={(e) =>
+                        updateActivity(
+                          experienceIndex,
+                          activityIndex,
+                          e.target.value
+                        )
+                      }
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        removeActivity(
+                          experienceIndex,
+                          activityIndex
+                        )
+                      }
+                      className="rounded-lg px-3 py-2 text-red-600 hover:bg-red-50"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </section>
   );
 }

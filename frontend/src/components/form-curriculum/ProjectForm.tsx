@@ -1,16 +1,18 @@
 import type { Dispatch, SetStateAction } from "react";
 import type {
   IProjectInput,
-} from "../../types/cv-input";
+} from "../../types/curriculumCreate";
 
 interface ProjectFormProps {
   projects: IProjectInput[];
   setProjects: Dispatch<SetStateAction<IProjectInput[]>>;
+  mode: "create" | "edit";
 }
 
 export function ProjectForm({
   projects,
   setProjects,
+  mode,
 }: ProjectFormProps) {
   function addProject() {
     setProjects((old) => [
@@ -28,7 +30,23 @@ export function ProjectForm({
   }
 
   function removeProject(index: number) {
-    setProjects((old) => old.filter((_, i) => i !== index));
+    if (mode === "create") {
+      setProjects((old) => old.filter((_, i) => i !== index));
+    } else {
+      setProjects((old) =>
+        old.map((item, i) =>
+          i === index ? { ...item, depreciated: true } : item
+        )
+      );
+    }
+  }
+
+  function restoreProject(index: number) {
+    setProjects((old) =>
+      old.map((item, i) =>
+        i === index ? { ...item, depreciated: false } : item
+      )
+    );
   }
 
   function updateProject(
@@ -188,175 +206,211 @@ export function ProjectForm({
         </p>
       )}
 
-      {projects.map((project, projectIndex) => (
-        <div
-          key={projectIndex}
-          className="space-y-5 rounded-xl border border-slate-200 p-5"
-        >
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium">
-              Projeto {projectIndex + 1}
-            </h3>
+      {projects.map((project, projectIndex) => {
+        const isExcluded = mode === "edit" && project.depreciated;
 
-            <button
-              type="button"
-              onClick={() => removeProject(projectIndex)}
-              className="text-sm text-red-600 hover:text-red-700"
-            >
-              Remover
-            </button>
-          </div>
+        return (
+          <div
+            key={projectIndex}
+            className={`space-y-5 rounded-xl border p-5 ${
+              isExcluded
+                ? "border-slate-200 bg-slate-100 opacity-50"
+                : "border-slate-200"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <h3
+                className={`font-medium ${
+                  isExcluded ? "line-through" : ""
+                }`}
+              >
+                Projeto {projectIndex + 1}
+                {isExcluded && (
+                  <span className="ml-2 text-xs font-normal text-red-500">
+                    (Removido)
+                  </span>
+                )}
+              </h3>
 
-          <input
-            className="w-full rounded-lg border p-2"
-            placeholder="Nome"
-            value={project.name}
-            onChange={(e) =>
-              updateProject(projectIndex, "name", e.target.value)
-            }
-          />
+              {isExcluded ? (
+                <button
+                  type="button"
+                  onClick={() => restoreProject(projectIndex)}
+                  className="text-sm text-green-600 hover:text-green-700"
+                >
+                  Restaurar
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => removeProject(projectIndex)}
+                  className="text-sm text-red-600 hover:text-red-700"
+                >
+                  Remover
+                </button>
+              )}
+            </div>
 
-          <input
-            className="w-full rounded-lg border p-2"
-            placeholder="GitHub"
-            value={project.github ?? ""}
-            onChange={(e) =>
-              updateProject(
-                projectIndex,
-                "github",
-                e.target.value || null
-              )
-            }
-          />
-
-          <input
-            className="w-full rounded-lg border p-2"
-            placeholder="Demo"
-            value={project.demo_url ?? ""}
-            onChange={(e) =>
-              updateProject(
-                projectIndex,
-                "demo_url",
-                e.target.value || null
-              )
-            }
-          />
-
-          <div className="grid grid-cols-2 gap-4">
             <input
-              type="date"
-              className="rounded-lg border p-2"
-              value={project.start_date}
+              className="w-full rounded-lg border p-2"
+              placeholder="Nome"
+              value={project.name}
               onChange={(e) =>
-                updateProject(
-                  projectIndex,
-                  "start_date",
-                  e.target.value
-                )
+                updateProject(projectIndex, "name", e.target.value)
               }
+              disabled={isExcluded}
             />
 
             <input
-              type="date"
-              className="rounded-lg border p-2"
-              value={project.end_date ?? ""}
+              className="w-full rounded-lg border p-2"
+              placeholder="GitHub"
+              value={project.github ?? ""}
               onChange={(e) =>
                 updateProject(
                   projectIndex,
-                  "end_date",
+                  "github",
                   e.target.value || null
                 )
               }
+              disabled={isExcluded}
             />
-          </div>
 
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <h4 className="font-medium">Descrições</h4>
+            <input
+              className="w-full rounded-lg border p-2"
+              placeholder="Demo"
+              value={project.demo_url ?? ""}
+              onChange={(e) =>
+                updateProject(
+                  projectIndex,
+                  "demo_url",
+                  e.target.value || null
+                )
+              }
+              disabled={isExcluded}
+            />
 
-              <button
-                type="button"
-                onClick={() => addDescription(projectIndex)}
-                className="text-blue-600"
-              >
-                + Adicionar
-              </button>
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="date"
+                className="rounded-lg border p-2"
+                value={project.start_date}
+                onChange={(e) =>
+                  updateProject(
+                    projectIndex,
+                    "start_date",
+                    e.target.value
+                  )
+                }
+                disabled={isExcluded}
+              />
+
+              <input
+                type="date"
+                className="rounded-lg border p-2"
+                value={project.end_date ?? ""}
+                onChange={(e) =>
+                  updateProject(
+                    projectIndex,
+                    "end_date",
+                    e.target.value || null
+                  )
+                }
+                disabled={isExcluded}
+              />
             </div>
 
-            {project.descriptions.map((description, index) => (
-              <div
-                key={index}
-                className="flex gap-2"
-              >
-                <input
-                  className="flex-1 rounded-lg border p-2"
-                  value={description.description}
-                  onChange={(e) =>
-                    updateDescription(
-                      projectIndex,
-                      index,
-                      e.target.value
-                    )
-                  }
-                />
+            {!isExcluded && (
+              <>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <h4 className="font-medium">Descrições</h4>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    removeDescription(projectIndex, index)
-                  }
-                  className="text-red-600"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
+                    <button
+                      type="button"
+                      onClick={() => addDescription(projectIndex)}
+                      className="text-blue-600"
+                    >
+                      + Adicionar
+                    </button>
+                  </div>
+
+                  {project.descriptions.map((description, index) => (
+                    <div
+                      key={index}
+                      className="flex gap-2"
+                    >
+                      <input
+                        className="flex-1 rounded-lg border p-2"
+                        value={description.description}
+                        onChange={(e) =>
+                          updateDescription(
+                            projectIndex,
+                            index,
+                            e.target.value
+                          )
+                        }
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeDescription(projectIndex, index)
+                        }
+                        className="text-red-600"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <h4 className="font-medium">Tecnologias</h4>
+
+                    <button
+                      type="button"
+                      onClick={() => addTechnology(projectIndex)}
+                      className="text-blue-600"
+                    >
+                      + Adicionar
+                    </button>
+                  </div>
+
+                  {project.technologies.map((technology, index) => (
+                    <div
+                      key={index}
+                      className="flex gap-2"
+                    >
+                      <input
+                        className="flex-1 rounded-lg border p-2"
+                        value={technology.technology}
+                        onChange={(e) =>
+                          updateTechnology(
+                            projectIndex,
+                            index,
+                            e.target.value
+                          )
+                        }
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeTechnology(projectIndex, index)
+                        }
+                        className="text-red-600"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <h4 className="font-medium">Tecnologias</h4>
-
-              <button
-                type="button"
-                onClick={() => addTechnology(projectIndex)}
-                className="text-blue-600"
-              >
-                + Adicionar
-              </button>
-            </div>
-
-            {project.technologies.map((technology, index) => (
-              <div
-                key={index}
-                className="flex gap-2"
-              >
-                <input
-                  className="flex-1 rounded-lg border p-2"
-                  value={technology.technology}
-                  onChange={(e) =>
-                    updateTechnology(
-                      projectIndex,
-                      index,
-                      e.target.value
-                    )
-                  }
-                />
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    removeTechnology(projectIndex, index)
-                  }
-                  className="text-red-600"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </section>
   );
 }
