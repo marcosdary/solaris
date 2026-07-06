@@ -3,8 +3,8 @@ from pydantic import RootModel
 from typing import List, Optional
 
 from app.config import Language, CVCategory
-from app.schemas.base import BaseSchema
-from app.schemas.cv_create import (
+from .base import BaseSchema
+from .curriculum_create import (
     ActivitySchema,
     ExperienceSchema,
     EducationSchema,
@@ -12,7 +12,7 @@ from app.schemas.cv_create import (
     ProjectTechnologySchema,
     ProjectSchema,
     CertificationSchema,
-    StructuredCVSchema,
+    StructuredCurriculumSchema,
 )
 
 
@@ -62,7 +62,7 @@ class CertificationResponseSchema(CertificationSchema):
     created_at: datetime
     updated_at: datetime
 
-class StructuredCVSummarySchema(BaseSchema):
+class StructuredCurriculumSummarySchema(BaseSchema):
     id: str
 
     language: Language
@@ -79,7 +79,7 @@ class StructuredCVSummarySchema(BaseSchema):
     created_at: datetime
     updated_at: datetime
 
-class StructuredCVResponseSchema(StructuredCVSchema):
+class StructuredCurriculumResponseSchema(StructuredCurriculumSchema):
     id: str
     created_at: datetime
     updated_at: datetime
@@ -89,7 +89,7 @@ class StructuredCVResponseSchema(StructuredCVSchema):
     projects: list[ProjectResponseSchema] | None = None
     certifications: list[CertificationResponseSchema] | None = None
 
-class ListStructuredCVResponse(RootModel[List[StructuredCVSummarySchema]]): ...
+class ListStructuredCurriculumResponse(RootModel[List[StructuredCurriculumSummarySchema]]): ...
 
 __all__ = [
     "ActivityResponseSchema",
@@ -99,7 +99,7 @@ __all__ = [
     "ProjectTechnologyResponseSchema",
     "ProjectResponseSchema",
     "CertificationResponseSchema",
-    "StructuredCVResponseSchema",
-    "StructuredCVSummarySchema",
-    "ListStructuredCVResponse"
+    "StructuredCurriculumResponseSchema",
+    "StructuredCurriculumSummarySchema",
+    "ListStructuredCurriculumResponse"
 ]

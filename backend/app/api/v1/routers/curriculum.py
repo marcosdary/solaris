@@ -5,7 +5,7 @@ from fastapi import (
     status,
     HTTPException
 )
-from app.models import CVModel
+from app.models import CurriculumModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import AsyncGenerator
@@ -21,15 +21,17 @@ from app.config import (
 )
 from app.schemas import (
     GenerateCVResponseSchema,
-    StructuredCVSchema,
-    StructuredCVResponseSchema,
-    ListStructuredCVResponse,
-    StructuredCVSummarySchema
+    StructuredCurriculumSchema,
+    StructuredCurriculumResponseSchema,
+    StructuredCurriculumEditSchema,
+    ListStructuredCurriculumResponse,
+    StructuredCurriculumSummarySchema
 )
 from app.services import (
     LoadInfoToFilePDFService,
     DriveUploadService,
-    FilePDFService
+    FilePDFService,
+    EditCurriculum,
 )
 
 async def get_session(
@@ -44,14 +46,14 @@ router = APIRouter()
 @router.post(
     "", 
     status_code=status.HTTP_201_CREATED, 
-    response_model=StructuredCVSummarySchema
+    response_model=StructuredCurriculumSummarySchema
 )
 async def cv(
-    schema: StructuredCVSchema,
+    schema: StructuredCurriculumSchema,
     session = Depends(get_session)
-) -> StructuredCVSummarySchema: 
+) -> StructuredCurriculumSummarySchema: 
     try:
-        cv = CVModel.from_schema(schema)
+        cv = CurriculumModel.from_schema(schema)
         session.add(cv)
         await session.commit()
         await session.refresh(cv)
@@ -66,24 +68,24 @@ async def cv(
 @router.get(
     "", 
     status_code=status.HTTP_200_OK, 
-    response_model=ListStructuredCVResponse
+    response_model=ListStructuredCurriculumResponse
 )
 async def get_cv_all(
     session = Depends(get_session),
     category: CVCategory = None,
     language: Language = None
-) -> ListStructuredCVResponse: 
+) -> ListStructuredCurriculumResponse: 
     try:
 
         filters = []
 
         if category:
-            filters.append(CVModel.category == category)
+            filters.append(CurriculumModel.category == category)
         
         if language:
-            filters.append(CVModel.language == language)
+            filters.append(CurriculumModel.language == language)
         
-        stmt = select(CVModel).filter(*filters)
+        stmt = select(CurriculumModel).filter(*filters)
 
 
         data = await session.scalars(stmt)
@@ -102,14 +104,14 @@ async def get_cv_all(
 @router.get(
     "/{id}", 
     status_code=status.HTTP_200_OK, 
-    response_model=StructuredCVResponseSchema
+    response_model=StructuredCurriculumResponseSchema
 )
 async def get_cv(
     id: str,
     session = Depends(get_session)
-) -> StructuredCVResponseSchema: 
+) -> StructuredCurriculumResponseSchema: 
     try:
-        stmt = select(CVModel).filter(CVModel.id == id)
+        stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
         data = await session.scalar(stmt)
 
         if not data : 
@@ -138,13 +140,13 @@ async def generate_cv_to_pdf(
 ) -> GenerateCVResponseSchema: 
     try:
         _basename = f"pdf_{uuid4()}"
-        stmt = select(CVModel).filter(CVModel.id == id)
+        stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
         cv = await session.scalar(stmt)
 
         if not cv : 
             raise ValueError("Conteúdo não encontrado. Tente novamente.")
 
-        context = StructuredCVSchema.model_validate(cv)
+        context = StructuredCurriculumSchema.model_validate(cv)
 
         template_dir = DirPaths.DIR_TEMPLATES.value
     
@@ -193,7 +195,7 @@ async def delete_cv(
     session = Depends(get_session)
 ) -> None: 
     try:
-        stmt = select(CVModel).filter(CVModel.id == id)
+        stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
         data = await session.scalar(stmt)
 
         if not data : 
@@ -210,4 +212,38 @@ async def delete_cv(
             detail=exc
         )
     
+@router.put(
+    "/{id}",
+    status_code=status.HTTP_200_OK,
+    response_model=StructuredCurriculumResponseSchema
+)
+async def edit_cv(
+    id: str,
+    schema: StructuredCurriculumEditSchema,
+    session: AsyncSession = Depends(get_session)
+) -> StructuredCurriculumResponseSchema:
+    try:
+        stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
+        cv = await session.scalar(stmt)
+
+        if not cv:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Currículo não encontrado."
+            )
+
+        editor = EditCurriculum(schema)
+        await editor.apply(cv, session)
+
+        return cv
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc)
+        )
+
 __all__ = ["router"]

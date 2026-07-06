@@ -23,7 +23,7 @@ class ProjectModel(BaseModel):
     start_date: Mapped[date]
     end_date: Mapped[date] = mapped_column(nullable=True)
 
-    cv: Mapped["CVModel"] = relationship(back_populates="projects")
+    cv: Mapped["CurriculumModel"] = relationship(back_populates="projects")
 
     descriptions: Mapped[list["ProjectDescriptionModel"]] = relationship(
         back_populates="project",

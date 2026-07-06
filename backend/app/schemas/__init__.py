@@ -3,31 +3,36 @@ from .generate_cv import (
     GenerateCVResponseSchema
 )
 
-from .cv_create import (
+from .curriculum_create import (
     ActivitySchema,
     EducationSchema,
-    StructuredCVSchema,
+    StructuredCurriculumSchema,
     CertificationSchema,
     ExperienceSchema,
     ProjectSchema,
     ProjectDescriptionSchema,
     ProjectTechnologySchema
 )
-from .cv_response import (
+from .curriculum_response import (
     ActivityResponseSchema,
     EducationResponseSchema,
-    StructuredCVResponseSchema,
+    StructuredCurriculumResponseSchema,
     CertificationResponseSchema,
     ExperienceResponseSchema,
     ProjectResponseSchema,
-    ListStructuredCVResponse,
-    StructuredCVSummarySchema
+    ListStructuredCurriculumResponse,
+    StructuredCurriculumSummarySchema
 )
 
-from .ws_messages import (
-    ActionType,
-    WSRequestSchema,
-    WSResponseSchema
+from .curriculum_edit import (
+    ActivityEditSchema,
+    CertificationEditSchema,
+    EducationEditSchema,
+    ExperienceEditSchema,
+    ProjectDescriptionEditSchema,
+    ProjectTechnologyEditSchema,
+    StructuredCurriculumEditSchema,
+    ProjectEditSchema,
 )
 
 from .validators import Validators
@@ -37,7 +42,7 @@ __all__ = [
     "GenerateCVResponseSchema",
     "ActivitySchema",
     "EducationSchema",
-    "StructuredCVSchema",
+    "StructuredCurriculumSchema",
     "CertificationSchema",
     "ExperienceSchema",
     "ProjectDescriptionSchema",
@@ -49,13 +54,18 @@ __all__ = [
     "ResponseSiteSchema",
     "ActivityResponseSchema",
     "EducationResponseSchema",
-    "StructuredCVResponseSchema",
+    "StructuredCurriculumResponseSchema",
     "CertificationResponseSchema",
     "ExperienceResponseSchema",
     "ProjectResponseSchema",
-    "ListStructuredCVResponse",
-    "StructuredCVSummarySchema",
-    "ActionType",
-    "WSRequestSchema",
-    "WSResponseSchema"
+    "ListStructuredCurriculumResponse",
+    "StructuredCurriculumSummarySchema",
+    "ActivityEditSchema",
+    "CertificationEditSchema",
+    "EducationEditSchema",
+    "ExperienceEditSchema",
+    "ProjectDescriptionEditSchema",
+    "ProjectTechnologyEditSchema",
+    "StructuredCurriculumEditSchema",
+    "ProjectEditSchema",
 ]

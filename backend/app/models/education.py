@@ -21,7 +21,7 @@ class EducationModel(BaseModel):
     start_date: Mapped[date]
     end_date: Mapped[date] = mapped_column(nullable=True)
 
-    cv: Mapped["CVModel"] = relationship(back_populates="educations")
+    cv: Mapped["CurriculumModel"] = relationship(back_populates="educations")
 
     @classmethod
     def from_schema(cls, schema: EducationSchema) -> "EducationModel":

@@ -129,7 +129,7 @@ class CertificationSchema(BaseSchema):
         return f"{start} - {end}"
 
 
-class StructuredCVSchema(BaseSchema):
+class StructuredCurriculumSchema(BaseSchema):
     """Currículo estruturado."""
 
     language: Language = Language.portuguese
@@ -176,5 +176,5 @@ __all__ = [
     "ProjectTechnologySchema",
     "ProjectSchema",
     "CertificationSchema",
-    "StructuredCVSchema"
+    "StructuredCurriculumSchema"
 ]

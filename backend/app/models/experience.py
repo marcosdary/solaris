@@ -22,7 +22,7 @@ class ExperienceModel(BaseModel):
     start_date: Mapped[date]
     end_date: Mapped[date] = mapped_column(nullable=True)
 
-    cv: Mapped["CVModel"] = relationship(back_populates="experiences")
+    cv: Mapped["CurriculumModel"] = relationship(back_populates="experiences")
 
     activities: Mapped[list["ExperienceActivityModel"]] = relationship(
         back_populates="experience",

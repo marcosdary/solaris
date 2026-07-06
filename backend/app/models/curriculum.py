@@ -13,11 +13,11 @@ from app.models.project import ProjectModel
 from app.models.certification import CertificationModel
 from app.config import Language, CVCategory
 from app.schemas import (
-    StructuredCVSchema
+    StructuredCurriculumSchema
 )
 
 
-class CVModel(BaseModel):
+class CurriculumModel(BaseModel):
     __tablename__ = "cv"
 
     id: Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
@@ -63,7 +63,7 @@ class CVModel(BaseModel):
     )
 
     @classmethod
-    def from_schema(cls, schema: StructuredCVSchema) -> "CVModel":
+    def from_schema(cls, schema: StructuredCurriculumSchema) -> "CurriculumModel":
         return cls(
             id=f"cv_{uuid4()}",
             language=schema.language,
@@ -98,4 +98,4 @@ class CVModel(BaseModel):
             ],
         )
 
-__all__ = ["CVModel"]
+__all__ = ["CurriculumModel"]

@@ -22,7 +22,7 @@ class CertificationModel(BaseModel):
     start_date: Mapped[date]
     end_date: Mapped[date] = mapped_column(nullable=True)
 
-    cv: Mapped["CVModel"] = relationship(back_populates="certifications")
+    cv: Mapped["CurriculumModel"] = relationship(back_populates="certifications")
 
     @classmethod
     def from_schema(

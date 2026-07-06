@@ -2,6 +2,7 @@ from .drive_upload import DriveUploadService
 from .file import FileDocxService, FilePDFService
 from .validation_exception import ValidationException
 from .load_info_to_file import LoadInfoToFilePDFService
+from .edit_curriculum import EditCurriculum, DeprecatedIds
 
 __all__ = [
     "DriveUploadService",
@@ -9,4 +10,6 @@ __all__ = [
     "FilePDFService",
     "ValidationException",
     "LoadInfoToFilePDFService",
+    "EditCurriculum",
+    "DeprecatedIds",
 ]
