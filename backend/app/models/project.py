@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseModel
 from app.models.project_description import ProjectDescriptionModel
 from app.models.project_technology import ProjectTechnologyModel
-from app.schemas import ProjectSchema
+from app.schemas import ProjectSchema, ProjectEditSchema
 
 class ProjectModel(BaseModel):
     __tablename__ = "projects"
@@ -41,6 +41,25 @@ class ProjectModel(BaseModel):
     def from_schema(cls, schema: ProjectSchema) -> "ProjectModel":
         return cls(
             id=f"pro_{uuid4()}",
+            name=schema.name,
+            github=schema.github,
+            demo_url=schema.demo_url,
+            start_date=schema.start_date,
+            end_date=schema.end_date,
+            descriptions=[
+                ProjectDescriptionModel.from_schema(description)
+                for description in schema.descriptions
+            ],
+            technologies=[
+                ProjectTechnologyModel.from_schema(technology)
+                for technology in (schema.technologies or [])
+            ],
+        )
+    
+    @classmethod
+    def from_edit_schema(cls, schema: ProjectEditSchema) -> "ProjectModel":
+        return cls(
+            id=schema.id,
             name=schema.name,
             github=schema.github,
             demo_url=schema.demo_url,

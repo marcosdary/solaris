@@ -97,5 +97,7 @@ class CurriculumModel(BaseModel):
                 for certification in (schema.certifications or [])
             ],
         )
+    
+    
 
 __all__ = ["CurriculumModel"]

@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
-from app.schemas import ProjectTechnologySchema
+from app.schemas import ProjectTechnologySchema, ProjectTechnologyEditSchema
 
 class ProjectTechnologyModel(BaseModel):
     __tablename__ = "project_technologies"
@@ -28,6 +28,16 @@ class ProjectTechnologyModel(BaseModel):
     ) -> "ProjectTechnologyModel":
         return cls(
             id=f"proj_tech_{uuid4()}",
+            technology=schema.technology,
+        )
+    
+    @classmethod
+    def from_edit_schema(
+        cls,
+        schema: ProjectTechnologyEditSchema,
+    ) -> "ProjectTechnologyModel":
+        return cls(
+            id=schema.id,
             technology=schema.technology,
         )
 

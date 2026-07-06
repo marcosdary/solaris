@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
 from app.models.experience_activity import ExperienceActivityModel
-from app.schemas import ExperienceSchema
+from app.schemas import ExperienceSchema, ExperienceEditSchema
 
 class ExperienceModel(BaseModel):
     __tablename__ = "experiences"
@@ -45,6 +45,20 @@ class ExperienceModel(BaseModel):
             ],
         )
 
+    @classmethod
+    def from_edit_schema(cls, schema: ExperienceEditSchema) -> "ExperienceModel":
+        return cls(
+            id=schema.id,
+            role=schema.role,
+            company=schema.company,
+            location=schema.location,
+            start_date=schema.start_date,
+            end_date=schema.end_date,
+            activities=[
+                ExperienceActivityModel.from_schema(activity)
+                for activity in schema.activities
+            ],
+        )
 
 
 __all__ = ["ExperienceModel"]

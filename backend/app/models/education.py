@@ -5,7 +5,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
-from app.schemas import EducationSchema
+from app.schemas import EducationSchema, EducationEditSchema
 
 class EducationModel(BaseModel):
     __tablename__ = "educations"
@@ -27,6 +27,17 @@ class EducationModel(BaseModel):
     def from_schema(cls, schema: EducationSchema) -> "EducationModel":
         return cls(
             id=f"edu_{uuid4()}",
+            institution=schema.institution,
+            degree=schema.degree,
+            location=schema.location,
+            start_date=schema.start_date,
+            end_date=schema.end_date,
+        )
+    
+    @classmethod
+    def from_edit_schema(cls, schema: EducationEditSchema) -> "EducationModel":
+        return cls(
+            id=schema.id,
             institution=schema.institution,
             degree=schema.degree,
             location=schema.location,

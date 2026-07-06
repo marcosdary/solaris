@@ -5,7 +5,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
-from app.schemas import CertificationSchema
+from app.schemas import CertificationSchema, CertificationEditSchema
 
 
 class CertificationModel(BaseModel):
@@ -37,5 +37,21 @@ class CertificationModel(BaseModel):
             start_date=schema.start_date,
             end_date=schema.end_date,
         )
+    
+    @classmethod
+    def from_edit_schema(
+        cls,
+        schema: CertificationEditSchema
+    ) -> "CertificationModel":
+        return cls(
+            id=schema.id,
+            location=schema.location,
+            institution=schema.institution,
+            name=schema.name,
+            start_date=schema.start_date,
+            end_date=schema.end_date
+        )
+    
+    
 
 __all__ = ["CertificationModel"]

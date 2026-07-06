@@ -13,12 +13,12 @@ from .curriculum_create import (
 )
 
 class ActivityEditSchema(ActivitySchema):
+    depreciated: Annotated[Optional[bool], Field(default=False)]
     id: str
 
 class ExperienceEditSchema(ExperienceSchema):
     depreciated: Annotated[Optional[bool], Field(default=False)]
     id: str
-
     activities: list[ActivityEditSchema]
 
 class EducationEditSchema(EducationSchema):
@@ -26,9 +26,11 @@ class EducationEditSchema(EducationSchema):
     id: str
 
 class ProjectDescriptionEditSchema(ProjectDescriptionSchema):
+    depreciated: Annotated[Optional[bool], Field(default=False)]
     id: str
 
 class ProjectTechnologyEditSchema(ProjectTechnologySchema):
+    depreciated: Annotated[Optional[bool], Field(default=False)]
     id: str
 
 class ProjectEditSchema(ProjectSchema):
