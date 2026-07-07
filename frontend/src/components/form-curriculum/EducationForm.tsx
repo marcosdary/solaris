@@ -1,67 +1,20 @@
-import type { Dispatch, SetStateAction } from "react";
 import type { IEducationInput } from "../../types/curriculumCreate";
+import type { UseEducationsReturn } from "../../hooks/useEducations";
 
-interface EducationFormProps {
-  educations: IEducationInput[];
-  setEducations: Dispatch<SetStateAction<IEducationInput[]>>;
+interface EducationFormProps extends UseEducationsReturn<IEducationInput> {
   mode: "create" | "edit";
 }
 
 export function EducationForm({
   educations,
-  setEducations,
   mode,
+  add,
+  remove,
+  restore,
+  update,
+  visible: _visible,
+  isEmpty,
 }: EducationFormProps) {
-  function addEducation() {
-    setEducations((old) => [
-      ...old,
-      {
-        institution: "",
-        degree: "",
-        location: "",
-        start_date: "",
-        end_date: null,
-      },
-    ]);
-  }
-
-  function removeEducation(index: number) {
-    if (mode === "create") {
-      setEducations((old) => old.filter((_, i) => i !== index));
-    } else {
-      setEducations((old) =>
-        old.map((item, i) =>
-          i === index ? { ...item, depreciated: true } : item
-        )
-      );
-    }
-  }
-
-  function restoreEducation(index: number) {
-    setEducations((old) =>
-      old.map((item, i) =>
-        i === index ? { ...item, depreciated: false } : item
-      )
-    );
-  }
-
-  function updateEducation(
-    index: number,
-    field: keyof IEducationInput,
-    value: string | null
-  ) {
-    setEducations((old) =>
-      old.map((education, i) =>
-        i === index
-          ? {
-              ...education,
-              [field]: value,
-            }
-          : education
-      )
-    );
-  }
-
   return (
     <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
       <div className="flex items-center justify-between">
@@ -71,14 +24,14 @@ export function EducationForm({
 
         <button
           type="button"
-          onClick={addEducation}
+          onClick={add}
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition hover:bg-blue-700"
         >
           + Adicionar Formação
         </button>
       </div>
 
-      {educations.filter((e) => !e.depreciated).length === 0 && (
+      {isEmpty() && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
           <p className="text-sm font-medium text-red-700">
             ⚠ É necessário adicionar pelo menos uma formação acadêmica.
@@ -115,7 +68,7 @@ export function EducationForm({
               {isExcluded ? (
                 <button
                   type="button"
-                  onClick={() => restoreEducation(index)}
+                  onClick={() => restore(index)}
                   className="text-sm text-green-600 transition hover:text-green-700"
                 >
                   Restaurar
@@ -123,7 +76,7 @@ export function EducationForm({
               ) : (
                 <button
                   type="button"
-                  onClick={() => removeEducation(index)}
+                  onClick={() => remove(index)}
                   className="text-sm text-red-600 transition hover:text-red-700"
                 >
                   Remover
@@ -139,10 +92,8 @@ export function EducationForm({
               <input
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                 value={education.institution}
-                onChange={(e) =>
-                  updateEducation(index, "institution", e.target.value)
-                }
-                disabled={isExcluded}
+                onChange={(e) => update(index, "institution", e.target.value)}
+                disabled={!!isExcluded}
               />
             </div>
 
@@ -154,10 +105,8 @@ export function EducationForm({
               <input
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                 value={education.degree}
-                onChange={(e) =>
-                  updateEducation(index, "degree", e.target.value)
-                }
-                disabled={isExcluded}
+                onChange={(e) => update(index, "degree", e.target.value)}
+                disabled={!!isExcluded}
               />
             </div>
 
@@ -169,10 +118,8 @@ export function EducationForm({
               <input
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                 value={education.location}
-                onChange={(e) =>
-                  updateEducation(index, "location", e.target.value)
-                }
-                disabled={isExcluded}
+                onChange={(e) => update(index, "location", e.target.value)}
+                disabled={!!isExcluded}
               />
             </div>
 
@@ -186,10 +133,8 @@ export function EducationForm({
                   type="date"
                   className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                   value={education.start_date}
-                  onChange={(e) =>
-                    updateEducation(index, "start_date", e.target.value)
-                  }
-                  disabled={isExcluded}
+                  onChange={(e) => update(index, "start_date", e.target.value)}
+                  disabled={!!isExcluded}
                 />
               </div>
 
@@ -203,13 +148,9 @@ export function EducationForm({
                   className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                   value={education.end_date ?? ""}
                   onChange={(e) =>
-                    updateEducation(
-                      index,
-                      "end_date",
-                      e.target.value || null
-                    )
+                    update(index, "end_date", e.target.value || null)
                   }
-                  disabled={isExcluded}
+                  disabled={!!isExcluded}
                 />
               </div>
             </div>

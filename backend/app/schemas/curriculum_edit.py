@@ -45,6 +45,7 @@ class CertificationEditSchema(CertificationSchema):
     id: str
 
 class StructuredCurriculumEditSchema(StructuredCurriculumSchema):
+    id: str
     experiences: list[ExperienceEditSchema]
     educations: list[EducationEditSchema]
     projects: list[ProjectEditSchema] | None = None

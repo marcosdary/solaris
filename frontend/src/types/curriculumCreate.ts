@@ -29,6 +29,7 @@ export interface IExperienceInput {
 }
 
 export interface IExperienceActivityInput {
+  id?: string;
   description: string;
 }
 
@@ -55,10 +56,12 @@ export interface IProjectInput {
 }
 
 export interface IProjectDescriptionInput {
+  id?: string;
   description: string;
 }
 
 export interface IProjectTechnologyInput {
+  id?: string;
   technology: string;
 }
 

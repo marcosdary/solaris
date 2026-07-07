@@ -1,87 +1,249 @@
-create table site (
-	id varchar(255) primary key,
-	name varchar(255) not null unique,
-	created_at timestamp default current_timestamp,
-	updated_at timestamp default current_timestamp
+CREATE TYPE language_enum AS ENUM (
+    'portuguese',
+    'english',
+    'spanish'
 );
 
-create table job (
-	id varchar(255) primary key,
-	site_id varchar(255) not null ,
-	job_url varchar(600) not null,
-	title varchar(400),
-	company varchar(255),
-	company_url varchar(255),
-	location varchar(400),
-	job_level varchar(255),
-	job_function varchar(255),
-	description text not null,
-	created_at timestamp default current_timestamp,
-	updated_at timestamp default current_timestamp,
-	
-	constraint fk_search_job_site
-		foreign key (site_id) references site(id)
-		on delete restrict 
+CREATE TYPE cv_category_enum AS ENUM (
+    -- Tecnologia
+    'backend_developer',
+    'frontend_developer',
+    'fullstack_developer',
+    'mobile_developer',
+    'desktop_developer',
+    'embedded_systems_developer',
+    'game_developer',
+    'data_engineer',
+    'data_analyst',
+    'data_scientist',
+    'machine_learning_engineer',
+    'devops_engineer',
+    'cloud_engineer',
+    'site_reliability_engineer',
+    'cybersecurity_analyst',
+    'qa_engineer',
+    'software_architect',
+    'ui_ux_designer',
+    'product_manager',
+    'scrum_master',
+
+    -- Administração e Finanças
+    'administrative_assistant',
+    'administrative_analyst',
+    'office_manager',
+    'executive_assistant',
+    'financial_analyst',
+    'accountant',
+    'controller',
+    'auditor',
+
+    -- Comercial
+    'sales_representative',
+    'inside_sales',
+    'account_executive',
+    'account_manager',
+    'business_development',
+    'customer_success_manager',
+
+    -- Marketing
+    'marketing_analyst',
+    'digital_marketing_specialist',
+    'social_media_manager',
+    'seo_specialist',
+    'content_writer',
+    'copywriter',
+    'graphic_designer',
+
+    -- Recursos Humanos
+    'recruiter',
+    'talent_acquisition_specialist',
+    'hr_analyst',
+    'hr_business_partner',
+
+    -- Engenharia
+    'civil_engineer',
+    'mechanical_engineer',
+    'electrical_engineer',
+    'production_engineer',
+    'chemical_engineer',
+
+    -- Saúde
+    'physician',
+    'nurse',
+    'pharmacist',
+    'physiotherapist',
+    'psychologist',
+    'nutritionist',
+    'dentist',
+
+    -- Educação
+    'teacher',
+    'professor',
+    'pedagogue',
+    'school_coordinator',
+
+    -- Jurídico
+    'lawyer',
+    'legal_assistant',
+    'paralegal',
+
+    -- Logística
+    'logistics_analyst',
+    'supply_chain_analyst',
+    'warehouse_supervisor',
+    'procurement_specialist',
+
+    -- Atendimento
+    'customer_service_representative',
+    'technical_support_specialist',
+    'help_desk_analyst',
+
+    -- Indústria
+    'production_operator',
+    'maintenance_technician',
+    'industrial_mechanic',
+    'electrician',
+
+    -- Outros
+    'intern',
+    'trainee',
+    'freelancer',
+    'consultant'
 );
 
-create table search_job (
-	id varchar(255) primary key,
-	is_remote bool default false,
-	search varchar(800) not null,
-	hours_publi int not null,
-	linkedin_fetch_description bool default false,
-	location varchar(255),
-	pages int not null,
-	country_indeed varchar(255),
-	job_type varchar(255) default 'fulltime',
-	created_at timestamp default current_timestamp,
-	updated_at timestamp default current_timestamp
+CREATE TABLE cv (
+    id VARCHAR(255) PRIMARY KEY,
+
+    language language_enum NOT NULL DEFAULT 'portuguese',
+    category cv_category_enum NOT NULL,
+
+    name VARCHAR(255) NOT NULL,
+    role VARCHAR(255) NOT NULL,
+
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(255) NOT NULL,
+
+    github VARCHAR(255),
+    linkedin VARCHAR(255) NOT NULL,
+
+    location VARCHAR(255) NOT NULL,
+
+    resume TEXT NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-create table search_job_site (
-	search_job_id varchar(255) not null,
-	site_id varchar(255) not null,
-	created_at timestamp default current_timestamp,
-	updated_at timestamp default current_timestamp,
+CREATE TABLE experience (
+    id VARCHAR(255) PRIMARY KEY,
 
-	primary key (search_job_id, site_id),
+    cv_id VARCHAR(255) NOT NULL
+        REFERENCES cv(id)
+        ON DELETE CASCADE,
 
-	constraint fk_sjs_search_job
-		foreign key (search_job_id)
-		references search_job(id)
-		on delete cascade,
+    role VARCHAR(255) NOT NULL,
+    company VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
 
-	constraint fk_sjs_site
-		foreign key (site_id)
-		references site(id)
-		on delete restrict
+    start_date DATE NOT NULL,
+    end_date DATE NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE experience_activity (
+    id VARCHAR(255) PRIMARY KEY,
 
-create index "idx_job_id" on job("id");
+    experience_id VARCHAR(255) NOT NULL
+        REFERENCES experience(id)
+        ON DELETE CASCADE,
 
-create index "idx_job_created_at" on job("created_at");
+    description TEXT NOT NULL,
 
-create index "idx_job_updated_at" on job("updated_at");
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
 
-create index "idx_job_site" on job("site");
+CREATE TABLE education (
+    id VARCHAR(255) PRIMARY KEY,
 
-select * from job;
-select * from site;
-select * from search_job;
+    cv_id VARCHAR(255) NOT NULL
+        REFERENCES cv(id)
+        ON DELETE CASCADE,
 
-delete from search_job where id in (
-	'ce881b43-604d-4eeb-b4ea-7e066b7c0e9e',
-	'3b1edf28-771c-41e1-aa2e-2097c25773af',
-	'5871359b-9258-4327-938f-d540659bd6be',
-	'b842d51f-4713-46bf-872e-8bad4228f7ff',
-	'260cc626-0789-47dc-b0fd-d0539fc2b1be'
-)
-drop table job;
-drop table search_job_site; 
-drop table site;
-drop table search_job;
+    institution VARCHAR(255) NOT NULL,
+    degree VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
 
+    start_date DATE NOT NULL,
+    end_date DATE NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE project (
+    id VARCHAR(255) PRIMARY KEY,
+
+    cv_id VARCHAR(255) NOT NULL
+        REFERENCES cv(id)
+        ON DELETE CASCADE,
+
+    name VARCHAR(255) NOT NULL,
+    github VARCHAR(255) NOT NULL,
+    demo_url VARCHAR(255),
+
+    start_date DATE NOT NULL,
+    end_date DATE NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE project_description (
+    id VARCHAR(255) PRIMARY KEY,
+
+    project_id VARCHAR(255) NOT NULL
+        REFERENCES project(id)
+        ON DELETE CASCADE,
+
+    description TEXT NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE project_technology (
+    id VARCHAR(255) PRIMARY KEY,
+
+    project_id VARCHAR(255) NOT NULL
+        REFERENCES project(id)
+        ON DELETE CASCADE,
+
+    technology VARCHAR(255) NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE certification (
+    id VARCHAR(255) PRIMARY KEY,
+
+    cv_id VARCHAR(255) NOT NULL
+        REFERENCES cv(id)
+        ON DELETE CASCADE,
+
+    institution VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+
+    start_date DATE NOT NULL,
+    end_date DATE NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
 
 
 

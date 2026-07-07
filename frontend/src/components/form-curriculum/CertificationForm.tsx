@@ -1,67 +1,21 @@
-import type { Dispatch, SetStateAction } from "react";
 import type { ICertificationInput } from "../../types/curriculumCreate";
+import type { UseCertificationsReturn } from "../../hooks/useCertifications";
 
-interface CertificationFormProps {
-  certifications: ICertificationInput[];
-  setCertifications: Dispatch<SetStateAction<ICertificationInput[]>>;
+interface CertificationFormProps
+  extends UseCertificationsReturn<ICertificationInput> {
   mode: "create" | "edit";
 }
 
 export function CertificationForm({
   certifications,
-  setCertifications,
   mode,
+  add,
+  remove,
+  restore,
+  update,
+  visible: _visible,
+  isEmpty: _isEmpty,
 }: CertificationFormProps) {
-  function addCertification() {
-    setCertifications((old) => [
-      ...old,
-      {
-        institution: "",
-        name: "",
-        location: "",
-        start_date: "",
-        end_date: null,
-      },
-    ]);
-  }
-
-  function removeCertification(index: number) {
-    if (mode === "create") {
-      setCertifications((old) => old.filter((_, i) => i !== index));
-    } else {
-      setCertifications((old) =>
-        old.map((item, i) =>
-          i === index ? { ...item, depreciated: true } : item
-        )
-      );
-    }
-  }
-
-  function restoreCertification(index: number) {
-    setCertifications((old) =>
-      old.map((item, i) =>
-        i === index ? { ...item, depreciated: false } : item
-      )
-    );
-  }
-
-  function updateCertification(
-    index: number,
-    field: keyof ICertificationInput,
-    value: string | null
-  ) {
-    setCertifications((old) =>
-      old.map((certification, i) =>
-        i === index
-          ? {
-              ...certification,
-              [field]: value,
-            }
-          : certification
-      )
-    );
-  }
-
   return (
     <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
       <div className="flex items-center justify-between">
@@ -71,7 +25,7 @@ export function CertificationForm({
 
         <button
           type="button"
-          onClick={addCertification}
+          onClick={add}
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
         >
           + Adicionar
@@ -98,9 +52,7 @@ export function CertificationForm({
           >
             <div className="flex items-center justify-between">
               <h3
-                className={`font-medium ${
-                  isExcluded ? "line-through" : ""
-                }`}
+                className={`font-medium ${isExcluded ? "line-through" : ""}`}
               >
                 Certificação {index + 1}
                 {isExcluded && (
@@ -113,7 +65,7 @@ export function CertificationForm({
               {isExcluded ? (
                 <button
                   type="button"
-                  onClick={() => restoreCertification(index)}
+                  onClick={() => restore(index)}
                   className="text-sm text-green-600 hover:text-green-700"
                 >
                   Restaurar
@@ -121,7 +73,7 @@ export function CertificationForm({
               ) : (
                 <button
                   type="button"
-                  onClick={() => removeCertification(index)}
+                  onClick={() => remove(index)}
                   className="text-sm text-red-600 hover:text-red-700"
                 >
                   Remover
@@ -130,17 +82,13 @@ export function CertificationForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">
-                Nome
-              </label>
+              <label className="mb-1 block text-sm font-medium">Nome</label>
 
               <input
                 className="w-full rounded-lg border p-2"
                 value={certification.name}
-                onChange={(e) =>
-                  updateCertification(index, "name", e.target.value)
-                }
-                disabled={isExcluded}
+                onChange={(e) => update(index, "name", e.target.value)}
+                disabled={!!isExcluded}
               />
             </div>
 
@@ -152,25 +100,19 @@ export function CertificationForm({
               <input
                 className="w-full rounded-lg border p-2"
                 value={certification.institution}
-                onChange={(e) =>
-                  updateCertification(index, "institution", e.target.value)
-                }
-                disabled={isExcluded}
+                onChange={(e) => update(index, "institution", e.target.value)}
+                disabled={!!isExcluded}
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">
-                Local
-              </label>
+              <label className="mb-1 block text-sm font-medium">Local</label>
 
               <input
                 className="w-full rounded-lg border p-2"
                 value={certification.location}
-                onChange={(e) =>
-                  updateCertification(index, "location", e.target.value)
-                }
-                disabled={isExcluded}
+                onChange={(e) => update(index, "location", e.target.value)}
+                disabled={!!isExcluded}
               />
             </div>
 
@@ -184,10 +126,8 @@ export function CertificationForm({
                   type="date"
                   className="w-full rounded-lg border p-2"
                   value={certification.start_date}
-                  onChange={(e) =>
-                    updateCertification(index, "start_date", e.target.value)
-                  }
-                  disabled={isExcluded}
+                  onChange={(e) => update(index, "start_date", e.target.value)}
+                  disabled={!!isExcluded}
                 />
               </div>
 
@@ -201,13 +141,9 @@ export function CertificationForm({
                   className="w-full rounded-lg border p-2"
                   value={certification.end_date ?? ""}
                   onChange={(e) =>
-                    updateCertification(
-                      index,
-                      "end_date",
-                      e.target.value || null
-                    )
+                    update(index, "end_date", e.target.value || null)
                   }
-                  disabled={isExcluded}
+                  disabled={!!isExcluded}
                 />
               </div>
             </div>

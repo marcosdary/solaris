@@ -1,10 +1,12 @@
-import type { Dispatch, SetStateAction } from "react";
 import { CVCategory, Language } from "../../config/constants";
 import type { ICurriculumInput } from "../../types/curriculumCreate";
 
 interface PersonalInfoProps {
   form: ICurriculumInput;
-  setForm: Dispatch<SetStateAction<ICurriculumInput>>;
+  updateField<K extends keyof ICurriculumInput>(
+    key: K,
+    value: ICurriculumInput[K]
+  ): void;
 }
 
 function phoneMask(value: string) {
@@ -30,18 +32,9 @@ function phoneMask(value: string) {
 
 export function PersonalInfo({
   form,
-  setForm,
+  updateField,
 }: PersonalInfoProps) {
-  function updateField<K extends keyof ICurriculumInput>(
-    field: K,
-    value: ICurriculumInput[K]
-  ) {
-    setForm((old) => ({
-      ...old,
-      [field]: value,
-    }));
-  }
-
+  
   return (
     <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
       <h2 className="text-lg font-semibold text-slate-800">

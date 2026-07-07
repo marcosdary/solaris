@@ -1,11 +1,11 @@
 import { settings } from "../config/settings";
-import type { ICurriculum, ICurriculumResponse } from "../types/curriculumResponse";
+import type { ICurriculumResponse } from "../types/curriculumResponse";
 import type { ICurriculumInput, SearchCurriculums } from "../types/curriculumCreate";
 import type { ICurriculumEdit } from "../types/curriculumEdit";
  
 export async function createCurriculum(
     form: ICurriculumInput
-): Promise<ICurriculum> {
+): Promise<ICurriculumResponse> {
     
     const response = await fetch(
         `${settings.baseURL}/api/v1/cv`,
@@ -27,7 +27,7 @@ export async function createCurriculum(
 
 export async function searchCurriculums(
     payload: SearchCurriculums
-): Promise<ICurriculum[]> {
+): Promise<ICurriculumResponse[]> {
     const params = new URLSearchParams();
 
     if (payload.category) {
@@ -91,7 +91,7 @@ export async function deleteCurriculum(
 
 export async function updateCurriculum(
     form: ICurriculumEdit
-): Promise<ICurriculum> {
+): Promise<ICurriculumResponse> {
     
     const response = await fetch(
         `${settings.baseURL}/api/v1/cv`,

@@ -1,9 +1,5 @@
-import { useState } from "react";
-
-import { createCurriculum } from "../services/api";
-
-import { CVCategory, Language } from "../config/constants";
-import type { ICurriculumInput } from "../types/curriculumCreate";
+import { useCurriculumForm } from "../hooks/useCurriculumForm";
+import type { ICurriculumResponse } from "../types/curriculumResponse";
 
 import { Loading } from "./Loading";
 import { CurriculumCard } from "./cards/CurriculumCard";
@@ -13,134 +9,54 @@ import { ExperienceForm } from "./form-curriculum/ExperienceForm";
 import { EducationForm } from "./form-curriculum/EducationForm";
 import { ProjectForm } from "./form-curriculum/ProjectForm";
 import { CertificationForm } from "./form-curriculum/CertificationForm";
-import type { ICurriculum } from "../types/curriculumResponse";
 
-export function CurriculumForm() {
-  const [loading, setLoading] = useState(false);
+interface CurriculumFormProps {
+  mode: "create" | "edit";
+  initialData?: ICurriculumResponse;
+  onSuccess?: () => void;
+}
 
-  const [result, setResult] = useState<ICurriculum | null>(null);
-
-  const [form, setForm] = useState<ICurriculumInput>({
-    language: Language.PORTUGUESE,
-    category: CVCategory.BACKEND_DEVELOPER,
-
-    name: "",
-    email: "",
-    role: "",
-
-    github: null,
-    linkedin: null,
-
-    phone: "",
-    location: "",
-    resume: "",
-
-    experiences: [],
-    educations: [],
-    projects: [],
-    certifications: [],
-  });
-
-  async function handleSubmit(
-    e: React.SyntheticEvent<HTMLFormElement>
-  ) {
-    e.preventDefault();
-
-    setLoading(true);
-    setResult(null);
-
-    try {
-      const response = await createCurriculum(form);
-
-      setResult(response);
-    } catch (error) {
-      console.error(error);
-
-      alert("Erro ao gerar currículo.");
-    } finally {
-      setLoading(false);
-    }
-  }
+export function CurriculumForm({
+  mode,
+  initialData,
+  onSuccess,
+}: CurriculumFormProps) {
+  const ctx = useCurriculumForm({ mode, initialData, onSuccess });
 
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={ctx.handleSubmit}
         className="space-y-8 rounded-2xl border border-slate-100 bg-white p-8 shadow-sm"
       >
-        <PersonalInfo
-          form={form}
-          setForm={setForm}
-        />
+        <PersonalInfo form={ctx.form} updateField={ctx.updateField} />
 
-        <ExperienceForm
-          experiences={form.experiences}
-          mode="create"
-          setExperiences={(experiences) =>
-            setForm((old) => ({
-              ...old,
-              experiences:
-                typeof experiences === "function"
-                  ? experiences(old.experiences)
-                  : experiences,
-            }))
-          }
-        />
+        <ExperienceForm mode={mode} {...ctx.experiences} />
 
-        <EducationForm
-          educations={form.educations}
-          mode="create"
-          setEducations={(educations) =>
-            setForm((old) => ({
-              ...old,
-              educations:
-                typeof educations === "function"
-                  ? educations(old.educations)
-                  : educations,
-            }))
-          }
-        />
+        <EducationForm mode={mode} {...ctx.educations} />
 
-        <ProjectForm
-          projects={form.projects ?? []}
-          mode="create"
-          setProjects={(projects) =>
-            setForm((old) => ({
-              ...old,
-              projects:
-                typeof projects === "function"
-                  ? projects(old.projects ?? [])
-                  : projects,
-            }))
-          }
-        />
+        <ProjectForm mode={mode} {...ctx.projects} />
 
-        <CertificationForm
-          certifications={form.certifications ?? []}
-          mode="create"
-          setCertifications={(certifications) =>
-            setForm((old) => ({
-              ...old,
-              certifications:
-                typeof certifications === "function"
-                  ? certifications(old.certifications ?? [])
-                  : certifications,
-            }))
-          }
-        />
+        <CertificationForm mode={mode} {...ctx.certifications} />
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={ctx.loading}
           className="w-full rounded-xl bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? "Gerando currículo..." : "Gerar currículo"}
+          {mode === "create" ? "Criar currículo" : "Salvar Alterações"}
         </button>
       </form>
 
-      {loading && <Loading />}
+      {ctx.loading && <Loading />}
 
-      {result && <CurriculumCard curriculum={result} />}
+      {ctx.error && (
+        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+          {ctx.error}
+        </div>
+      )}
+
+      {ctx.result && <CurriculumCard curriculum={ctx.result} />}
     </>
   );
 }

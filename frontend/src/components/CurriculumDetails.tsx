@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import type { ICurriculumResponse } from "../types/curriculumResponse";
-import { ActionButtons } from "../components/ButtonActions";
+import { ActionButtons } from "./ButtonActions";
 
 interface Props {
   curriculum: ICurriculumResponse;

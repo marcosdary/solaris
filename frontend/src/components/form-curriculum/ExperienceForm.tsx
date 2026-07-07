@@ -1,133 +1,23 @@
-import type { Dispatch, SetStateAction } from "react";
-import type {
-  IExperienceActivityInput,
-  IExperienceInput,
-} from "../../types/curriculumCreate";
+import type { IExperienceInput } from "../../types/curriculumCreate";
+import type { UseExperiencesReturn } from "../../hooks/useExperiences";
 
-interface ExperienceFormProps {
-  experiences: IExperienceInput[];
-  setExperiences: Dispatch<SetStateAction<IExperienceInput[]>>;
+interface ExperienceFormProps extends UseExperiencesReturn<IExperienceInput> {
   mode: "create" | "edit";
 }
 
 export function ExperienceForm({
-  experiences,
-  setExperiences,
   mode,
+  experiences,
+  add,
+  remove,
+  restore,
+  update,
+  addActivity,
+  removeActivity,
+  updateActivity,
+  visible: _visible,
+  isEmpty,
 }: ExperienceFormProps) {
-  function addExperience() {
-    setExperiences((old) => [
-      ...old,
-      {
-        role: "",
-        company: "",
-        location: "",
-        start_date: "",
-        end_date: null,
-        activities: [],
-      },
-    ]);
-  }
-
-  function removeExperience(index: number) {
-    if (mode === "create") {
-      setExperiences((old) => old.filter((_, i) => i !== index));
-    } else {
-      setExperiences((old) =>
-        old.map((item, i) =>
-          i === index ? { ...item, depreciated: true } : item
-        )
-      );
-    }
-  }
-
-  function restoreExperience(index: number) {
-    setExperiences((old) =>
-      old.map((item, i) =>
-        i === index ? { ...item, depreciated: false } : item
-      )
-    );
-  }
-
-  function updateExperience(
-    index: number,
-    field: keyof Omit<IExperienceInput, "activities">,
-    value: string | null
-  ) {
-    setExperiences((old) =>
-      old.map((experience, i) =>
-        i === index
-          ? {
-              ...experience,
-              [field]: value,
-            }
-          : experience
-      )
-    );
-  }
-
-  function addActivity(experienceIndex: number) {
-    setExperiences((old) =>
-      old.map((experience, i) =>
-        i === experienceIndex
-          ? {
-              ...experience,
-              activities: [
-                ...experience.activities,
-                {
-                  description: "",
-                },
-              ],
-            }
-          : experience
-      )
-    );
-  }
-
-  function removeActivity(
-    experienceIndex: number,
-    activityIndex: number
-  ) {
-    setExperiences((old) =>
-      old.map((experience, i) =>
-        i === experienceIndex
-          ? {
-              ...experience,
-              activities: experience.activities.filter(
-                (_, idx) => idx !== activityIndex
-              ),
-            }
-          : experience
-      )
-    );
-  }
-
-  function updateActivity(
-    experienceIndex: number,
-    activityIndex: number,
-    value: string
-  ) {
-    setExperiences((old) =>
-      old.map((experience, i) => {
-        if (i !== experienceIndex) return experience;
-
-        const activities: IExperienceActivityInput[] = [
-          ...experience.activities,
-        ];
-
-        activities[activityIndex] = {
-          ...activities[activityIndex],
-          description: value,
-        };
-
-        return {
-          ...experience,
-          activities,
-        };
-      })
-    );
-  }
-
   return (
     <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
       <div className="flex items-center justify-between">
@@ -137,14 +27,14 @@ export function ExperienceForm({
 
         <button
           type="button"
-          onClick={addExperience}
+          onClick={add}
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition hover:bg-blue-700"
         >
           + Adicionar Experiência
         </button>
       </div>
 
-      {experiences.filter((e) => !e.depreciated).length === 0 && (
+      {isEmpty() && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
           <p className="text-sm font-medium text-red-700">
             ⚠ É necessário adicionar pelo menos uma experiência profissional.
@@ -181,7 +71,7 @@ export function ExperienceForm({
               {isExcluded ? (
                 <button
                   type="button"
-                  onClick={() => restoreExperience(experienceIndex)}
+                  onClick={() => restore(experienceIndex)}
                   className="text-sm text-green-600 transition hover:text-green-700"
                 >
                   Restaurar
@@ -189,7 +79,7 @@ export function ExperienceForm({
               ) : (
                 <button
                   type="button"
-                  onClick={() => removeExperience(experienceIndex)}
+                  onClick={() => remove(experienceIndex)}
                   className="text-sm text-red-600 transition hover:text-red-700"
                 >
                   Remover
@@ -206,13 +96,9 @@ export function ExperienceForm({
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                 value={experience.role}
                 onChange={(e) =>
-                  updateExperience(
-                    experienceIndex,
-                    "role",
-                    e.target.value
-                  )
+                  update(experienceIndex, "role", e.target.value)
                 }
-                disabled={isExcluded}
+                disabled={!!isExcluded}
               />
             </div>
 
@@ -225,13 +111,9 @@ export function ExperienceForm({
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                 value={experience.company}
                 onChange={(e) =>
-                  updateExperience(
-                    experienceIndex,
-                    "company",
-                    e.target.value
-                  )
+                  update(experienceIndex, "company", e.target.value)
                 }
-                disabled={isExcluded}
+                disabled={!!isExcluded}
               />
             </div>
 
@@ -244,13 +126,9 @@ export function ExperienceForm({
                 className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                 value={experience.location}
                 onChange={(e) =>
-                  updateExperience(
-                    experienceIndex,
-                    "location",
-                    e.target.value
-                  )
+                  update(experienceIndex, "location", e.target.value)
                 }
-                disabled={isExcluded}
+                disabled={!!isExcluded}
               />
             </div>
 
@@ -265,13 +143,9 @@ export function ExperienceForm({
                   className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                   value={experience.start_date}
                   onChange={(e) =>
-                    updateExperience(
-                      experienceIndex,
-                      "start_date",
-                      e.target.value
-                    )
+                    update(experienceIndex, "start_date", e.target.value)
                   }
-                  disabled={isExcluded}
+                  disabled={!!isExcluded}
                 />
               </div>
 
@@ -285,13 +159,9 @@ export function ExperienceForm({
                   className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
                   value={experience.end_date ?? ""}
                   onChange={(e) =>
-                    updateExperience(
-                      experienceIndex,
-                      "end_date",
-                      e.target.value || null
-                    )
+                    update(experienceIndex, "end_date", e.target.value || null)
                   }
-                  disabled={isExcluded}
+                  disabled={!!isExcluded}
                 />
               </div>
             </div>
@@ -299,9 +169,7 @@ export function ExperienceForm({
             {!isExcluded && (
               <div className="space-y-3 rounded-lg border border-slate-100 bg-slate-50 p-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-slate-700">
-                    Atividades
-                  </h4>
+                  <h4 className="font-medium text-slate-700">Atividades</h4>
 
                   <button
                     type="button"
@@ -319,10 +187,7 @@ export function ExperienceForm({
                 )}
 
                 {experience.activities.map((activity, activityIndex) => (
-                  <div
-                    key={activityIndex}
-                    className="flex items-start gap-2"
-                  >
+                  <div key={activityIndex} className="flex items-start gap-2">
                     <textarea
                       rows={3}
                       className="flex-1 rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
@@ -340,10 +205,7 @@ export function ExperienceForm({
                     <button
                       type="button"
                       onClick={() =>
-                        removeActivity(
-                          experienceIndex,
-                          activityIndex
-                        )
+                        removeActivity(experienceIndex, activityIndex)
                       }
                       className="rounded-lg px-3 py-2 text-red-600 hover:bg-red-50"
                     >

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
-import { CurriculumEditModal } from "./EditCurriculumEdit";
+import { CurriculumFormEdit } from "./CurriculumFormEdit";
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 
 interface ActionButtonsProps {
@@ -35,7 +35,7 @@ export function ActionButtons({
         </button>
       </div>
 
-      <CurriculumEditModal
+      <CurriculumFormEdit
         open={open}
         data={data}
         onClose={() => setOpen(false)}

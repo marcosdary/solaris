@@ -213,17 +213,16 @@ async def delete_cv(
         )
     
 @router.put(
-    "/{id}",
+    "",
     status_code=status.HTTP_200_OK,
     response_model=StructuredCurriculumResponseSchema
 )
 async def edit_cv(
-    id: str,
     schema: StructuredCurriculumEditSchema,
     session: AsyncSession = Depends(get_session)
 ) -> StructuredCurriculumResponseSchema:
     try:
-        stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
+        stmt = select(CurriculumModel).filter(CurriculumModel.id == schema.id)
         cv = await session.scalar(stmt)
 
         if not cv:

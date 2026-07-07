@@ -250,3 +250,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+backend/gerar_*.py 
+backend/gerar_*.py

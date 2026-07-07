@@ -10,6 +10,7 @@ import type {
 } from "./curriculumCreate";
 
 export interface ICurriculumEdit extends ICurriculumInput {
+  id: string;
   experiences: IExperienceEdit[];
   educations: IEducationEdit[];
   projects: IProjectEdit[] | null;
@@ -22,7 +23,7 @@ export interface IExperienceEdit extends IExperienceInput {
   activities: IExperienceActivityEdit[];
 }
 
-export interface IExperienceActivityEdit extends IExperienceActivityInput{
+export interface IExperienceActivityEdit extends IExperienceActivityInput {
   id: string;
   description: string;
 }

@@ -7,11 +7,11 @@ import { CurriculumSearchForm } from "../components/page-curriculum/CurriculumSe
 
 import { searchCurriculums } from "../services/api";
 
-import type { ICurriculum } from "../types/curriculumResponse";
+import type { ICurriculumResponse } from "../types/curriculumResponse";
 import type { SearchCurriculums } from "../types/curriculumCreate";
 
 export default function CurriculumsPage() {
-  const [curriculums, setCurriculums] = useState<ICurriculum[]>([]);
+  const [curriculums, setCurriculums] = useState<ICurriculumResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [lastQuery, setLastQuery] = useState<SearchCurriculums | null>(null);
 

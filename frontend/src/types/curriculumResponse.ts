@@ -5,7 +5,7 @@ export interface CVResponse {
   mimetype: string;
 }
 
-export interface ICurriculum {
+export interface ICurriculumResponse {
   id: string;
   language: Language;
   category: CVCategory;
@@ -14,22 +14,18 @@ export interface ICurriculum {
   email: string;
   github: string;
   linkedin: string;
-  location: string;
   created_at: string;
   updated_at: string;
-}
-
-export interface ICurriculumResponse extends ICurriculum {
   phone: string;
   location: string;
   resume: string;
-  experiences: IExperience[];
-  educations: IEducation[];
-  projects: IProject[];
-  certifications: ICertification[];
+  experiences: IExperienceResponse[];
+  educations: IEducationResponse[];
+  projects: IProjectResponse[];
+  certifications: ICertificationResponse[];
 }
 
-export interface IExperience {
+export interface IExperienceResponse {
   id: string;
   role: string;
   company: string;
@@ -37,19 +33,19 @@ export interface IExperience {
   start_date: string;
   end_date: string | null;
   period: string;
-  activities: IExperienceActivity[];
+  activities: IExperienceActivityResponse[];
   created_at: string;
   updated_at: string;
 }
 
-export interface IExperienceActivity {
+export interface IExperienceActivityResponse {
   id: string;
   description: string;
   created_at: string;
   updated_at: string;
 }
 
-export interface IEducation {
+export interface IEducationResponse {
   id: string;
   institution: string;
   degree: string;
@@ -61,7 +57,7 @@ export interface IEducation {
   updated_at: string;
 }
 
-export interface IProject {
+export interface IProjectResponse {
   id: string;
   name: string;
   github: string;
@@ -69,27 +65,27 @@ export interface IProject {
   start_date: string;
   end_date: string | null;
   period: string;
-  descriptions: IProjectDescription[];
-  technologies: IProjectTechnology[];
+  descriptions: IProjectDescriptionResponse[];
+  technologies: IProjectTechnologyResponse[];
   created_at: string;
   updated_at: string;
 }
 
-export interface IProjectDescription {
+export interface IProjectDescriptionResponse {
   id: string;
   description: string;
   created_at: string;
   updated_at: string;
 }
 
-export interface IProjectTechnology {
+export interface IProjectTechnologyResponse {
   id: string;
   technology: string;
   created_at: string;
   updated_at: string;
 }
 
-export interface ICertification {
+export interface ICertificationResponse {
   id: string;
   institution: string;
   name: string;
