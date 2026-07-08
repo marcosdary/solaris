@@ -3,6 +3,7 @@ from fastapi import (
     Request,
     status
 )
+from contextlib import asynccontextmanager
 from fastapi.exceptions import (
     HTTPException,
     RequestValidationError
@@ -11,14 +12,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 # API
 from app.api import router 
-from app.config import initialize_directories
+from app.config import initialize_directories, get_settings, PostgresAsyncDB
 
 # Services
 from app.services import ValidationException
 
-
 # Schemas
 from app.schemas import IndexSchema
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Chama a função/classe diretamente, sem Depends
+    settings = get_settings() 
+    
+    postgres_db = PostgresAsyncDB(settings.DB_URL)
+    
+    yield {"postgres_db": postgres_db}
+    
+    await postgres_db.close()
 
 # Inicializa a aplicação FastAPI
 app = FastAPI(
@@ -26,7 +37,8 @@ app = FastAPI(
     version="0.1.0",
     description="""
 API responsável pela integração para inserção de informações ao currículo
-"""
+""",
+    lifespan=lifespan
 )
 
 # Configuração de CORS

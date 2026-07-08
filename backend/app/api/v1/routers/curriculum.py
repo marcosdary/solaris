@@ -1,24 +1,23 @@
 from uuid import uuid4
-from pydantic import ValidationError
 from fastapi import (
     APIRouter, 
     Depends, 
     status,
+    Request,
+    BackgroundTasks,
     HTTPException
 )
-from app.models import CurriculumModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import AsyncGenerator
 
+from app.models import CurriculumModel
 from app.config import (
     get_settings,
     DirPaths,
     TemplateFile,
     CVCategory,
-    Language,
-    Settings,
-    PostgresAsyncDB
+    Language
 )
 from app.schemas import (
     GenerateCurriculumToFileSchema,
@@ -36,11 +35,53 @@ from app.services import (
 )
 
 async def get_session(
-    settings: Settings = Depends(get_settings),
+    request: Request,
 ) -> AsyncGenerator[AsyncSession, None]:
-    postgres_db = PostgresAsyncDB(settings.DB_URL)
+    postgres_db = request.state.postgres_db
     async with postgres_db.get_session() as session:
         yield session
+
+# 1. Criamos uma função separada para a tarefa pesada em segundo plano
+# Nota: Esta função NÃO deve injetar dependências via Depends(). Passamos os objetos já resolvidos.
+def process_pdf_and_upload(
+    curriculum_data_dict: dict,
+    template_value: str,
+    settings,
+    load_info_to_file
+):
+    try:
+        _basename = f"pdf_{uuid4()}"
+        template_dir = DirPaths.DIR_TEMPLATES.value
+        
+        # Gera o HTML/Dados (Processo CPU-Bound)
+        data = load_info_to_file.load_info(
+            template=template_value, 
+            template_dir=template_dir, 
+            context=curriculum_data_dict
+        )
+        
+        # Salva o PDF localmente
+        file_pdf = FilePDFService(basename=_basename, data=data)
+        file_pdf.save_from_html()
+
+        mimetype = file_pdf.mimetype
+        filepath = file_pdf.path / file_pdf.filename
+
+        # Faz o Upload para o Drive (Processo I/O-Bound lento)
+        drive_upload = DriveUploadService(settings)
+        drive_upload.upload(filepath=filepath, mimetype=mimetype)
+            
+        # Remove o arquivo temporário local
+        file_pdf.delete()
+        print(f"PDF {_basename} gerado e enviado com sucesso!")
+        
+        # DICA DE PRODUÇÃO: Aqui você poderia salvar no banco de dados 
+        # que o status do PDF agora é "CONCLUÍDO" e salvar a URL do Drive.
+
+    except Exception as exc:
+        # Como está em segundo plano, erros aqui não quebram a requisição HTTP do usuário.
+        # É vital ter logs aqui para você saber se falhou.
+        print(f"Erro ao processar PDF em segundo plano: {exc}")
 
 router = APIRouter()
 
@@ -131,70 +172,47 @@ async def get_curriculum(
 
 @router.post(
     "/pdf/{id}", 
-    status_code=status.HTTP_201_CREATED, 
+    status_code=status.HTTP_202_ACCEPTED, # 202 significa "Aceito para processamento"
     response_model=GenerateCurriculumToFileSchema
 )
 async def generate_curriculum_to_pdf(
     id: str,
+    background_tasks: BackgroundTasks, # Injetamos a ferramenta de background do FastAPI
     settings = Depends(get_settings),
     template: TemplateFile = TemplateFile.standard,
     session: AsyncSession = Depends(get_session),
     load_info_to_file = Depends(LoadInfoToFilePDFService)
 ) -> GenerateCurriculumToFileSchema: 
-    try:
-        _basename = f"pdf_{uuid4()}"
-        stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
-        curriculum_model = await session.scalar(stmt)
-
-        if not curriculum_model : 
-            raise ValueError("Conteúdo não encontrado. Tente novamente.")
-
-        context = StructuredCurriculumSchema.model_validate(curriculum_model)
-
-        template_dir = DirPaths.DIR_TEMPLATES.value
     
-       
-        data = load_info_to_file.load_info(
-            template=template.value, 
-            template_dir=template_dir, 
-            context=context.model_dump()
-        )
-    
-        file_pdf = FilePDFService(basename=_basename, data=data)
+    # Buscamos os dados no banco de dados rapidamente
+    stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
+    curriculum_model = await session.scalar(stmt)
 
-        file_pdf.save_from_html()
-
-        # Mimetype e filename para pdf
-        mimetype = file_pdf.mimetype
-        filepath = file_pdf.path / file_pdf.filename
-
-        # Realizar upload na nuvem do Google Drive
-        drive_upload = DriveUploadService(settings)
-        drive_upload.upload(filepath=filepath, mimetype=mimetype)
-            
-        file_pdf.delete()
-
-        return {
-            "name": f"{_basename}.pdf"
-        }
-
-    except FileNotFoundError as exc:
+    if not curriculum_model: 
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=exc
-        )
-    
-    except ValidationError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=exc
+            detail="Conteúdo não encontrado. Tente novamente."
         )
 
-    except Exception as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail=exc
-        )
+    # Validamos os dados com o Pydantic antes de mandar para o background
+    context = StructuredCurriculumSchema.model_validate(curriculum_model)
+    
+    # Geramos um nome prévio ou ID para o cliente rastrear, se necessário
+    _basename = f"pdf_{uuid4()}"
+
+    # Agendamos a tarefa pesada para rodar assim que a resposta HTTP for enviada
+    background_tasks.add_task(
+        process_pdf_and_upload,
+        curriculum_data_dict=context.model_dump(),
+        template_value=template.value,
+        settings=settings,
+        load_info_to_file=load_info_to_file
+    )
+
+    # Retorna IMEDIATAMENTE (Tempo de resposta cai de 4-5 segundos para milissegundos)
+    return {
+        "name": f"{_basename}.pdf"
+    }
 
 @router.delete(
     "/{id}", 

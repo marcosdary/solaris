@@ -2,8 +2,7 @@ from abc import abstractmethod, ABC
 from typing import AsyncGenerator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import (
-    sessionmaker, 
-    Session
+    sessionmaker,
 )
 from contextlib import (
     asynccontextmanager, 
@@ -18,7 +17,10 @@ from sqlalchemy.ext.asyncio import (
 class BaseDB(ABC):
 
     @abstractmethod
-    def get_session(self) -> Session: ...
+    def get_session(self): ...
+
+    @abstractmethod
+    async def close(self) -> None: ...
 
 class PostgresAsyncDB(BaseDB):
 
@@ -48,6 +50,10 @@ class PostgresAsyncDB(BaseDB):
         finally:
             await db.close()
 
+    # Implementação do fechamento assíncrono do Engine
+    async def close(self) -> None:
+        await self._engine.dispose()
+
 class PostgresSyncDB(BaseDB):
 
     def __init__(self, url: str):
@@ -64,5 +70,8 @@ class PostgresSyncDB(BaseDB):
             db.rollback()
         finally:
             db.close()
+            
+    async def close(self) -> None:
+        self._engine.dispose()
 
         
