@@ -148,18 +148,24 @@ class StructuredCurriculumSchema(BaseSchema):
     resume: Annotated[str, Field(min_length=1)]
 
     experiences: Annotated[
-        List[ExperienceSchema],
-        Field(min_length=1)
+        Optional[List[ExperienceSchema]],
+        Field(default=None)
     ]
 
     educations: Annotated[
-        List[EducationSchema],
-        Field(min_length=1)
+        Optional[List[EducationSchema]],
+        Field(default=None)
     ]
 
-    projects: Optional[List[ProjectSchema]] = None
+    projects: Annotated[
+        Optional[List[ProjectSchema]],
+        Field(default=None)
+    ] 
 
-    certifications: Optional[List[CertificationSchema]] = None
+    certifications: Annotated[
+        Optional[List[CertificationSchema]],
+        Field(default=None)
+    ] 
 
     @field_serializer("resume", mode="plain")
     def serialize_bold(self, value: str) -> str:

@@ -1,4 +1,4 @@
-from typing import Optional, Annotated
+from typing import Optional, Annotated, List
 from pydantic import Field
 
 from .curriculum_create import (
@@ -13,43 +13,56 @@ from .curriculum_create import (
 )
 
 class ActivityEditSchema(ActivitySchema):
-    depreciated: Annotated[Optional[bool], Field(default=False)]
-    id: str
+    id: Annotated[Optional[str], Field(default=None)]
 
 class ExperienceEditSchema(ExperienceSchema):
-    depreciated: Annotated[Optional[bool], Field(default=False)]
-    id: str
-    activities: list[ActivityEditSchema]
+    id: Annotated[Optional[str], Field(default=None)]
+    activities: Annotated[
+        Optional[List[ActivityEditSchema]],
+        Field(default=None)
+    ]
 
 class EducationEditSchema(EducationSchema):
-    depreciated: Annotated[Optional[bool], Field(default=False)]
-    id: str
+    id: Annotated[Optional[str], Field(default=None)]
 
 class ProjectDescriptionEditSchema(ProjectDescriptionSchema):
-    depreciated: Annotated[Optional[bool], Field(default=False)]
-    id: str
+    id: Annotated[Optional[str], Field(default=None)]
 
 class ProjectTechnologyEditSchema(ProjectTechnologySchema):
-    depreciated: Annotated[Optional[bool], Field(default=False)]
-    id: str
+    id: Annotated[Optional[str], Field(default=None)]
 
 class ProjectEditSchema(ProjectSchema):
-    depreciated: Annotated[Optional[bool], Field(default=False)]
-    id: str
-
-    descriptions: list[ProjectDescriptionEditSchema]
-    technologies: list[ProjectTechnologyEditSchema] | None = None
+    id: Annotated[Optional[str], Field(default=None)]
+    descriptions: Annotated[
+        Optional[List[ProjectDescriptionEditSchema]], 
+        Field(default=None)
+    ]
+    technologies: Annotated[
+        Optional[List[ProjectTechnologyEditSchema]], 
+        Field(default=None)
+    ]
 
 class CertificationEditSchema(CertificationSchema):
-    depreciated: Annotated[Optional[bool], Field(default=False)]
-    id: str
+    id: Annotated[Optional[str], Field(default=None)]
 
 class StructuredCurriculumEditSchema(StructuredCurriculumSchema):
-    id: str
-    experiences: list[ExperienceEditSchema]
-    educations: list[EducationEditSchema]
-    projects: list[ProjectEditSchema] | None = None
-    certifications: list[CertificationEditSchema] | None = None
+    experiences: Annotated[
+        Optional[List[ExperienceEditSchema]],
+        Field(default=None)
+    ]
+    educations: Annotated[
+        Optional[List[EducationEditSchema]], 
+        Field(default=None)
+    ]
+
+    projects: Annotated[
+        Optional[List[ProjectEditSchema]],
+        Field(default=None)
+    ]
+    certifications: Annotated[
+        Optional[List[CertificationEditSchema]],
+        Field(default=None)
+    ] 
 
 __all__ = [
     "ActivityEditSchema",

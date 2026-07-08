@@ -18,7 +18,7 @@ from app.schemas import (
 
 
 class CurriculumModel(BaseModel):
-    __tablename__ = "cv"
+    __tablename__ = "curriculum"
 
     id: Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
 
@@ -79,12 +79,12 @@ class CurriculumModel(BaseModel):
 
             experiences=[
                 ExperienceModel.from_schema(experience)
-                for experience in schema.experiences
+                for experience in (schema.experiences or [])
             ],
 
             educations=[
                 EducationModel.from_schema(education)
-                for education in schema.educations
+                for education in (schema.educations or [])
             ],
 
             projects=[

@@ -15,7 +15,7 @@ from app.models import (
 
 
 @dataclass
-class DeprecatedIds:
+class DeprecietedIds:
     """Agrupa os IDs de todos os itens marcados como depreciated no schema de edição.
 
     Cada campo contém os IDs (str) que devem ser removidos do banco.
@@ -55,29 +55,33 @@ class EditCurriculum:
        do CurriculumModel, efetivando tanto criações quanto atualizações.
     """
 
-    def __init__(self, schema: StructuredCurriculumEditSchema) -> None:
+    def __init__(self, schema: StructuredCurriculumEditSchema, model: CurriculumModel) -> None:
         self._schema = schema
+        self._model = model
 
     # ── deprecated IDs ──────────────────────────────────────────────
 
     @property
-    def depreciated_ids(self) -> DeprecatedIds:
-        return DeprecatedIds(
+    def deprecieted_ids(self) -> DeprecietedIds:
+        
+        return DeprecietedIds(
             experiences=[
-                exp.id for exp in self._schema.experiences if exp.depreciated
+                exp.id for exp in (self._model.experiences or []) 
+                if exp not in (self._schema.experiences or [])
             ],
             educations=[
-                edu.id for edu in self._schema.educations if edu.depreciated
+                edu.id for edu in (self._model.educations or [])
+                if edu not in (self._schema.educations or [])
             ],
             projects=[
                 proj.id
-                for proj in (self._schema.projects or [])
-                if proj.depreciated
+                for proj in (self._model.projects or [])
+                if proj not in (self._schema.projects or []) 
             ],
             certifications=[
                 cert.id
-                for cert in (self._schema.certifications or [])
-                if cert.depreciated
+                for cert in (self._model.certifications or [])
+                if cert not in (self._schema.certifications or [])
             ],
         )
 
@@ -87,16 +91,14 @@ class EditCurriculum:
     def active_experiences(self) -> List[ExperienceModel]:
         return [
             ExperienceModel.from_schema(exp)
-            for exp in self._schema.experiences
-            if not exp.depreciated
+            for exp in (self._schema.experiences or [])
         ]
 
     @property
     def active_educations(self) -> List[EducationModel]:
         return [
             EducationModel.from_schema(edu)
-            for edu in self._schema.educations
-            if not edu.depreciated
+            for edu in (self._schema.educations or [])
         ]
 
     @property
@@ -104,7 +106,6 @@ class EditCurriculum:
         return [
             ProjectModel.from_schema(proj)
             for proj in (self._schema.projects or [])
-            if not proj.depreciated
         ]
 
     @property
@@ -112,14 +113,12 @@ class EditCurriculum:
         return [
             CertificationModel.from_schema(cert)
             for cert in (self._schema.certifications or [])
-            if not cert.depreciated
         ]
 
     # ── apply ───────────────────────────────────────────────────────
 
     async def apply(
         self,
-        cv: CurriculumModel,
         session: AsyncSession,
     ) -> None:
         """Aplica as alterações do schema de edição no modelo existente.
@@ -129,7 +128,7 @@ class EditCurriculum:
         2. Atualiza os campos escalares do CurriculumModel.
         3. Substitui as listas de relacionamentos pelos itens ativos.
         """
-        ids = self.depreciated_ids
+        ids = self.deprecieted_ids
 
         if ids.experiences:
             await self._delete_by_ids(
@@ -148,24 +147,24 @@ class EditCurriculum:
                 session, CertificationModel, ids.certifications
             )
 
-        cv.name = self._schema.name
-        cv.email = self._schema.email
-        cv.role = self._schema.role
-        cv.github = self._schema.github  # type: ignore[assignment]
-        cv.linkedin = self._schema.linkedin
-        cv.phone = self._schema.phone
-        cv.location = self._schema.location
-        cv.resume = self._schema.resume
-        cv.language = self._schema.language
-        cv.category = self._schema.category
+        self._model.name = self._schema.name
+        self._model.email = self._schema.email
+        self._model.role = self._schema.role
+        self._model.github = self._schema.github  # type: ignore[assignment]
+        self._model.linkedin = self._schema.linkedin
+        self._model.phone = self._schema.phone
+        self._model.location = self._schema.location
+        self._model.resume = self._schema.resume
+        self._model.language = self._schema.language
+        self._model.category = self._schema.category
 
-        cv.experiences = self.active_experiences
-        cv.educations = self.active_educations
-        cv.projects = self.active_projects
-        cv.certifications = self.active_certifications
+        self._model.experiences = self.active_experiences
+        self._model.educations = self.active_educations
+        self._model.projects = self.active_projects
+        self._model.certifications = self.active_certifications
 
         await session.commit()
-        await session.refresh(cv)
+        await session.refresh(self._model)
 
     @staticmethod
     async def _delete_by_ids(

@@ -13,7 +13,7 @@ class ExperienceModel(BaseModel):
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
-    cv_id: Mapped[str] = mapped_column(ForeignKey("cv.id"))
+    curriculum_id: Mapped[str] = mapped_column(ForeignKey("curriculum.id"))
 
     role: Mapped[str]
     company: Mapped[str]

@@ -111,7 +111,7 @@ CREATE TYPE cv_category_enum AS ENUM (
     'consultant'
 );
 
-CREATE TABLE cv (
+CREATE TABLE curriculum (
     id VARCHAR(255) PRIMARY KEY,
 
     language language_enum NOT NULL DEFAULT 'portuguese',
@@ -134,11 +134,11 @@ CREATE TABLE cv (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE experience (
+CREATE TABLE experiences (
     id VARCHAR(255) PRIMARY KEY,
 
-    cv_id VARCHAR(255) NOT NULL
-        REFERENCES cv(id)
+    curriculum_id VARCHAR(255) NOT NULL
+        REFERENCES curriculum(id)
         ON DELETE CASCADE,
 
     role VARCHAR(255) NOT NULL,
@@ -152,11 +152,11 @@ CREATE TABLE experience (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE experience_activity (
+CREATE TABLE experience_activities (
     id VARCHAR(255) PRIMARY KEY,
 
     experience_id VARCHAR(255) NOT NULL
-        REFERENCES experience(id)
+        REFERENCES experiences(id)
         ON DELETE CASCADE,
 
     description TEXT NOT NULL,
@@ -165,11 +165,11 @@ CREATE TABLE experience_activity (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE education (
+CREATE TABLE educations (
     id VARCHAR(255) PRIMARY KEY,
 
-    cv_id VARCHAR(255) NOT NULL
-        REFERENCES cv(id)
+    curriculum_id VARCHAR(255) NOT NULL
+        REFERENCES curriculum(id)
         ON DELETE CASCADE,
 
     institution VARCHAR(255) NOT NULL,
@@ -183,11 +183,11 @@ CREATE TABLE education (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE project (
+CREATE TABLE projects (
     id VARCHAR(255) PRIMARY KEY,
 
-    cv_id VARCHAR(255) NOT NULL
-        REFERENCES cv(id)
+    curriculum_id VARCHAR(255) NOT NULL
+        REFERENCES curriculum(id)
         ON DELETE CASCADE,
 
     name VARCHAR(255) NOT NULL,
@@ -201,11 +201,11 @@ CREATE TABLE project (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE project_description (
+CREATE TABLE project_descriptions (
     id VARCHAR(255) PRIMARY KEY,
 
     project_id VARCHAR(255) NOT NULL
-        REFERENCES project(id)
+        REFERENCES projects(id)
         ON DELETE CASCADE,
 
     description TEXT NOT NULL,
@@ -214,11 +214,11 @@ CREATE TABLE project_description (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE project_technology (
+CREATE TABLE project_technologies (
     id VARCHAR(255) PRIMARY KEY,
 
     project_id VARCHAR(255) NOT NULL
-        REFERENCES project(id)
+        REFERENCES projects(id)
         ON DELETE CASCADE,
 
     technology VARCHAR(255) NOT NULL,
@@ -227,11 +227,11 @@ CREATE TABLE project_technology (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE certification (
+CREATE TABLE certifications (
     id VARCHAR(255) PRIMARY KEY,
 
-    cv_id VARCHAR(255) NOT NULL
-        REFERENCES cv(id)
+    curriculum_id VARCHAR(255) NOT NULL
+        REFERENCES curriculum(id)
         ON DELETE CASCADE,
 
     institution VARCHAR(255) NOT NULL,

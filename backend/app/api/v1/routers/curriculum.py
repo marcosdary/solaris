@@ -1,4 +1,5 @@
 from uuid import uuid4
+from pydantic import ValidationError
 from fastapi import (
     APIRouter, 
     Depends, 
@@ -20,7 +21,7 @@ from app.config import (
     PostgresAsyncDB
 )
 from app.schemas import (
-    GenerateCVResponseSchema,
+    GenerateCurriculumToFileSchema,
     StructuredCurriculumSchema,
     StructuredCurriculumResponseSchema,
     StructuredCurriculumEditSchema,
@@ -48,29 +49,25 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED, 
     response_model=StructuredCurriculumSummarySchema
 )
-async def cv(
+async def curriculum(
     schema: StructuredCurriculumSchema,
     session = Depends(get_session)
 ) -> StructuredCurriculumSummarySchema: 
-    try:
+    
         cv = CurriculumModel.from_schema(schema)
         session.add(cv)
         await session.commit()
         await session.refresh(cv)
         return cv
     
-    except Exception as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail=exc
-        )
+    
 
 @router.get(
     "", 
     status_code=status.HTTP_200_OK, 
     response_model=ListStructuredCurriculumResponse
 )
-async def get_cv_all(
+async def get_curriculum_all(
     session = Depends(get_session),
     category: CVCategory = None,
     language: Language = None
@@ -106,7 +103,7 @@ async def get_cv_all(
     status_code=status.HTTP_200_OK, 
     response_model=StructuredCurriculumResponseSchema
 )
-async def get_cv(
+async def get_curriculum(
     id: str,
     session = Depends(get_session)
 ) -> StructuredCurriculumResponseSchema: 
@@ -119,6 +116,12 @@ async def get_cv(
         
         return data
     
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=exc
+        )
+    
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
@@ -129,24 +132,24 @@ async def get_cv(
 @router.post(
     "/pdf/{id}", 
     status_code=status.HTTP_201_CREATED, 
-    response_model=GenerateCVResponseSchema
+    response_model=GenerateCurriculumToFileSchema
 )
-async def generate_cv_to_pdf(
+async def generate_curriculum_to_pdf(
     id: str,
     settings = Depends(get_settings),
     template: TemplateFile = TemplateFile.standard,
     session: AsyncSession = Depends(get_session),
     load_info_to_file = Depends(LoadInfoToFilePDFService)
-) -> GenerateCVResponseSchema: 
+) -> GenerateCurriculumToFileSchema: 
     try:
         _basename = f"pdf_{uuid4()}"
         stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
-        cv = await session.scalar(stmt)
+        curriculum_model = await session.scalar(stmt)
 
-        if not cv : 
+        if not curriculum_model : 
             raise ValueError("Conteúdo não encontrado. Tente novamente.")
 
-        context = StructuredCurriculumSchema.model_validate(cv)
+        context = StructuredCurriculumSchema.model_validate(curriculum_model)
 
         template_dir = DirPaths.DIR_TEMPLATES.value
     
@@ -167,15 +170,23 @@ async def generate_cv_to_pdf(
 
         # Realizar upload na nuvem do Google Drive
         drive_upload = DriveUploadService(settings)
-        response = drive_upload.upload(filepath=filepath, mimetype=mimetype)
-        
+        drive_upload.upload(filepath=filepath, mimetype=mimetype)
+            
         file_pdf.delete()
 
-        return response
-    
+        return {
+            "name": f"{_basename}.pdf"
+        }
+
     except FileNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=exc
+        )
+    
+    except ValidationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=exc
         )
 
@@ -190,7 +201,7 @@ async def generate_cv_to_pdf(
     status_code=status.HTTP_200_OK, 
     response_model=None
 )
-async def delete_cv(
+async def delete_curriculum(
     id: str,
     session = Depends(get_session)
 ) -> None: 
@@ -213,28 +224,29 @@ async def delete_cv(
         )
     
 @router.put(
-    "",
+    "/{id}",
     status_code=status.HTTP_200_OK,
     response_model=StructuredCurriculumResponseSchema
 )
-async def edit_cv(
+async def edit_curriculum(
+    id: str,
     schema: StructuredCurriculumEditSchema,
     session: AsyncSession = Depends(get_session)
 ) -> StructuredCurriculumResponseSchema:
     try:
-        stmt = select(CurriculumModel).filter(CurriculumModel.id == schema.id)
-        cv = await session.scalar(stmt)
+        stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
+        curriculum = await session.scalar(stmt)
 
-        if not cv:
+        if not curriculum:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Currículo não encontrado."
             )
 
-        editor = EditCurriculum(schema)
-        await editor.apply(cv, session)
+        editor = EditCurriculum(model=curriculum, schema=schema)
+        await editor.apply(session)
 
-        return cv
+        return curriculum
 
     except HTTPException:
         raise

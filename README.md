@@ -1,190 +1,239 @@
 # Auto CV
 
-API em FastAPI para gerar curriculos em `.docx` a partir de templates do Word.
+API full-stack para criação e geração automática de currículos em PDF e DOCX.
 
-O projeto recebe as informacoes do curriculo por HTTP, renderiza o campo `RESUME` nos modelos `.docx` usando `docxtpl` e salva o arquivo final no diretorio configurado.
+A aplicação permite cadastrar currículos estruturados (dados pessoais, experiências, formações, projetos e certificações), armazená-los em banco de dados PostgreSQL, gerar PDFs a partir de templates HTML (Jinja2 + WeasyPrint) e fazer upload dos arquivos para o Google Drive.
 
 ## Stack
 
-- Python 3.12+
-- FastAPI
-- Uvicorn
-- Pydantic / pydantic-settings
-- docxtpl
-- uv
-- LibreOffice, opcional para conversao em PDF
+**Backend**
 
-## Arquitetura
+| Tecnologia | Finalidade |
+|---|---|
+| Python 3.12+ | Linguagem principal |
+| FastAPI | Framework web assíncrono |
+| Uvicorn | Servidor ASGI |
+| Pydantic / pydantic-settings | Validação de dados e configuração |
+| SQLAlchemy (async) | ORM para PostgreSQL |
+| asyncpg | Driver async para PostgreSQL |
+| psycopg2-binary | Driver sync (testes) |
+| docxtpl | Renderização de templates Word (legado) |
+| WeasyPrint | Conversão HTML → PDF |
+| Jinja2 | Renderização de templates HTML |
+| Redis | Cache e pub-sub |
+| requests | Upload para Google Drive |
+| ruff | Linter e formatador |
+| mypy | Checagem estática de tipos |
+| pytest / pytest-asyncio | Testes |
+
+**Frontend**
+
+| Tecnologia | Finalidade |
+|---|---|
+| React 19 | Biblioteca de interfaces |
+| Vite 8 | Build e dev server |
+| TypeScript 6 | Tipagem estática |
+| TailwindCSS 4 | CSS utilitário |
+| react-router-dom 7 | Roteamento |
+| lucide-react | Ícones |
+
+## Estrutura do Projeto
 
 ```text
-src/
-├── api/
-│   └── v1/
-│       └── __init__.py        # Endpoint POST /api/v1
-├── config/
-│   ├── constants.py           # Enums de templates e diretorios
-│   └── settings.py            # Variaveis de ambiente
-├── schemas/
-│   ├── payload.py             # Entrada da API
-│   ├── response.py            # Resposta da API
-│   └── index.py               # Resposta do endpoint /
-├── services/
-│   ├── file.py                # Renderizacao, salvamento e PDF
-│   └── loading_info.py        # Montagem do RichText para o template
-└── __init__.py                    # Aplicacao FastAPI
+auto_cv/
+├── db/
+│   ├── db.sql                 # Schema do banco de produção
+│   └── db_test.sql            # Schema do banco de testes
+├── backend/
+│   ├── pyproject.toml         # Dependências e configurações Python
+│   ├── Dockerfile             # Build multi-stage (uv + Debian slim)
+│   ├── app/
+│   │   ├── __init__.py        # Aplicação FastAPI, CORS, exception handlers
+│   │   ├── config/            # Constantes, settings (.env), conexão DB
+│   │   ├── models/            # Modelos SQLAlchemy (curriculum, experiences, etc.)
+│   │   ├── schemas/           # Schemas Pydantic (entrada e resposta)
+│   │   ├── services/          # Regras de negócio (PDF, DOCX, upload, edição)
+│   │   └── api/v1/routers/    # Endpoints REST e WebSocket
+│   ├── templates/             # Templates HTML e DOCX
+│   ├── data/uploads/          # Arquivos gerados (pdf/, docx/)
+│   └── tests/                 # Testes unitários
+└── frontend/
+    ├── package.json           # Dependências Node
+    ├── vite.config.ts         # Configuração do Vite
+    └── src/
+        ├── config/            # Constantes e settings
+        ├── types/             # Interfaces TypeScript
+        ├── services/          # Cliente HTTP (API)
+        ├── hooks/             # Hooks React (formulários, status)
+        ├── components/        # Componentes reutilizáveis
+        ├── pages/             # Páginas da aplicação
+        └── utils/             # Utilitários
 ```
 
-## Requisitos
+## Banco de Dados
+
+O banco relacional (PostgreSQL) é composto por 8 tabelas principais:
+
+| Tabela | Descrição |
+|---|---|
+| `curriculum` | Registro principal do currículo (idioma, categoria, dados pessoais) |
+| `experiences` | Experiências profissionais |
+| `experience_activities` | Atividades dentro de cada experiência |
+| `educations` | Formação acadêmica |
+| `projects` | Projetos |
+| `project_descriptions` | Descrições de cada projeto |
+| `project_technologies` | Tecnologias usadas nos projetos |
+| `certifications` | Certificações |
+
+Enums disponíveis:
+- **Idioma**: `portuguese`, `english`, `spanish`
+- **Categoria**: 70+ categorias profissionais (tecnologia, administração, vendas, saúde, engenharia, etc.)
+
+Os scripts de criação do schema estão em `db/db.sql` (produção) e `db/db_test.sql` (testes).
+
+## Pré-requisitos
 
 - Python 3.12 ou superior
-- uv instalado
-- LibreOffice instalado, apenas se usar `pdf: true`
-- Projeto no Google Cloud para google drive
+- Node.js 20 ou superior
+- PostgreSQL 15+
+- Redis 7+
+- uv (gerenciador de pacotes Python)
+- LibreOffice (opcional, para conversão DOCX legada)
+- Conta Google Cloud com Google Apps Script configurado (para upload no Drive)
 
-## Configuracao Local
+## Configuração Local
 
-Instale as dependencias:
+### Backend
 
 ```bash
+cd backend
+
+# Instalar dependências
 uv sync
 ```
 
-Crie um arquivo `.env` na raiz do projeto:
+Crie um arquivo `.env` em `backend/`:
 
 ```env
-DIST_PATH=/caminho/para/salvar/google/drive
+DB_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
+DB_TEST_URL=postgresql+psycopg2://postgres:1234@localhost:5432/test_autocv
+REDIS_URL=redis://localhost:6379
+API_KEY=<sua-api-key>
+APP_SCRIPT_KEY=<sua-app-script-key>
 ```
 
-Exemplo:
-
-```env
-DIST_PATH=/1aOsYKIC6YYCzwWCtZVTknA1f9ClDk9zD
-```
-
-Os templates base ficam em:
-
-```text
-data/portuguese.docx
-data/english.docx
-```
-
-Os templates devem conter a variavel `{{r RESUME}}`, pois o projeto envia um `RichText` do `docxtpl`.
-
-## Executando a API
+### Frontend
 
 ```bash
+cd frontend
+
+# Instalar dependências
+npm install
+```
+
+Crie um arquivo `.env` em `frontend/`:
+
+```env
+VITE_API_URL=http://localhost:8000
+VITE_WS=ws://localhost:8000
+```
+
+## Executando
+
+### Backend
+
+```bash
+cd backend
 uv run uvicorn app:app --reload
 ```
 
-URLs principais:
+A API estará disponível em `http://localhost:8000`. A documentação Swagger pode ser acessada em `/docs`.
 
-```text
-GET  /
-POST /api/v1
-GET  /docs
-```
-
-## Gerar Curriculo
-
-Endpoint:
-
-```http
-POST /api/v1
-```
-
-Payload:
-
-```json
-{
-  "cv": "portuguese.docx",
-  "info": "**Desenvolvedor Python** com experiencia em FastAPI, automacao e integracoes.",
-  "pdf": false
-}
-```
-
-Campos:
-
-| Campo | Tipo | Obrigatorio | Valores |
-| --- | --- | --- | --- |
-| `cv` | string | sim | `portuguese.docx`, `english.docx` |
-| `dirname` | string | sim | `portuguese`, `english` |
-| `info` | string | sim | Texto que sera aplicado ao campo `RESUME` |
-| `pdf` | boolean | nao | `true` para converter tambem para PDF |
-
-Exemplo com `curl`:
+### Frontend
 
 ```bash
-curl -X POST http://127.0.0.1:8000/api/v1 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "cv": "portuguese.docx",
-    "info": "**Desenvolvedor Python** com experiencia em automacao de documentos.",
-    "pdf": false
-  }'
+cd frontend
+npm run dev
 ```
 
-Resposta esperada:
-
-```json
-{
-  "name": "nome_do_arquivo.extensao",
-  "mimetype": "tipo/arquivo"
-}
-```
-
-## Saída dos Arquivos
-
-O arquivo `.docx` e salvo em:
-
-```text
-{DIST_PATH}/docx/{filename}.docx
-```
-
-Quando `pdf` for `true`, a conversao usa LibreOffice em modo headless e salva o PDF em:
-
-```text
-{DIST_PATH}/pdf/{filename}.pdf
-```
-
-## Formatação do Texto
-
-Trechos entre `**` sao renderizados em negrito no documento:
-
-```text
-Texto normal com **trecho em negrito**.
-```
-
-O `LoadingInfoService` transforma esse texto em `RichText` e monta o contexto:
-
-```python
-{
-    "RESUME": rt
-}
-```
-
-## Validação
-
-Rodar os testes:
+### Docker
 
 ```bash
+cd backend
+docker build -t autocv .
+docker run -p 8000:8000 -e PORT=8000 autocv
+```
+
+## Endpoints da API
+
+Prefixo: `/api/v1`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/` | Status da API e versão |
+| `POST` | `/api/v1/cv` | Criar currículo |
+| `GET` | `/api/v1/cv` | Listar currículos (`?category=` `&language=`) |
+| `GET` | `/api/v1/cv/{id}` | Buscar currículo por ID |
+| `PUT` | `/api/v1/cv/{id}` | Editar currículo |
+| `DELETE` | `/api/v1/cv/{id}` | Excluir currículo |
+| `POST` | `/api/v1/cv/pdf/{id}` | Gerar PDF e enviar ao Google Drive (`?template=standard|modern`) |
+| `WS` | `/api/v1/ws/health` | WebSocket de health check (ping/pong) |
+
+Documentação interativa: `http://localhost:8000/docs`
+
+## Testes
+
+### Backend
+
+```bash
+cd backend
+
+# Rodar todos os testes
 uv run pytest
-```
 
-Rodar apenas uma pasta ou arquivo de teste:
-
-```bash
+# Rodar testes de uma pasta ou arquivo específico
 uv run pytest tests/unit/services
 uv run pytest tests/unit/services/test_file.py
 ```
 
-Rodar checagem de tipos:
+### Lint e typecheck
 
 ```bash
+cd backend
+
+# Linter e formatador
+uv run ruff check app
+uv run ruff format --check app
+
+# Checagem de tipos
 uv run mypy app
+# Caso haja conflito de módulos:
+# uv run mypy --explicit-package-bases app
 ```
 
-Se o mypy reclamar que um arquivo foi encontrado com dois nomes de modulo, execute com bases explicitas:
+### Frontend
 
 ```bash
-uv run mypy --explicit-package-bases app
+cd frontend
+
+# Linter
+npm run lint
+
+# Build (inclui checagem do TypeScript)
+npm run build
 ```
+
+## Deploy
+
+A aplicação está preparada para deploy em qualquer plataforma de containers (Docker). O `Dockerfile` localizado em `backend/` utiliza build multi-stage com `uv` e imagem final `debian:trieixie-slim`, rodando como usuário não-root.
+
+Variáveis de ambiente obrigatórias para produção:
+- `DB_URL`
+- `REDIS_URL`
+- `API_KEY`
+- `APP_SCRIPT_KEY`
+- `PORT` (usado pelo CMD do Uvicorn)
+
+## Licença
+
+Este projeto é privado. Consulte o mantenedor para informações sobre licenciamento.

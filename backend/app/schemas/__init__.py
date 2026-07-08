@@ -1,6 +1,6 @@
 from .index import IndexSchema
-from .generate_cv import (
-    GenerateCVResponseSchema
+from .generate_curriculum_to_file import (
+    GenerateCurriculumToFileSchema
 )
 
 from .curriculum_create import (
@@ -39,7 +39,7 @@ from .validators import Validators
 
 __all__ = [
     "IndexSchema",
-    "GenerateCVResponseSchema",
+    "GenerateCurriculumToFileSchema",
     "ActivitySchema",
     "EducationSchema",
     "StructuredCurriculumSchema",
