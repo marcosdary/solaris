@@ -1,15 +1,15 @@
-from app.config.constants import ( 
+from .constants import ( 
     TemplateFile, 
     DirPaths,
     MimeTypes,
     TypeFolder,
     Language,
-    CVCategory,
+    CurriculumCategory,
     Sites,
     initialize_directories
 )
-from app.config.settings import get_settings, Settings 
-from app.config.database import PostgresAsyncDB, PostgresSyncDB
+from .settings import get_settings, Settings 
+from .database import PostgresAsyncDB, PostgresSyncDB
 
 __all__ = [
     "TemplateFile",
@@ -17,7 +17,7 @@ __all__ = [
     "MimeTypes",    
     "TypeFolder",
     "Language",
-    "CVCategory",
+    "CurriculumCategory",
     "Sites",
     "initialize_directories",
     "get_settings",

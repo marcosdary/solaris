@@ -9,6 +9,7 @@ from fastapi import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from typing import AsyncGenerator
 
 from app.models import CurriculumModel
@@ -16,7 +17,7 @@ from app.config import (
     get_settings,
     DirPaths,
     TemplateFile,
-    CVCategory,
+    CurriculumCategory,
     Language
 )
 from app.schemas import (
@@ -41,12 +42,17 @@ async def get_session(
     async with postgres_db.get_session() as session:
         yield session
 
+async def get_drive_upload_service(
+    settings = Depends(get_settings),
+) -> DriveUploadService:
+    return DriveUploadService(settings)
+
 # 1. Criamos uma função separada para a tarefa pesada em segundo plano
 # Nota: Esta função NÃO deve injetar dependências via Depends(). Passamos os objetos já resolvidos.
 def process_pdf_and_upload(
     curriculum_data_dict: dict,
     template_value: str,
-    settings,
+    drive_upload,
     load_info_to_file
 ):
     try:
@@ -68,7 +74,6 @@ def process_pdf_and_upload(
         filepath = file_pdf.path / file_pdf.filename
 
         # Faz o Upload para o Drive (Processo I/O-Bound lento)
-        drive_upload = DriveUploadService(settings)
         drive_upload.upload(filepath=filepath, mimetype=mimetype)
             
         # Remove o arquivo temporário local
@@ -94,15 +99,24 @@ async def curriculum(
     schema: StructuredCurriculumSchema,
     session = Depends(get_session)
 ) -> StructuredCurriculumSummarySchema: 
-    
+    try:
         cv = CurriculumModel.from_schema(schema)
         session.add(cv)
         await session.commit()
         await session.refresh(cv)
         return cv
     
+    except IntegrityError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=f"Erro de integridade: {exc}"
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=f"Erro de desconhecido: {exc}"
+        )
     
-
 @router.get(
     "", 
     status_code=status.HTTP_200_OK, 
@@ -110,7 +124,7 @@ async def curriculum(
 )
 async def get_curriculum_all(
     session = Depends(get_session),
-    category: CVCategory = None,
+    category: CurriculumCategory = None,
     language: Language = None
 ) -> ListStructuredCurriculumResponse: 
     try:
@@ -178,7 +192,7 @@ async def get_curriculum(
 async def generate_curriculum_to_pdf(
     id: str,
     background_tasks: BackgroundTasks, # Injetamos a ferramenta de background do FastAPI
-    settings = Depends(get_settings),
+    drive_upload = Depends(get_drive_upload_service),
     template: TemplateFile = TemplateFile.standard,
     session: AsyncSession = Depends(get_session),
     load_info_to_file = Depends(LoadInfoToFilePDFService)
@@ -205,7 +219,7 @@ async def generate_curriculum_to_pdf(
         process_pdf_and_upload,
         curriculum_data_dict=context.model_dump(),
         template_value=template.value,
-        settings=settings,
+        drive_upload=drive_upload,
         load_info_to_file=load_info_to_file
     )
 

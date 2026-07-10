@@ -22,7 +22,7 @@ class DirPaths(Enum):
 class TypeFolder(Enum):
     PDF = "pdf"
     DOCX = "docx"
-class CVCategory(str, Enum):
+class CurriculumCategory(str, Enum):
     # Tecnologia
     backend_developer = "backend_developer"
     frontend_developer = "frontend_developer"
@@ -151,7 +151,7 @@ __all__ = [
     "MimeTypes",
     "TypeFolder",
     "Language",
-    "CVCategory",
+    "CurriculumCategory",
     "Sites",
     "initialize_directories"
 ]

@@ -11,7 +11,7 @@ from app.models.experience import ExperienceModel
 from app.models.education import EducationModel
 from app.models.project import ProjectModel
 from app.models.certification import CertificationModel
-from app.config import Language, CVCategory
+from app.config import Language, CurriculumCategory
 from app.schemas import (
     StructuredCurriculumSchema
 )
@@ -23,7 +23,7 @@ class CurriculumModel(BaseModel):
     id: Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
 
     language: Mapped[Language] = mapped_column(Enum(Language, name="language_enum"))
-    category: Mapped[CVCategory] = mapped_column(Enum(CVCategory, name="cv_category_enum"))
+    category: Mapped[CurriculumCategory] = mapped_column(Enum(CurriculumCategory, name="cv_category_enum"))
 
     name: Mapped[str]
     role: Mapped[str]

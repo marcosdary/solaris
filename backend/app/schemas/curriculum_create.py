@@ -1,24 +1,13 @@
 from datetime import date
 from typing import Annotated, List, Optional
-import re
+from pydantic import Field, computed_field
 
-from pydantic import Field, field_serializer, computed_field
-
-from app.config import Language, CVCategory
+from app.config import Language, CurriculumCategory
 from app.schemas.base import BaseSchema
-
 
 class ActivitySchema(BaseSchema):
     """Uma atividade/realização dentro de uma experiência profissional."""
     description: Annotated[str, Field(min_length=1)]
-
-    @field_serializer("description", mode="plain")
-    def serialize_bold(self, value: str) -> str:
-        return re.sub(
-            r"\*\*(.*?)\*\*",
-            r"<strong>\1</strong>",
-            value,
-        )
 
 class ExperienceSchema(BaseSchema):
     """Experiência profissional."""
@@ -51,29 +40,10 @@ class EducationSchema(BaseSchema):
     start_date: date
     end_date: Optional[date] = None
 
-    @computed_field
-    @property
-    def period(self) -> str:
-        start = self.start_date.strftime("%m/%Y")
-
-        if self.end_date is None:
-            return f"{start} - Atual"
-
-        end = self.end_date.strftime("%m/%Y")
-        return f"{start} - {end}"
-
 
 class ProjectDescriptionSchema(BaseSchema):
     """Descrição de um projeto."""
     description: Annotated[str, Field(min_length=1)]
-
-    @field_serializer("description", mode="plain")
-    def serialize_bold(self, value: str) -> str:
-        return re.sub(
-            r"\*\*(.*?)\*\*",
-            r"<strong>\1</strong>",
-            value,
-        )
 
 
 class ProjectTechnologySchema(BaseSchema):
@@ -97,16 +67,6 @@ class ProjectSchema(BaseSchema):
 
     technologies: Optional[List[ProjectTechnologySchema]] = None
 
-    @computed_field
-    @property
-    def period(self) -> str:
-        start = self.start_date.strftime("%m/%Y")
-
-        if self.end_date is None:
-            return f"{start} - Atual"
-
-        end = self.end_date.strftime("%m/%Y")
-        return f"{start} - {end}"
 
 class CertificationSchema(BaseSchema):
     """Certificação."""
@@ -117,23 +77,12 @@ class CertificationSchema(BaseSchema):
     start_date: date
     end_date: Optional[date] = None
 
-    @computed_field
-    @property
-    def period(self) -> str:
-        start = self.start_date.strftime("%m/%Y")
-
-        if self.end_date is None:
-            return f"{start} - Atual"
-
-        end = self.end_date.strftime("%m/%Y")
-        return f"{start} - {end}"
-
 
 class StructuredCurriculumSchema(BaseSchema):
     """Currículo estruturado."""
 
     language: Language = Language.portuguese
-    category: CVCategory = CVCategory.backend_developer
+    category: CurriculumCategory = CurriculumCategory.backend_developer
 
     name: Annotated[str, Field(min_length=1)]
     email: Annotated[str, Field(min_length=1)]
@@ -167,13 +116,6 @@ class StructuredCurriculumSchema(BaseSchema):
         Field(default=None)
     ] 
 
-    @field_serializer("resume", mode="plain")
-    def serialize_bold(self, value: str) -> str:
-        return re.sub(
-            r"\*\*(.*?)\*\*",
-            r"<strong>\1</strong>",
-            value,
-        )
 __all__ = [
     "ActivitySchema",
     "ExperienceSchema",
