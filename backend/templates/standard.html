@@ -7,15 +7,17 @@
     <style>
         @page {
             size: A4;
-            margin: 1.6cm;
+            margin: 1.2cm 1.4cm; /* Margens verticais menores para otimizar espaço */
         }
 
         body {
-            font-family: "Times New Roman", Times, serif;
-            font-size: 8pt;
+            /* Fontes sans-serif altamente legíveis por ATS e profissionais */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 8.5pt; /* Tamanho reduzido para máxima densidade sem perder legibilidade */
             line-height: 1.35;
-            color: #2b2b2b;
+            color: #334155; /* Slate 700 */
             margin: 0;
+            padding: 0;
         }
 
         .container {
@@ -23,123 +25,130 @@
         }
 
         header {
-            text-align: center;
-            margin-bottom: 18px;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 16pt;
-            color: #163c75;
-            font-weight: bold;
-        }
-
-        .subtitle {
-            margin-top: 4px;
-            font-size: 9pt;
-            color: #555;
-        }
-
-        .contact {
-            margin-top: 8px;
-            font-size: 8pt;
-            color: #444;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid #163c75;
-            margin: 12px 0;
-        }
-
-        .section {
-            margin-bottom: 14px;
-        }
-
-        .section-title {
-            font-family: "Times New Roman", Times, serif;
-            font-size: 11pt;
-            font-weight: bold;
-            color: #163c75;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .item {
+            text-align: left;
             margin-bottom: 10px;
         }
 
-        .row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+        h1 {
+            margin: 0 0 3px 0;
+            font-size: 17pt;
+            color: #0f172a; /* Slate 900 */
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
-        .company {
-            font-size: 8pt;
-            font-weight: bold;
+        .subtitle {
+            margin-top: 0;
+            margin-bottom: 4px;
+            font-size: 10pt;
+            color: #2563eb; /* Azul moderno */
+            font-weight: 600;
         }
 
-        .period {
-            font-size: 8pt;
-            color: #555;
-        }
-
-        .role {
-            font-size: 8pt;
-            font-weight: bold;
-        }
-
-        .location {
-            font-size: 8pt;
-            color: #555;
-        }
-
-        .description {
-            font-size: 8pt;
-            text-align: justify;
-        }
-
-        ul {
-            margin: 4px 0 0 16px;
-            padding: 0;
-        }
-
-        li {
-            font-size: 8pt;
-            margin-bottom: 2px;
-        }
-
-        .tags {
-            margin: 5px 0;
-        }
-
-        .tag {
-            display: inline-block;
-            border: 1px solid #163c75;
-            border-radius: 12px;
-            padding: 1px 6px;
-            margin-right: 4px;
-            margin-bottom: 3px;
-            font-size: 7pt;
-            color: #163c75;
-            background: #eef4ff;
+        .contact {
+            font-size: 8.5pt;
+            color: #64748b;
         }
 
         .github {
-            margin-top: 3px;
-            margin-bottom: 6px;
-            font-size: 8pt;
-            color: #555;
+            margin-top: 2px;
+            font-size: 8.5pt;
         }
 
         .github a {
-            color: #163c75;
+            color: #2563eb;
             text-decoration: none;
         }
 
         .github a:hover {
             text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #e2e8f0;
+            margin: 10px 0; /* Divisores mais colados para salvar espaço vertical */
+        }
+
+        .section {
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .item {
+            margin-bottom: 8px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1px;
+        }
+
+        .company {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .period {
+            font-size: 8.5pt;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .role {
+            font-size: 8.5pt;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .location {
+            font-size: 8.5pt;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .description {
+            font-size: 8.5pt;
+            margin-top: 2px;
+        }
+
+        ul {
+            margin: 2px 0 0 14px;
+            padding: 0;
+            list-style-type: disc;
+        }
+
+        li {
+            font-size: 8.5pt;
+            margin-bottom: 2px;
+            color: #334155;
+        }
+
+        .tags {
+            margin: 4px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            border-radius: 4px;
+            padding: 1px 6px;
+            margin-right: 3px;
+            margin-bottom: 3px;
+            font-size: 7.5pt;
+            font-weight: 600;
+            color: #1e40af;
+            background: #eff6ff;
         }
     </style>
 </head>
@@ -152,24 +161,17 @@
             <h1>{{ name }}</h1>
 
             <div class="subtitle">
-                {{ role}}
+                {{ role }}
             </div>
 
             <div class="contact">
-                {{ email }}
-                •
-                {{ linkedin }}
-                •
-                {{ phone }}
-                •
-                {{ location }}
+                {{ email }} • {{ phone }} • {{ location }}
+                {% if linkedin %} • {{ linkedin }} {% endif %}
             </div>
 
             {% if github %}
             <div class="github">
-                <a href="{{ github }}">
-                    {{ github }}
-                </a>
+                <a href="{{ github }}">{{ github }}</a>
             </div>
             {% endif %}
         </header>
@@ -178,43 +180,30 @@
 
         <section class="section">
             <div class="section-title">
-            {% if language.value == 'english' %}Summary{% else %}Resumo{% endif %}
+                {% if language.value == 'english' %}Summary{% else %}Resumo{% endif %}
             </div>
-
-            {{ resume }}
+            <div class="description">
+                {{ resume }}
+            </div>
         </section>
 
         <hr>
 
         <section class="section">
-
             <div class="section-title">
                 {% if language.value == 'english' %}Professional Experience{% else %}Experiência Profissional{% endif %}
             </div>
 
             {% for exp in experiences %}
-
             <div class="item">
-
                 <div class="row">
-                    <div class="company">
-                        {{ exp.company }}
-                    </div>
-
-                    <div class="period">
-                        {{ exp.period }}
-                    </div>
-                    
+                    <div class="company">{{ exp.company }}</div>
+                    <div class="period">{{ exp.period }}</div>
                 </div>
 
                 <div class="row">
-                    <div class="role">
-                        {{ exp.role }}
-                    </div>
-
-                    <div class="location">
-                        {{ exp.location }}
-                    </div>
+                    <div class="role">{{ exp.role }}</div>
+                    <div class="location">{{ exp.location }}</div>
                 </div>
 
                 <ul>
@@ -222,64 +211,42 @@
                     <li>{{ act.description }}</li>
                     {% endfor %}
                 </ul>
-
             </div>
-
             {% endfor %}
-
         </section>
 
         {% if projects %}
-
         <hr>
-
         <section class="section">
-
             <div class="section-title">
                 {% if language.value == 'english' %}Projects{% else %}Projetos{% endif %}
             </div>
 
             {% for pro in projects %}
-
             <div class="item">
-
                 <div class="row">
-                    <div class="company">
-                        {{ pro.name }}
-                    </div>
-
-                    <div class="period">
-                        {{ pro.period }}
-                    </div>
-
+                    <div class="company">{{ pro.name }}</div>
+                    <div class="period">{{ pro.period }}</div>
                 </div>
                 
                 {% if pro.github %}
                 <div class="github">
-                    GitHub:
-                    <a href="{{ pro.github }}">
-                        {{ pro.github }}
-                    </a>
+                    GitHub: <a href="{{ pro.github }}">{{ pro.github }}</a>
                 </div>
                 {% endif %}
 
                 {% if pro.demo_url %}
                 <div class="github">
-                    Demo:
-                    <a href="{{ pro.demo_url }}">
-                        {{ pro.demo_url }}
-                    </a>
+                    Demo: <a href="{{ pro.demo_url }}">{{ pro.demo_url }}</a>
                 </div>
                 {% endif %}
 
                 {% if pro.technologies %}
-
                 <div class="tags">
                     {% for tech in pro.technologies %}
                     <span class="tag">{{ tech.technology }}</span>
                     {% endfor %}
                 </div>
-
                 {% endif %}
 
                 <div class="description">
@@ -289,89 +256,53 @@
                         {% endfor %}
                     </ul>
                 </div>
-
             </div>
-
             {% endfor %}
-
         </section>
-
         {% endif %}
 
         <hr>
 
         <section class="section">
-
             <div class="section-title">
                 {% if language.value == 'english' %}Education{% else %}Formação Acadêmica{% endif %}
             </div>
 
             {% for edu in educations %}
-
             <div class="item">
-
                 <div class="row">
-                    <div class="company">
-                        {{ edu.institution }}
-                    </div>
-
-                    <div class="period">
-                        {{ edu.period }}
-                    </div>
+                    <div class="company">{{ edu.institution }}</div>
+                    <div class="period">{{ edu.period }}</div>
                 </div>
 
                 <div class="row">
-                    <div class="role">
-                        {{ edu.degree }}
-                    </div>
-
-                    <div class="location">
-                        {{ edu.location }}
-                    </div>
+                    <div class="role">{{ edu.degree }}</div>
+                    <div class="location">{{ edu.location }}</div>
                 </div>
-
             </div>
-
             {% endfor %}
-
         </section>
 
         <hr>
 
         <section class="section">
-
             <div class="section-title">
                 {% if language.value == 'english' %}Certifications{% else %}Certificações{% endif %}
             </div>
 
             {% for cert in certifications %}
-
             <div class="item">
-
                 <div class="row">
-                    <div class="company">
-                        {{ cert.name }}
-                    </div>
-
-                    <div class="period">
-                        {{ cert.period }}
-                    </div>
+                    <div class="company">{{ cert.name }}</div>
+                    <div class="period">{{ cert.period }}</div>
                 </div>
 
                 <div class="row">
-                    <div class="role">
-                        {{ cert.institution }}
-                    </div>
-
-                    <div class="location">
-                        {{ cert.location }}
-                    </div>
+                    <div class="role">{{ cert.institution }}</div>
+                    <div class="location">{{ cert.location }}</div>
                 </div>
-
             </div>
-
             {% endfor %}
-
         </section>
 
     </div>

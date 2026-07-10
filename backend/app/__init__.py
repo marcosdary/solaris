@@ -36,7 +36,7 @@ app = FastAPI(
     title="Auto CV",
     version="0.1.0",
     description="""
-API responsável pela integração para inserção de informações ao currículo
+API responsável pela integração para inserção de informações ao currículo 
 """,
     lifespan=lifespan
 )
@@ -130,7 +130,7 @@ async def http_exception_handler(
     tags=["Index"],
     response_model=IndexSchema,
     summary="Endpoint inicial da API",
-    description="Retorna informações básicas da API, como versão e status de integração."
+    description="Retorna informações básicas da API, como versão e status de integração. - Scientia Potestas Est (Francis Bacon)"
 )
 def index():
     """

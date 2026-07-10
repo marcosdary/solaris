@@ -1,46 +1,61 @@
-# STAGE 1
-FROM ghcr.io/astral-sh/uv:0.9.17-trixie-slim AS builder
+# ==========================
+# STAGE 1 - Builder
+# ==========================
+FROM python:3.14-slim AS builder
 
 ENV UV_COMPILE_BYTECODE=1 \
-  UV_LINK_MODE=copy \
-  UV_PYTHON_PREFERENCE=only-managed \
-  UV_NO_DEV=1 \
-  UV_PYTHON_INSTALL_DIR=/python
+    UV_LINK_MODE=copy \
+    UV_PROJECT_ENVIRONMENT=/opt/venv
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* ;
-
-RUN uv python install 3.14.2 ;
+COPY --from=ghcr.io/astral-sh/uv:0.9.17 /uv /usr/local/bin/uv
 
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY pyproject.toml uv.lock ./
+
 RUN --mount=type=cache,target=/root/.cache/uv \
-  --mount=type=bind,source=uv.lock,target=uv.lock \
-  --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-  uv sync --frozen --no-install-project ;
+    uv sync --frozen --no-install-project
 
-COPY . /app
+COPY . .
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-  uv sync --frozen ;
+    uv sync --frozen
 
-# STAGE 2 - Estágio final
-FROM debian:trixie-slim AS development
+# ==========================
+# STAGE 2 - Runtime
+# ==========================
+FROM python:3.14-slim
 
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH"
 
-RUN groupadd --gid 1000 python \
-  && useradd --uid 1000 --gid python --shell /bin/bash --create-home python ;
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libcairo2 \
+        libcairo-gobject2 \
+        libglib2.0-0 \
+        libgdk-pixbuf-2.0-0 \
+        libpango-1.0-0 \
+        libpangocairo-1.0-0 \
+        libharfbuzz0b \
+        libfontconfig1 \
+        shared-mime-info \
+        fonts-dejavu-core && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder --chown=python:python /python /python
+RUN groupadd -g 1000 python && \
+    useradd -m -u 1000 -g python python
+
+WORKDIR /app
+
+COPY --from=builder --chown=python:python /opt/venv /opt/venv
 COPY --from=builder --chown=python:python /app /app
 
-ENV PATH="/app/.venv/bin:${PATH}"
-
 USER python
-ENTRYPOINT []
-WORKDIR /app
 
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "$PORT", "app:app"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
