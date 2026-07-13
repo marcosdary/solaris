@@ -1,9 +1,9 @@
 from sqlalchemy.orm import (
     Mapped, 
     mapped_column, 
-    relationship,
+    relationship
 )
-from sqlalchemy import Enum
+from sqlalchemy import Enum, ForeignKey
 from uuid import uuid4
 from typing import Optional
 
@@ -39,11 +39,11 @@ class CurriculumModel(BaseModel):
 
     resume: Mapped[str]
 
-    user_id: Mapped[Optional[str]] = mapped_column(nullable=True)
+    user_id: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id"), nullable=True)
 
     user: Mapped[Optional["UserModel"]] = relationship(
         back_populates="curriculums",
-        lazy="selectin",
+        lazy="select",
     )
 
     experiences: Mapped[list["ExperienceModel"]] = relationship(
@@ -71,8 +71,9 @@ class CurriculumModel(BaseModel):
     )
 
     @classmethod
-    def from_schema(cls, schema: StructuredCurriculumSchema) -> "CurriculumModel":
+    def from_schema(cls, user_id: str, schema: StructuredCurriculumSchema) -> "CurriculumModel":
         return cls(
+            user_id=user_id,
             id=f"cv_{uuid4()}",
             language=schema.language,
             category=schema.category,

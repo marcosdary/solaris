@@ -149,9 +149,10 @@ class CurriculumService:
     @staticmethod
     async def create(
         session: AsyncSession,
+        user_id: str,
         schema: StructuredCurriculumSchema,
     ) -> CurriculumModel:
-        cv = CurriculumModel.from_schema(schema)
+        cv = CurriculumModel.from_schema(user_id, schema)
         return await CurriculumRepo.create(session, cv)
 
     @staticmethod
@@ -167,10 +168,11 @@ class CurriculumService:
     @staticmethod
     async def get_all(
         session: AsyncSession,
+        user_id: str,
         category: Optional[CurriculumCategory] = None,
         language: Optional[Language] = None,
     ) -> List[CurriculumModel]:
-        data = await CurriculumRepo.get_all(session, category, language)
+        data = await CurriculumRepo.get_all(session, user_id, category, language)
         if not data:
             raise ValueError("Conteúdo não encontrado. Tente novamente.")
         return data

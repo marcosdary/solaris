@@ -38,16 +38,17 @@ router = APIRouter()
 
 
 @router.post(
-    "",
+    "/{user_id}",
     status_code=status.HTTP_201_CREATED,
     response_model=StructuredCurriculumSummarySchema,
 )
 async def create_curriculum(
+    user_id: str,
     schema: StructuredCurriculumSchema,
     session = Depends(get_session),
 ) -> StructuredCurriculumSummarySchema:
     try:
-        return await CurriculumService.create(session, schema)
+        return await CurriculumService.create(session, user_id, schema)
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -56,17 +57,18 @@ async def create_curriculum(
 
 
 @router.get(
-    "",
+    "/{user_id}",
     status_code=status.HTTP_200_OK,
     response_model=ListStructuredCurriculumResponse,
 )
 async def list_curriculums(
+    user_id: str,
     session = Depends(get_session),
     category: CurriculumCategory = None,
     language: Language = None,
 ) -> ListStructuredCurriculumResponse:
     try:
-        return await CurriculumService.get_all(session, category, language)
+        return await CurriculumService.get_all(session, user_id, category, language)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
     except Exception as exc:

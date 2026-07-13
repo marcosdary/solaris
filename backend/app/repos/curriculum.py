@@ -30,10 +30,11 @@ class CurriculumRepo:
     @staticmethod
     async def get_all(
         session: AsyncSession,
+        user_id: str,
         category: Optional[CurriculumCategory] = None,
         language: Optional[Language] = None,
     ) -> List[CurriculumModel]:
-        filters: list = []
+        filters: list = [CurriculumModel.user_id == user_id,]
 
         if category:
             filters.append(CurriculumModel.category == category)
