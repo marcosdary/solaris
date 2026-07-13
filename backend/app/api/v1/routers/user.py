@@ -73,4 +73,40 @@ async def get_user(
         )
 
 
+@router.patch(
+    "/{id}/deactivate",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def deactivate_user(
+    id: str,
+    session = Depends(get_session),
+) -> None:
+    try:
+        await UserService.deactivate(session, id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+        )
+
+
+@router.patch(
+    "/{id}/activate",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def activate_user(
+    id: str,
+    session = Depends(get_session),
+) -> None:
+    try:
+        await UserService.activate(session, id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+        )
+
+
 __all__ = ["router"]
