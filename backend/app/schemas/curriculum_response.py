@@ -30,7 +30,6 @@ class ActivityResponseSchema(ActivitySchema):
             value,
         )
 
-
 class ExperienceResponseSchema(ExperienceSchema):
     id: str
     created_at: datetime
@@ -38,12 +37,10 @@ class ExperienceResponseSchema(ExperienceSchema):
 
     activities: list[ActivityResponseSchema]
 
-
 class EducationResponseSchema(EducationSchema):
     id: str
     created_at: datetime
     updated_at: datetime
-
 
 class ProjectDescriptionResponseSchema(ProjectDescriptionSchema):
     id: str
@@ -63,7 +60,6 @@ class ProjectTechnologyResponseSchema(ProjectTechnologySchema):
     created_at: datetime
     updated_at: datetime
 
-
 class ProjectResponseSchema(ProjectSchema):
     id: str
     created_at: datetime
@@ -82,7 +78,6 @@ class ProjectResponseSchema(ProjectSchema):
 
         end = self.end_date.strftime("%m/%Y")
         return f"{start} - {end}"
-
 
 class CertificationResponseSchema(CertificationSchema):
     id: str

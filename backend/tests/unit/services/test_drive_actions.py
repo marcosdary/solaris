@@ -1,13 +1,15 @@
+from pathlib import Path
+
 from docx import Document
 from pytest import mark
-from pathlib import Path
 from reportlab.pdfgen import canvas
 
-from app.services import DriveUploadService
+from app.integrations import GoogleDriveBucketService
 from app.config import MimeTypes
 
-def test_upload_no_google_drive_para_arquivo_docx(tmp_dir, faker, filename, settings):
-    drive_actions = DriveUploadService(
+@mark.asyncio
+async def test_upload_no_google_drive_para_arquivo_docx(tmp_dir, faker, filename, settings):
+    drive_actions = GoogleDriveBucketService(
         settings=settings
     )
     filename_docx = f"{filename}.docx"
@@ -17,10 +19,9 @@ def test_upload_no_google_drive_para_arquivo_docx(tmp_dir, faker, filename, sett
     doc = Document()
     doc.add_paragraph(faker.paragraph())
     doc.save(filepath)
-        
-    response = drive_actions.upload(
+
+    response = await drive_actions.upload(
         filepath=filepath,
-        filename=filename_docx,
         mimetype=mimetype
     )
     assert response == {
@@ -29,9 +30,9 @@ def test_upload_no_google_drive_para_arquivo_docx(tmp_dir, faker, filename, sett
         "mimeType": mimetype
     }
 
-def test_upload_no_google_drive_para_arquivo_pdf(drive_service, tmp_dir, faker, filename, settings):
-    drive_actions = DriveUploadService(
-        creds=drive_service,
+@mark.asyncio
+async def test_upload_no_google_drive_para_arquivo_pdf(tmp_dir, faker, filename, settings):
+    drive_actions = GoogleDriveBucketService(
         settings=settings
     )
 
@@ -43,9 +44,8 @@ def test_upload_no_google_drive_para_arquivo_pdf(drive_service, tmp_dir, faker, 
     c.drawString(100, 750, faker.paragraph())
     c.save()
 
-    response = drive_actions.upload(
+    response = await drive_actions.upload(
         filepath=filepath,
-        filename=filename_pdf,
         mimetype=mimetype
     )
 
@@ -56,32 +56,29 @@ def test_upload_no_google_drive_para_arquivo_pdf(drive_service, tmp_dir, faker, 
     }
 
 @mark.xfail(reason="O erro ocorre devido ao fato de não ter criado o arquivo doc")
-def test_erro_devido_ao_fato_do_arquivo_docx_nao_foi_criado(drive_service, tmp_dir, filename, settings):
-    drive_actions = DriveUploadService(
-        creds=drive_service,
+@mark.asyncio
+async def test_erro_devido_ao_fato_do_arquivo_docx_nao_foi_criado(tmp_dir, filename, settings):
+    drive_actions = GoogleDriveBucketService(
         settings=settings
     )
     filename_docx = f"{filename}.docx"
     mimetype = MimeTypes.docx.value
     filepath = Path(tmp_dir) / filename_docx
-    drive_actions.upload(
+    await drive_actions.upload(
         filepath=filepath,
-        filename=filename_docx,
         mimetype=mimetype
     )
 
 @mark.xfail(reason="O erro ocorre devido ao fato de não ter criado o arquivo pdf")
-def test_erro_devido_ao_fato_do_arquivo_pdf_nao_foi_criado(drive_service, tmp_dir, filename, settings):
-    drive_actions = DriveUploadService(
-        creds=drive_service,
+@mark.asyncio
+async def test_erro_devido_ao_fato_do_arquivo_pdf_nao_foi_criado(tmp_dir, filename, settings):
+    drive_actions = GoogleDriveBucketService(
         settings=settings
     )
     filename_pdf = f"{filename}.pdf"
     mimetype = MimeTypes.pdf.value
     filepath = Path(tmp_dir) / filename_pdf
-    drive_actions.upload(
+    await drive_actions.upload(
         filepath=filepath,
-        filename=filename_pdf,
         mimetype=mimetype
     )
-

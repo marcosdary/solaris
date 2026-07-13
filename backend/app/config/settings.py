@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     DB_URL: str
     API_KEY: str
     APP_SCRIPT_KEY: str
+    SUPABASE_URL: str
+    SUPABASE_KEY: str
+    SUPABASE_BUCKET_NAME: str
 
 @lru_cache(maxsize=1)
 def get_settings():

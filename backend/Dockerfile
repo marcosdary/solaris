@@ -54,7 +54,7 @@ RUN groupadd -g 1000 python && \
 WORKDIR /app
 
 COPY --from=builder --chown=python:python /opt/venv /opt/venv
-COPY --from=builder --chown=python:python /app /app
+COPY --from=builder --chown=python:python /app/app app/app
 
 USER python
 
