@@ -1,0 +1,30 @@
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Boolean
+
+from app.models.base import BaseModel
+from app.schemas import UserCreateSchema
+
+class UserModel(BaseModel):
+    __tablename__ = "users"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+
+    name: Mapped[str]
+    email: Mapped[str] = mapped_column(unique=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    curriculums: Mapped[list["CurriculumModel"]] = relationship(
+        back_populates="user",
+        lazy="selectin",
+    )
+
+    @classmethod
+    def from_schema(cls, schema: UserCreateSchema) -> "UserModel":
+        return cls(
+            id=schema.phone,
+            name=schema.name,
+            email=schema.email,
+        )
+
+
+__all__ = ["UserModel"]

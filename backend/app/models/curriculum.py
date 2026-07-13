@@ -5,6 +5,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy import Enum
 from uuid import uuid4
+from typing import Optional
 
 from app.models.base import BaseModel
 from app.models.experience import ExperienceModel
@@ -37,6 +38,13 @@ class CurriculumModel(BaseModel):
     location: Mapped[str]
 
     resume: Mapped[str]
+
+    user_id: Mapped[Optional[str]] = mapped_column(nullable=True)
+
+    user: Mapped[Optional["UserModel"]] = relationship(
+        back_populates="curriculums",
+        lazy="selectin",
+    )
 
     experiences: Mapped[list["ExperienceModel"]] = relationship(
         back_populates="cv",

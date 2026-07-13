@@ -111,6 +111,15 @@ CREATE TYPE cv_category_enum AS ENUM (
     'consultant'
 );
 
+CREATE TABLE users (
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE curriculum (
     id VARCHAR(255) PRIMARY KEY,
 
@@ -129,6 +138,8 @@ CREATE TABLE curriculum (
     location VARCHAR(255) NOT NULL,
 
     resume TEXT NOT NULL,
+
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
 
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
@@ -244,6 +255,5 @@ CREATE TABLE certifications (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
-
 
 
