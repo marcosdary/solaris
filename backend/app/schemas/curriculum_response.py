@@ -112,6 +112,22 @@ class StructuredCurriculumSummarySchema(BaseSchema):
     created_at: datetime
     updated_at: datetime
 
+    @computed_field
+    @property
+    def format_message(self) -> str:
+        github_info = self.github if self.github else "Não informado"
+        
+        return (
+            f"📄 *Ficha do Currículo*\n\n"
+            f"*Nome:* {self.name}\n"
+            f"*Localização:* {self.location}\n\n"
+            f"*Contato e Redes*\n"
+            f"*E-mail:* {self.email}\n"
+            f"*LinkedIn:* https://{self.linkedin}\n"
+            f"*GitHub:* {github_info}\n\n",
+            f"*Currículo completo:* http://localhost:5173/curriculums/{self.id}"
+        )
+
 class StructuredCurriculumResponseSchema(StructuredCurriculumSchema):
     id: str
     created_at: datetime
@@ -129,6 +145,7 @@ class StructuredCurriculumResponseSchema(StructuredCurriculumSchema):
             r"<strong>\1</strong>",
             value,
         )
+
 
 class ListStructuredCurriculumResponse(RootModel[List[StructuredCurriculumSummarySchema]]): ...
 

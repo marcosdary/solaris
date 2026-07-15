@@ -69,7 +69,7 @@ async def create_curriculum(
     status_code=status.HTTP_200_OK,
     response_model=ListStructuredCurriculumResponse,
 )
-async def list_curriculums(
+async def list_curriculums_to_user(
     user_id: str,
     curriculum_service: CurriculumServiceDep,
     category: CurriculumCategory = None,
@@ -77,31 +77,6 @@ async def list_curriculums(
 ) -> ListStructuredCurriculumResponse:
     try:
         return await curriculum_service.get_all(user_id, category, language)
-    except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except DBAPIError:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Serviço indisponível no momento.",
-        )
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erro interno do servidor.",
-        )
-
-
-@router.get(
-    "/{id}",
-    status_code=status.HTTP_200_OK,
-    response_model=StructuredCurriculumResponseSchema,
-)
-async def get_curriculum(
-    id: str,
-    curriculum_service: CurriculumServiceDep,
-) -> StructuredCurriculumResponseSchema:
-    try:
-        return await curriculum_service.get_by_id(id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
     except DBAPIError:
@@ -156,6 +131,31 @@ async def generate_curriculum_pdf(
     )
 
     return {"name": f"{_basename}.pdf"}
+
+
+@router.get(
+    "/{id}",
+    status_code=status.HTTP_200_OK,
+    response_model=StructuredCurriculumSchema,
+)
+async def get_curriculum(
+    id: str,
+    curriculum_service: CurriculumServiceDep,
+) -> StructuredCurriculumSchema:
+    try:
+        return await curriculum_service.get_by_id(id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
+        )
 
 
 @router.delete(

@@ -116,6 +116,7 @@ class StructuredCurriculumSchema(BaseSchema):
         Field(default=None)
     ] 
 
+
 __all__ = [
     "ActivitySchema",
     "ExperienceSchema",
