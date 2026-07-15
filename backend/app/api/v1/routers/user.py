@@ -1,18 +1,10 @@
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, status
 from fastapi.exceptions import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import AsyncGenerator
 
-from app.schemas import UserCreateSchema, UserResponseSchema
-from app.services import UserService
+from sqlalchemy.exc import IntegrityError, DBAPIError
 
-
-async def get_session(
-    request: Request,
-) -> AsyncGenerator[AsyncSession, None]:
-    postgres_db = request.state.postgres_db
-    async with postgres_db.get_session() as session:
-        yield session
+from app.schemas import UserCreateSchema, UserUpdateSchema, UserResponseSchema
+from app.services import UserServiceDep
 
 
 router = APIRouter()
@@ -25,14 +17,30 @@ router = APIRouter()
 )
 async def create_user(
     schema: UserCreateSchema,
-    session = Depends(get_session),
+    user_service: UserServiceDep,
 ) -> UserResponseSchema:
     try:
-        return await UserService.create(session, schema)
-    except Exception as exc:
+        await user_service.get_by_email(schema.email)
+        return await user_service.create(schema)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        )
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Já existe um usuário cadastrado com este email.",
+        )
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erro ao criar usuário: {exc}",
+            detail="Erro interno do servidor.",
         )
 
 
@@ -42,15 +50,21 @@ async def create_user(
     response_model=list[UserResponseSchema],
 )
 async def list_users(
-    session = Depends(get_session),
+    user_service: UserServiceDep,
 ) -> list[UserResponseSchema]:
     try:
-        return await UserService.get_all(session)
+        return await user_service.get_all()
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except Exception as exc:
+    except DBAPIError:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
         )
 
 
@@ -61,15 +75,55 @@ async def list_users(
 )
 async def get_user(
     id: str,
-    session = Depends(get_session),
+    user_service: UserServiceDep,
 ) -> UserResponseSchema:
     try:
-        return await UserService.get_by_id(session, id)
+        return await user_service.get_by_id(id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except Exception as exc:
+    except DBAPIError:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
+        )
+
+
+@router.put(
+    "/{id}",
+    status_code=status.HTTP_200_OK,
+    response_model=UserResponseSchema,
+)
+async def update_user(
+    id: str,
+    schema: UserUpdateSchema,
+    user_service: UserServiceDep,
+) -> UserResponseSchema:
+    try:
+        return await user_service.update(id, schema)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Já existe um usuário cadastrado com este email.",
+        )
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
         )
 
 
@@ -79,15 +133,21 @@ async def get_user(
 )
 async def deactivate_user(
     id: str,
-    session = Depends(get_session),
+    user_service: UserServiceDep,
 ) -> None:
     try:
-        await UserService.deactivate(session, id)
+        await user_service.deactivate(id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except Exception as exc:
+    except DBAPIError:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
         )
 
 
@@ -97,15 +157,21 @@ async def deactivate_user(
 )
 async def activate_user(
     id: str,
-    session = Depends(get_session),
+    user_service: UserServiceDep,
 ) -> None:
     try:
-        await UserService.activate(session, id)
+        await user_service.activate(id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except Exception as exc:
+    except DBAPIError:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
         )
 
 

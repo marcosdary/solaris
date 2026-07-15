@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import EmailStr
 
 from app.schemas.base import BaseSchema
@@ -9,6 +11,11 @@ class UserCreateSchema(BaseSchema):
     email: EmailStr
 
 
+class UserUpdateSchema(BaseSchema):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+
+
 class UserResponseSchema(BaseSchema):
     id: str
     name: str
@@ -16,4 +23,4 @@ class UserResponseSchema(BaseSchema):
     is_active: bool
 
 
-__all__ = ["UserCreateSchema", "UserResponseSchema"]
+__all__ = ["UserCreateSchema", "UserUpdateSchema", "UserResponseSchema"]

@@ -1,9 +1,9 @@
 from uuid import uuid4
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, status
 from fastapi.exceptions import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import AsyncGenerator
+
+from sqlalchemy.exc import IntegrityError, DBAPIError
 
 from app.config import get_settings, TemplateFile, CurriculumCategory, Language
 from app.schemas import (
@@ -14,19 +14,12 @@ from app.schemas import (
     StructuredCurriculumSummarySchema,
     StructuredCurriculumResponseSchema,
 )
-from app.services import CurriculumService
+from app.services import CurriculumServiceDep
 from app.integrations import (
     LoadInfoToFilePDFService,
     SupabaseBucketService
 )
 
-
-async def get_session(
-    request: Request,
-) -> AsyncGenerator[AsyncSession, None]:
-    postgres_db = request.state.postgres_db
-    async with postgres_db.get_session() as session:
-        yield session
 
 async def get_supabase_bucket(
     settings = Depends(get_settings)
@@ -45,14 +38,29 @@ router = APIRouter()
 async def create_curriculum(
     user_id: str,
     schema: StructuredCurriculumSchema,
-    session = Depends(get_session),
+    curriculum_service: CurriculumServiceDep,
 ) -> StructuredCurriculumSummarySchema:
     try:
-        return await CurriculumService.create(session, user_id, schema)
-    except Exception as exc:
+        return await curriculum_service.create(user_id, schema)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Já existe um currículo com estes dados.",
+        )
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erro desconhecido: {exc}",
+            detail="Erro interno do servidor.",
         )
 
 
@@ -63,17 +71,23 @@ async def create_curriculum(
 )
 async def list_curriculums(
     user_id: str,
-    session = Depends(get_session),
+    curriculum_service: CurriculumServiceDep,
     category: CurriculumCategory = None,
     language: Language = None,
 ) -> ListStructuredCurriculumResponse:
     try:
-        return await CurriculumService.get_all(session, user_id, category, language)
+        return await curriculum_service.get_all(user_id, category, language)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except Exception as exc:
+    except DBAPIError:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
         )
 
 
@@ -84,15 +98,21 @@ async def list_curriculums(
 )
 async def get_curriculum(
     id: str,
-    session = Depends(get_session),
+    curriculum_service: CurriculumServiceDep,
 ) -> StructuredCurriculumResponseSchema:
     try:
-        return await CurriculumService.get_by_id(session, id)
+        return await curriculum_service.get_by_id(id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except Exception as exc:
+    except DBAPIError:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
         )
 
 
@@ -103,28 +123,38 @@ async def get_curriculum(
 )
 async def generate_curriculum_pdf(
     id: str,
+    curriculum_service: CurriculumServiceDep,
     background_tasks: BackgroundTasks,
     supabase_bucket = Depends(get_supabase_bucket),
     template: TemplateFile = TemplateFile.standard,
-    session: AsyncSession = Depends(get_session),
     load_info_to_file = Depends(LoadInfoToFilePDFService),
 ) -> GenerateCurriculumToFileSchema:
     try:
-        context = await CurriculumService.prepare_pdf_context(session, id)
+        context = await curriculum_service.prepare_pdf_context(id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
+        )
 
     _basename = f"pdf_{uuid4()}"
 
     background_tasks.add_task(
-        CurriculumService.process_pdf_background,
+        curriculum_service.process_pdf_background,
         curriculum_data_dict=context,
         basename=_basename,
         template_value=template.value,
         bucket=supabase_bucket,
         load_info_to_file=load_info_to_file,
     )
-   
+
     return {"name": f"{_basename}.pdf"}
 
 
@@ -135,15 +165,21 @@ async def generate_curriculum_pdf(
 )
 async def delete_curriculum(
     id: str,
-    session = Depends(get_session),
+    curriculum_service: CurriculumServiceDep,
 ) -> None:
     try:
-        await CurriculumService.delete(session, id)
+        await curriculum_service.delete(id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except Exception as exc:
+    except DBAPIError:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
         )
 
 
@@ -155,15 +191,26 @@ async def delete_curriculum(
 async def edit_curriculum(
     id: str,
     schema: StructuredCurriculumEditSchema,
-    session: AsyncSession = Depends(get_session),
+    curriculum_service: CurriculumServiceDep,
 ) -> StructuredCurriculumResponseSchema:
     try:
-        return await CurriculumService.edit(session, id, schema)
+        return await curriculum_service.edit(id, schema)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except Exception as exc:
+    except IntegrityError:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Já existe um currículo com estes dados.",
+        )
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor.",
         )
 
 

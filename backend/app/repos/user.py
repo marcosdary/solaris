@@ -42,5 +42,14 @@ class UserRepo:
         result = await session.scalars(stmt)
         return list(result.all())
 
+    @staticmethod
+    async def update(
+        session: AsyncSession,
+        user: UserModel,
+    ) -> UserModel:
+        await session.commit()
+        await session.refresh(user)
+        return user
+
 
 __all__ = ["UserRepo"]

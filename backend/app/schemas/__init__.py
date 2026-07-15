@@ -35,7 +35,7 @@ from .curriculum_edit import (
     ProjectEditSchema,
 )
 
-from .user import UserCreateSchema, UserResponseSchema
+from .user import UserCreateSchema, UserUpdateSchema, UserResponseSchema
 from .validators import Validators
 
 __all__ = [
@@ -70,5 +70,6 @@ __all__ = [
     "StructuredCurriculumEditSchema",
     "ProjectEditSchema",
     "UserCreateSchema",
+    "UserUpdateSchema",
     "UserResponseSchema",
 ]

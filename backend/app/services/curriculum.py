@@ -1,5 +1,12 @@
 from dataclasses import dataclass, field
-from typing import Any, List, Optional
+from typing import (
+    Any, 
+    List, 
+    Optional, 
+    AsyncGenerator,
+    Annotated
+)
+from fastapi import Request, Depends
 
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,6 +33,13 @@ from app.integrations import (
     FilePDFService,
     BucketService
 )
+
+async def get_session(
+    request: Request,
+) -> AsyncGenerator[AsyncSession, None]:
+    postgres_db = request.state.postgres_db
+    async with postgres_db.get_session() as session:
+        yield session
 
 
 @dataclass
@@ -144,71 +158,67 @@ class _EditCurriculum:
         await session.flush()
 
 
-class CurriculumService:
+class _CurriculumService:
+    def __init__(self, db: AsyncSession):
+        self._db = db
 
-    @staticmethod
     async def create(
-        session: AsyncSession,
+        self,
         user_id: str,
         schema: StructuredCurriculumSchema,
     ) -> CurriculumModel:
         cv = CurriculumModel.from_schema(user_id, schema)
-        return await CurriculumRepo.create(session, cv)
+        return await CurriculumRepo.create(self._db, cv)
 
-    @staticmethod
     async def get_by_id(
-        session: AsyncSession,
+        self,
         id: str,
     ) -> CurriculumModel:
-        cv = await CurriculumRepo.get_by_id(session, id)
+        cv = await CurriculumRepo.get_by_id(self._db, id)
         if not cv:
             raise ValueError("Conteúdo não encontrado. Tente novamente.")
         return cv
 
-    @staticmethod
     async def get_all(
-        session: AsyncSession,
+        self,
         user_id: str,
         category: Optional[CurriculumCategory] = None,
         language: Optional[Language] = None,
     ) -> List[CurriculumModel]:
-        data = await CurriculumRepo.get_all(session, user_id, category, language)
+        data = await CurriculumRepo.get_all(self._db, user_id, category, language)
         if not data:
             raise ValueError("Conteúdo não encontrado. Tente novamente.")
         return data
 
-    @staticmethod
     async def delete(
-        session: AsyncSession,
+        self,
         id: str,
     ) -> None:
-        cv = await CurriculumService.get_by_id(session, id)
-        await CurriculumRepo.delete(session, cv)
+        cv = await _CurriculumService.get_by_id(self._db, id)
+        await CurriculumRepo.delete(self._db, cv)
 
-    @staticmethod
     async def edit(
-        session: AsyncSession,
+        self,
         id: str,
         schema: StructuredCurriculumEditSchema,
     ) -> CurriculumModel:
-        curriculum = await CurriculumRepo.get_by_id(session, id)
+        curriculum = await CurriculumRepo.get_by_id(self._db, id)
         if not curriculum:
             raise ValueError("Currículo não encontrado.")
 
         editor = _EditCurriculum(model=curriculum, schema=schema)
-        await editor.apply(session)
+        await editor.apply(self._db)
         return curriculum
 
-    @staticmethod
     async def prepare_pdf_context(
-        session: AsyncSession,
+        self,
         id: str,
     ) -> dict:
-        cv = await CurriculumService.get_by_id(session, id)
+        cv = await _CurriculumService.get_by_id(self._db, id)
         return StructuredCurriculumSchema.model_validate(cv).model_dump()
 
-    @staticmethod
     async def process_pdf_background(
+        self,
         curriculum_data_dict: dict,
         template_value: str,
         bucket: BucketService,
@@ -270,4 +280,9 @@ class _ProcessPdfBackground:
         print(f"PDF {file_pdf._basename} gerado e enviado com sucesso!")
 
 
-__all__ = ["CurriculumService"]
+def get_curriculum_service(db: Annotated[AsyncSession, Depends(get_session)]):
+    return _CurriculumService(db)
+
+CurriculumServiceDep = Annotated[_CurriculumService, Depends(get_curriculum_service)]
+
+__all__ = ["CurriculumServiceDep"]
