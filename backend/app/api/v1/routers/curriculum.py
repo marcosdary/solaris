@@ -65,7 +65,7 @@ async def create_curriculum(
 
 
 @router.get(
-    "/{user_id}",
+    "/users/{user_id}",
     status_code=status.HTTP_200_OK,
     response_model=ListStructuredCurriculumResponse,
 )
