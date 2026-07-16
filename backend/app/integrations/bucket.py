@@ -1,5 +1,6 @@
 import asyncio
 from pathlib import Path
+from typing import List
 import requests
 from supabase import acreate_client
 from abc import ABC, abstractmethod
@@ -13,6 +14,9 @@ class BucketService(ABC):
 
     @abstractmethod
     async def upload(self, filepath: Path, mimetype: str) -> dict: ...
+
+    @abstractmethod
+    async def delete(self, filename_list: List[str]) -> None: ...
 
 class GoogleDriveBucketService(BucketService):
     def __init__(self, settings: Settings) -> None:
@@ -108,5 +112,33 @@ class SupabaseBucketService(BucketService):
             "url": public_url
         }
      
+    async def download(self, filename: str) -> dict:
+        client = await self._get_client()
+
+        response = (
+            client.storage
+            .from_(self._settings.SUPABASE_BUCKET_NAME)
+            .create_signed_url(
+                filename,
+                3600,
+                {"download": True},
+            )
+        )
+            
+        return {
+            "url": response["signedURL"],
+        }
+    
+    async def delete(self, filename_list: List[str]) -> None:
+        client = await self._get_client()
+
+        (
+            client.storage
+            .from_(self._settings.SUPABASE_BUCKET_NAME)
+            .remove(filename_list)
+        )
+        
+        return
+    
 
 __all__ = ["GoogleDriveBucketService", "SupabaseBucketService", "BucketService"]

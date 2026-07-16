@@ -70,6 +70,12 @@ class CurriculumModel(BaseModel):
         lazy="selectin",
     )
 
+    files: Mapped[list["CurriculumFileModel"]] = relationship(
+        back_populates="curriculum",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+
     @classmethod
     def from_schema(cls, user_id: str, schema: StructuredCurriculumSchema) -> "CurriculumModel":
         return cls(

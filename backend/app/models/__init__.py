@@ -7,6 +7,7 @@ from .project_description import ProjectDescriptionModel
 from .project_technology import ProjectTechnologyModel
 from .education import EducationModel
 from .user import UserModel
+from .curriculum_file import CurriculumFileModel
 
 __all__ = [
     "CurriculumModel",
@@ -18,4 +19,5 @@ __all__ = [
     "ProjectTechnologyModel",
     "EducationModel",
     "UserModel",
+    "CurriculumFileModel",
 ]

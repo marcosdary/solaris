@@ -57,7 +57,7 @@ export async function selectCurriculumByID(
 ): Promise<ICurriculumResponse> {
 
     const response = await fetch(
-        `${settings.baseURL}/api/v1/cv/${id}`,
+        `${settings.baseURL}/api/v1/curriculums/${id}`,
         {
         method: "GET",
         }

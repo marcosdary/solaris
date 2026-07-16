@@ -256,4 +256,19 @@ CREATE TABLE certifications (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE curriculum_files (
+    id VARCHAR(255) PRIMARY KEY,
+
+    curriculum_id VARCHAR(255) NOT NULL
+        REFERENCES curriculum(id)
+        ON DELETE CASCADE,
+
+    name VARCHAR(255) NOT NULL,
+    mimetype VARCHAR(255) NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    template VARCHAR(255),
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
 

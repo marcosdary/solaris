@@ -37,6 +37,11 @@ from .curriculum_edit import (
 
 from .user import UserCreateSchema, UserUpdateSchema, UserResponseSchema
 from .validators import Validators
+from .curriculum_file import (
+    CurriculumFileCreateSchema,
+    CurriculumFileResponseSchema,
+    DownloadCurriculumResponseSchema,
+)
 
 __all__ = [
     "IndexSchema",
@@ -72,4 +77,7 @@ __all__ = [
     "UserCreateSchema",
     "UserUpdateSchema",
     "UserResponseSchema",
+    "CurriculumFileCreateSchema",
+    "CurriculumFileResponseSchema",
+    "DownloadCurriculumResponseSchema",
 ]
