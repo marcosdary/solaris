@@ -22,9 +22,18 @@ class Settings(BaseSettings):
     
     DB_URL: str
     API_KEY: str
+    
+    JWT_SECRET: str
+    JWT_ALGORITHM: str = "HS256"
+    
     APP_SCRIPT_KEY: str
+    
     SUPABASE_URL: str
     SUPABASE_KEY: str
+
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    JWT_ALGORITHM: str
+
     SUPABASE_BUCKET_NAME: str
     SUPABASE_FOLDER_PUBLIC: str
 
