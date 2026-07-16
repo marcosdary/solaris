@@ -12,7 +12,6 @@ from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import (
-    DirPaths, 
     CurriculumCategory, 
     Language
 )
@@ -28,11 +27,7 @@ from app.schemas import (
     StructuredCurriculumEditSchema,
 )
 from app.repos.curriculum import CurriculumRepo
-from app.integrations import (
-    LoadInfoToFilePDFService,
-    FilePDFService,
-    BucketService
-)
+
 
 async def get_session(
     request: Request,
@@ -167,17 +162,17 @@ class _CurriculumService:
         user_id: str,
         schema: StructuredCurriculumSchema,
     ) -> CurriculumModel:
-        cv = CurriculumModel.from_schema(user_id, schema)
-        return await CurriculumRepo.create(self._db, cv)
+        curriculum = CurriculumModel.from_schema(user_id, schema)
+        return await CurriculumRepo.create(self._db, curriculum)
 
     async def get_by_id(
         self,
         id: str,
     ) -> CurriculumModel:
-        cv = await CurriculumRepo.get_by_id(self._db, id)
-        if not cv:
+        curriculum = await CurriculumRepo.get_by_id(self._db, id)
+        if not curriculum:
             raise ValueError("Conteúdo não encontrado. Tente novamente.")
-        return cv
+        return curriculum
 
     async def get_all(
         self,
@@ -194,8 +189,8 @@ class _CurriculumService:
         self,
         id: str,
     ) -> None:
-        cv = await _CurriculumService.get_by_id(self._db, id)
-        await CurriculumRepo.delete(self._db, cv)
+        curriculum = await _CurriculumService.get_by_id(self._db, id)
+        await CurriculumRepo.delete(self._db, curriculum)
 
     async def edit(
         self,
@@ -214,70 +209,8 @@ class _CurriculumService:
         self,
         id: str,
     ) -> dict:
-        cv = await _CurriculumService.get_by_id(self._db, id)
-        return StructuredCurriculumSchema.model_validate(cv).model_dump()
-
-    async def process_pdf_background(
-        self,
-        curriculum_data_dict: dict,
-        template_value: str,
-        bucket: BucketService,
-        basename: str,
-        load_info_to_file: LoadInfoToFilePDFService
-    ) -> None:
-        processor = _ProcessPdfBackground(
-            curriculum_data_dict=curriculum_data_dict,
-            template_value=template_value,
-            bucket=bucket,
-            basename=basename,
-            load_info_to_file=load_info_to_file,
-        )
-        await processor.execute()
-
-
-class _ProcessPdfBackground:
-    def __init__(
-        self,
-        *,
-        basename: str,
-        curriculum_data_dict: dict,
-        template_value: str,
-        bucket: BucketService,
-        load_info_to_file: LoadInfoToFilePDFService,
-    ) -> None:
-        self._curriculum_data_dict = curriculum_data_dict
-        self._template_value = template_value
-        self._bucket = bucket
-        self._basename = basename
-        self._load_info_to_file = load_info_to_file
-
-    async def execute(self) -> None:
-        try:
-            file_pdf = await self._generate()
-            await self._upload_and_cleanup(file_pdf)
-        except Exception as exc:
-            print(f"Erro ao processar PDF em segundo plano: {exc}")
-
-    async def _generate(self) -> FilePDFService:
-        template_dir = DirPaths.DIR_TEMPLATES.value
-
-        data = self._load_info_to_file.load_info(
-            template=self._template_value,
-            template_dir=template_dir,
-            context=self._curriculum_data_dict,
-        )
-
-        file_pdf = FilePDFService(basename=self._basename, data=data)
-        file_pdf.save()
-        return file_pdf
-
-    async def _upload_and_cleanup(self, file_pdf: FilePDFService) -> None:
-        mimetype = file_pdf.mimetype
-        filepath = file_pdf.path / file_pdf.filename
-
-        await self._bucket.upload(filepath=filepath, mimetype=mimetype)
-        file_pdf.delete()
-        print(f"PDF {file_pdf._basename} gerado e enviado com sucesso!")
+        curriculum = await self.get_by_id(id)
+        return StructuredCurriculumSchema.model_validate(curriculum).model_dump()
 
 
 def get_curriculum_service(db: Annotated[AsyncSession, Depends(get_session)]):

@@ -24,7 +24,7 @@ class FileService(ABC):
     @abstractmethod
     def save(self) -> None: ...
     
-class FilePDFService(FileService):
+class FilePDFIntegration(FileService):
     def __init__(self, basename: str, data: str):
         self.__folder_pdf = TypeFolder.PDF.value
         self.__folder_upload = DirPaths.DIR_UPLOAD.value
@@ -54,4 +54,4 @@ class FilePDFService(FileService):
            
            
     
-__all__ = ["FilePDFService"]
+__all__ = ["FilePDFIntegration"]

@@ -8,7 +8,7 @@ from base64 import b64encode
 
 from app.config import Settings
 
-class BucketService(ABC):
+class BucketIntegration(ABC):
     def __init__(self, settings: Settings):
         self._settings = settings
 
@@ -18,9 +18,8 @@ class BucketService(ABC):
     @abstractmethod
     async def delete(self, filename_list: List[str]) -> None: ...
 
-class GoogleDriveBucketService(BucketService):
+class GoogleDriveBucketService(BucketIntegration):
     def __init__(self, settings: Settings) -> None:
-        print(settings)
         super().__init__(settings=settings)
 
     async def upload(self, filepath: Path, mimetype: str) -> dict:
@@ -74,10 +73,12 @@ class GoogleDriveBucketService(BucketService):
         except Exception:
             raise 
 
-class SupabaseBucketService(BucketService):
+class SupabaseBucketService(BucketIntegration):
     def __init__(self, settings: Settings) -> None:
         super().__init__(settings)
-
+        self._folder_public = self._settings.SUPABASE_FOLDER_PUBLIC
+        self._bucket_name = self._settings.SUPABASE_BUCKET_NAME
+ 
     async def _get_client(self):
         return await acreate_client(
             supabase_url=self._settings.SUPABASE_URL,
@@ -86,29 +87,32 @@ class SupabaseBucketService(BucketService):
 
     async def upload(self, filepath: Path, mimetype: str) -> dict:
         client = await self._get_client()
+        distpath = f"{self._folder_public}/{filepath.name}"
 
         with open(filepath, "rb") as f:
             await (
                 client.storage.
                 from_(
-                    self._settings.SUPABASE_BUCKET_NAME
+                    self._bucket_name
                 ).upload(
-                    path=filepath.name,
+                    path=distpath,
                     file=f,
                     file_options={"content-type": mimetype}
                 )
             )
 
         public_url = (
-            client.storage.from_(
-                self._settings.SUPABASE_BUCKET_NAME
-            ).get_public_url(filepath.name)
+            await client.storage
+            .from_(
+               self._bucket_name
+            )
+            .get_public_url(distpath)
         )
 
         return {
-            "success": True,
             "name": filepath.name,
             "mimeType": mimetype,
+            "distpath": distpath, 
             "url": public_url
         }
      
@@ -117,7 +121,7 @@ class SupabaseBucketService(BucketService):
 
         response = (
             client.storage
-            .from_(self._settings.SUPABASE_BUCKET_NAME)
+            .from_(self._bucket_name)
             .create_signed_url(
                 filename,
                 3600,
@@ -141,4 +145,4 @@ class SupabaseBucketService(BucketService):
         return
     
 
-__all__ = ["GoogleDriveBucketService", "SupabaseBucketService", "BucketService"]
+__all__ = ["GoogleDriveBucketService", "SupabaseBucketService", "BucketIntegration"]

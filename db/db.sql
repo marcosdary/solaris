@@ -264,6 +264,7 @@ CREATE TABLE curriculum_files (
         ON DELETE CASCADE,
 
     name VARCHAR(255) NOT NULL,
+    distpath VARCHAR(255) NOT NULL,
     mimetype VARCHAR(255) NOT NULL,
     url VARCHAR(255) NOT NULL,
     template VARCHAR(255),

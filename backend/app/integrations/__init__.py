@@ -1,15 +1,15 @@
 from .bucket import (
     GoogleDriveBucketService,
     SupabaseBucketService,
-    BucketService
+    BucketIntegration
 )
-from .file import FilePDFService
-from .load_info_to_file import LoadInfoToFilePDFService
+from .file import FilePDFIntegration
+from .load_info_to_file import LoadInfoToFilePDFIntegration
 
 __all__ = [
     "GoogleDriveBucketService",
-    "FilePDFService",
-    "LoadInfoToFilePDFService",
+    "FilePDFIntegration",
+    "LoadInfoToFilePDFIntegration",
     "SupabaseBucketService",
-    "BucketService"
+    "BucketIntegration"
 ]

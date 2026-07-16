@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict
 
 
-class LoadInfoToFilePDFService:
+class LoadInfoToFilePDFIntegration:
 
     def load_info(self, template: str, template_dir: Path, context: Dict) -> str: 
         env = Environment(loader=FileSystemLoader(template_dir))
@@ -12,4 +12,4 @@ class LoadInfoToFilePDFService:
         return html
     
 
-__all__ = ["LoadInfoToFilePDFService"]
+__all__ = ["LoadInfoToFilePDFIntegration"]

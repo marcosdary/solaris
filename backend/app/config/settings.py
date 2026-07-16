@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_KEY: str
     SUPABASE_BUCKET_NAME: str
+    SUPABASE_FOLDER_PUBLIC: str
 
 @lru_cache(maxsize=1)
 def get_settings():

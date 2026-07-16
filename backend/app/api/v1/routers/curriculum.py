@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from fastapi import APIRouter, BackgroundTasks, Depends, status
+from fastapi import APIRouter, BackgroundTasks, Depends, Request, status
 from fastapi.exceptions import HTTPException
 
 from sqlalchemy.exc import IntegrityError, DBAPIError
@@ -14,10 +14,13 @@ from app.schemas import (
     StructuredCurriculumSummarySchema,
     StructuredCurriculumResponseSchema,
 )
-from app.services import CurriculumServiceDep
+from app.services import (
+    CurriculumServiceDep,
+    CurriculumFileServiceDep
+)
 from app.integrations import (
-    LoadInfoToFilePDFService,
-    SupabaseBucketService
+    LoadInfoToFilePDFIntegration,
+    SupabaseBucketService,
 )
 
 
@@ -82,7 +85,7 @@ async def list_curriculums_to_user(
     except DBAPIError:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Serviço indisponível no momento.",
+            detail="Serviço indisponível no momento",
         )
     except Exception:
         raise HTTPException(
@@ -98,11 +101,13 @@ async def list_curriculums_to_user(
 )
 async def generate_curriculum_pdf(
     id: str,
+    request: Request,
     curriculum_service: CurriculumServiceDep,
+    curriculum_file_service: CurriculumFileServiceDep,
     background_tasks: BackgroundTasks,
     supabase_bucket = Depends(get_supabase_bucket),
     template: TemplateFile = TemplateFile.standard,
-    load_info_to_file = Depends(LoadInfoToFilePDFService),
+    load_info_to_file = Depends(LoadInfoToFilePDFIntegration),
 ) -> GenerateCurriculumToFileSchema:
     try:
         context = await curriculum_service.prepare_pdf_context(id)
@@ -113,25 +118,37 @@ async def generate_curriculum_pdf(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Serviço indisponível no momento.",
         )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro interno do servidor: {exc}",
+        )
+    try:
+        _basename = f"pdf_{uuid4()}"
+
+        background_tasks.add_task(
+            curriculum_file_service.process_pdf_background,
+            curriculum_id=id,
+            curriculum_data_dict=context,
+            basename=_basename,
+            template_value=template.value,
+            bucket=supabase_bucket,
+            load_info_to_file=load_info_to_file,
+            postgres_db=request.state.postgres_db,
+        )
+
+        return {"name": f"{_basename}.pdf"}
+    
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erro interno do servidor.",
         )
-
-    _basename = f"pdf_{uuid4()}"
-
-    background_tasks.add_task(
-        curriculum_service.process_pdf_background,
-        curriculum_data_dict=context,
-        basename=_basename,
-        template_value=template.value,
-        bucket=supabase_bucket,
-        load_info_to_file=load_info_to_file,
-    )
-
-    return {"name": f"{_basename}.pdf"}
-
 
 @router.get(
     "/{id}",
@@ -150,6 +167,11 @@ async def get_curriculum(
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Serviço indisponível no momento.",
+        )
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Já existe um currículo com estes dados.",
         )
     except Exception:
         raise HTTPException(
