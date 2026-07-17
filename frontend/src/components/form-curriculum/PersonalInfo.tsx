@@ -1,5 +1,6 @@
-import { CVCategory, Language } from "../../config/constants";
+import { CurriculumCategory, Language } from "../../config/constants";
 import type { ICurriculumInput } from "../../types/curriculumCreate";
+import { phoneMask } from "../../utils/phoneMask";
 
 interface PersonalInfoProps {
   form: ICurriculumInput;
@@ -7,27 +8,6 @@ interface PersonalInfoProps {
     key: K,
     value: ICurriculumInput[K]
   ): void;
-}
-
-function phoneMask(value: string) {
-  const numbers = value.replace(/\D/g, "").slice(0, 13);
-
-  if (numbers.length <= 2) {
-    return numbers;
-  }
-
-  if (numbers.length <= 4) {
-    return `+${numbers.slice(0, 2)} ${numbers.slice(2)}`;
-  }
-
-  if (numbers.length <= 9) {
-    return `+${numbers.slice(0, 2)} ${numbers.slice(2, 4)} ${numbers.slice(4)}`;
-  }
-
-  return `+${numbers.slice(0, 2)} ${numbers.slice(2, 4)} ${numbers.slice(
-    4,
-    9
-  )}-${numbers.slice(9)}`;
 }
 
 export function PersonalInfo({
@@ -183,7 +163,7 @@ export function PersonalInfo({
               updateField("category", e.target.value as typeof form.category)
             }
           >
-            {Object.entries(CVCategory).map(([label, value]) => (
+            {Object.entries(CurriculumCategory).map(([label, value]) => (
               <option key={value} value={value}>
                 {label.replaceAll("_", " ")}
               </option>

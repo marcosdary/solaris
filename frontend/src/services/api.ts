@@ -1,19 +1,27 @@
 import { settings } from "../config/settings";
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 import type { ICurriculumInput, SearchCurriculums } from "../types/curriculumCreate";
-import type { ICurriculumEdit } from "../types/curriculumEdit";
+import type { ICurriculumEditPayload } from "../types/curriculumEditPayload";
+import type { ILoginInput, IRegisterInput, IAuthResponse } from "../types/auth";
  
 export async function createCurriculum(
-    form: ICurriculumInput
+    form: ICurriculumInput,
+    token?: string
 ): Promise<ICurriculumResponse> {
     
+    const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+    };
+
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(
         `${settings.baseURL}/api/v1/cv`,
         {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers,
             body: JSON.stringify(form),
         }
     );
@@ -26,7 +34,8 @@ export async function createCurriculum(
 }
 
 export async function searchCurriculums(
-    payload: SearchCurriculums
+    payload: SearchCurriculums,
+    token?: string
 ): Promise<ICurriculumResponse[]> {
     const params = new URLSearchParams();
 
@@ -38,10 +47,17 @@ export async function searchCurriculums(
         params.append("language", payload.language);
     }
 
+    const headers: Record<string, string> = {};
+
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(
-        `${settings.baseURL}/api/v1/cv?${params.toString()}`,
+        `${settings.baseURL}/api/v1/curriculums/users?${params.toString()}`,
         {
         method: "GET",
+        headers,
         }
     );
 
@@ -53,13 +69,21 @@ export async function searchCurriculums(
 }
 
 export async function selectCurriculumByID(
-    id: string
+    id: string,
+    token?: string
 ): Promise<ICurriculumResponse> {
+
+    const headers: Record<string, string> = {};
+
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const response = await fetch(
         `${settings.baseURL}/api/v1/curriculums/${id}`,
         {
         method: "GET",
+        headers,
         }
     );
 
@@ -71,13 +95,21 @@ export async function selectCurriculumByID(
 }
 
 export async function deleteCurriculum(
-    id: string
+    id: string,
+    token?: string
 ): Promise<void> {
+
+    const headers: Record<string, string> = {};
+
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const response = await fetch(
         `${settings.baseURL}/api/v1/cv/${id}`,
         {
         method: "DELETE",
+        headers,
         }
     );
 
@@ -90,16 +122,24 @@ export async function deleteCurriculum(
 
 
 export async function updateCurriculum(
-    form: ICurriculumEdit
+    form: ICurriculumEditPayload,
+    curriculumId: string,
+    token?: string
 ): Promise<ICurriculumResponse> {
     
+    const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+    };
+
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(
-        `${settings.baseURL}/api/v1/cv`,
+        `${settings.baseURL}/api/v1/curriculums/${curriculumId}`,
         {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers,
             body: JSON.stringify(form),
         }
     );
@@ -109,4 +149,38 @@ export async function updateCurriculum(
     }
 
     return await response.json();
+}
+
+export async function login(data: ILoginInput): Promise<IAuthResponse> {
+  const response = await fetch(
+    `${settings.baseURL}/api/v1/auth/login`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
+export async function register(data: IRegisterInput): Promise<IAuthResponse> {
+  const response = await fetch(
+    `${settings.baseURL}/api/v1/auth/register`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`);
+  }
+
+  return await response.json();
 }

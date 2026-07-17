@@ -7,11 +7,43 @@ from app.schemas import (
     LoginRequestSchema,
     UserResponseSchema,
     UserUpdateSchema,
+    UserCreateSchema
 )
 from app.services import UserServiceDep, AuthServiceDep, CurrentUserDep
 
 router = APIRouter()
 
+@router.post(
+    "/register",
+    status_code=status.HTTP_201_CREATED,
+    response_model=UserResponseSchema,
+)
+async def create_user(
+    schema: UserCreateSchema,
+    user_service: UserServiceDep,
+) -> UserResponseSchema:
+    try:
+        return await user_service.create(schema)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        )
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Já existe um usuário cadastrado com este número.",
+        )
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro interno do servidor. {exc}",
+        )
 
 @router.post("/login", response_model=TokenResponseSchema)
 async def login(
@@ -48,6 +80,7 @@ async def get_me(
 ) -> UserResponseSchema:
     try: 
         user_id = await current_user.get_me()
+        print(user_id)
         return await user_service.get_by_id(user_id)
     except ValueError as exc:
         raise HTTPException(

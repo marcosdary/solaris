@@ -3,12 +3,15 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { CurriculumDetails } from "../components/CurriculumDetails";
 import { selectCurriculumByID, deleteCurriculum } from "../services/api";
+import { useAccessToken } from "../hooks/useAccessToken";
 
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 
 export default function CurriculumDetailsPage() {
     const { id } = useParams<{ id: string }>();
+    const accessToken = useAccessToken();
     const navigate = useNavigate();
+    
 
     const [curriculum, setCurriculum] =
         useState<ICurriculumResponse | null>(null);
@@ -20,7 +23,7 @@ export default function CurriculumDetailsPage() {
         if (!id) return;
 
         try {
-            const data = await selectCurriculumByID(id);
+            const data = await selectCurriculumByID(id, accessToken ?? undefined);
             setCurriculum(data);
         } catch (error) {
             console.error(error);
@@ -30,7 +33,7 @@ export default function CurriculumDetailsPage() {
         }
 
         loadCurriculum();
-    }, [id]);
+    }, [id, accessToken]);
 
     async function handleDelete() {
         if (!curriculum) return;
@@ -97,9 +100,9 @@ export default function CurriculumDetailsPage() {
     }
 
     return (
-        <CurriculumDetails
+      <CurriculumDetails
         curriculum={curriculum}
         onDelete={handleDelete}
-        />
+      />
     );
 }

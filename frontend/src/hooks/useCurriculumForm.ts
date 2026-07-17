@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 import type { ICurriculumInput } from "../types/curriculumCreate";
-import type { ICurriculumEdit } from "../types/curriculumEdit";
-import { CVCategory, Language } from "../config/constants";
+import type { ICurriculumEditPayload } from "../types/curriculumEditPayload";
+import { CurriculumCategory, Language } from "../config/constants";
 import { createCurriculum, updateCurriculum } from "../services/api";
 import { useExperiences } from "./useExperiences";
 import { useEducations } from "./useEducations";
@@ -31,7 +31,7 @@ export interface UseCurriculumFormReturn {
     key: K,
     value: ICurriculumInput[K]
   ): void;
-  handleSubmit(e: React.FormEvent): Promise<void>;
+  handleSubmit(e: React.SubmitEvent<HTMLFormElement>, curriculumId?: string): Promise<void>;
   loading: boolean;
   result: ICurriculumResponse | null;
   error: string | null;
@@ -50,7 +50,7 @@ interface UseCurriculumFormOptions {
 function emptyForm(): ICurriculumInput {
   return {
     language: Language.PORTUGUESE,
-    category: CVCategory.BACKEND_DEVELOPER,
+    category: CurriculumCategory.BACKEND_DEVELOPER,
     name: "",
     email: "",
     role: "",
@@ -71,11 +71,12 @@ export function useCurriculumForm({
   initialData,
   onSuccess,
 }: UseCurriculumFormOptions): UseCurriculumFormReturn {
+
   const [form, setForm] = useState<ICurriculumInput>(() =>
     initialData
       ? {
           language: initialData.language ?? Language.PORTUGUESE,
-          category: initialData.category ?? CVCategory.BACKEND_DEVELOPER,
+          category: initialData.category ?? CurriculumCategory.BACKEND_DEVELOPER,
           name: initialData.name ?? "",
           email: initialData.email ?? "",
           role: initialData.role ?? "",
@@ -123,7 +124,7 @@ export function useCurriculumForm({
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>, curriculumId?: string) {
     e.preventDefault();
 
     setLoading(true);
@@ -131,21 +132,39 @@ export function useCurriculumForm({
     setError(null);
 
     try {
-      const payload = {
-        ...form,
-        experiences: experiences.experiences,
-        educations: educations.educations,
-        projects: projects.projects.length > 0 ? projects.projects : null,
+      const visibleExperiences = experiences.visible();
+      const visibleEducations = educations.visible();
+      const visibleProjects = projects.visible();
+      const visibleCertifications = certifications.visible();
+
+      const payload: ICurriculumEditPayload = {
+        id: curriculumId!,
+        language: form.language,
+        category: form.category,
+        name: form.name,
+        email: form.email,
+        role: form.role,
+        github: form.github,
+        linkedin: form.linkedin,
+        phone: form.phone,
+        location: form.location,
+        resume: form.resume,
+        experiences: visibleExperiences as ICurriculumEditPayload["experiences"],
+        educations: visibleEducations as ICurriculumEditPayload["educations"],
+        projects:
+          visibleProjects.length > 0
+            ? (visibleProjects as ICurriculumEditPayload["projects"])
+            : null,
         certifications:
-          certifications.certifications.length > 0
-            ? certifications.certifications
+          visibleCertifications.length > 0
+            ? (visibleCertifications as ICurriculumEditPayload["certifications"])
             : null,
       };
 
       const response =
         mode === "create"
           ? await createCurriculum(payload)
-          : await updateCurriculum(payload as ICurriculumEdit);
+          : await updateCurriculum(payload, curriculumId!);
 
       setResult(response);
 

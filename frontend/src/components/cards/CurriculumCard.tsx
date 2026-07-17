@@ -1,12 +1,28 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 
 import type { ICurriculumResponse } from "../../types/curriculumResponse";
+import { selectCurriculumByID } from "../../services/api";
+import { useAccessToken } from "../../hooks/useAccessToken";
 
 interface Props {
   curriculum: ICurriculumResponse;
 }
 
 export function CurriculumCard({ curriculum }: Props) {
+  const { id } = useParams();
+  const accessToken = useAccessToken();
+
+  const [data, setData] = useState<ICurriculumResponse>(curriculum);
+
+  useEffect(() => {
+    if (id && accessToken) {
+      selectCurriculumByID(id, accessToken)
+        .then(setData)
+        .catch(console.error);
+    }
+  }, [id, accessToken]);
+
   function formatCategory(category: string) {
     return category
       .split("_")
@@ -27,20 +43,20 @@ export function CurriculumCard({ curriculum }: Props) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-slate-800">
-            {curriculum.name}
+            {data.name}
           </h2>
 
           <p className="mt-1 text-sm font-medium text-blue-600">
-            {curriculum.role}
+            {data.role}
           </p>
 
           <p className="mt-2 text-sm text-slate-500">
-            📍 {curriculum.location}
+            📍 {data.location}
           </p>
         </div>
 
         <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-          {languageMap[curriculum.language]}
+          {languageMap[data.language]}
         </span>
       </div>
 
@@ -48,20 +64,20 @@ export function CurriculumCard({ curriculum }: Props) {
       <div className="mt-6 space-y-2 text-sm text-slate-600">
         <p>
           <span className="font-medium">Categoria:</span>{" "}
-          {formatCategory(curriculum.category)}
+          {formatCategory(data.category)}
         </p>
 
         <p>
           <span className="font-medium">E-mail:</span>{" "}
-          {curriculum.email}
+          {data.email}
         </p>
       </div>
 
       {/* Links */}
       <div className="mt-5 flex flex-wrap gap-3">
-        {curriculum.github && (
+        {data.github && (
           <a
-            href={curriculum.github}
+            href={data.github}
             target="_blank"
             rel="noreferrer"
             className="text-sm font-medium text-slate-600 transition hover:text-blue-600"
@@ -70,9 +86,9 @@ export function CurriculumCard({ curriculum }: Props) {
           </a>
         )}
 
-        {curriculum.linkedin && (
+        {data.linkedin && (
           <a
-            href={curriculum.linkedin}
+            href={data.linkedin}
             target="_blank"
             rel="noreferrer"
             className="text-sm font-medium text-slate-600 transition hover:text-blue-600"
@@ -87,11 +103,11 @@ export function CurriculumCard({ curriculum }: Props) {
 
         <span className="text-xs text-slate-500">
           Atualizado em{" "}
-          {new Date(curriculum.updated_at).toLocaleDateString("pt-BR")}
+          {new Date(data.updated_at).toLocaleDateString("pt-BR")}
         </span>
 
         <Link
-          to={`/curriculums/${curriculum.id}`}
+          to={`/curriculums/${data.id}`}
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
         >
           Ver currículo

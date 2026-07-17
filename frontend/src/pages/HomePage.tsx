@@ -17,12 +17,21 @@ export default function CurriculumFormPage() {
             <ServerStatus />
           </div>
 
-          <Link
-            to="/curriculums"
-            className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
-          >
-            Meus Currículos
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
+            >
+              Entrar
+            </Link>
+
+            <Link
+              to="/curriculums"
+              className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
+            >
+              Meus Currículos
+            </Link>
+          </div>
         </nav>
 
         {/* HERO */}

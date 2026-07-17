@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ServerStatus } from "../components/ServerStatus";
 import { CurriculumCard } from "../components/page-curriculum/CurriculumCard";
 import { CurriculumSearchForm } from "../components/page-curriculum/CurriculumSearchForm";
+import { useAccessToken } from "../hooks/useAccessToken";
 
 import { searchCurriculums } from "../services/api";
 
@@ -14,18 +15,18 @@ export default function CurriculumsPage() {
   const [curriculums, setCurriculums] = useState<ICurriculumResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [lastQuery, setLastQuery] = useState<SearchCurriculums | null>(null);
+  const accessToken = useAccessToken();
 
   async function handleSearch(payload: SearchCurriculums) {
     try {
       setLoading(true);
       setLastQuery(payload);
 
-      const result = await searchCurriculums(payload);
+      const result = await searchCurriculums(payload, accessToken ?? undefined);
 
       setCurriculums(result);
     } catch (error) {
       console.error(error);
-      alert(`Erro: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -41,6 +42,13 @@ export default function CurriculumsPage() {
         <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-3">
+              <Link
+                to="/"
+                className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
+              >
+                ← Home
+              </Link>
+
               <h1 className="text-4xl font-bold tracking-tight text-slate-800">
                 Currículos
               </h1>
@@ -94,13 +102,55 @@ export default function CurriculumsPage() {
         )}
 
         {/* EMPTY */}
-        {!loading && !hasCurriculums && (
-          <section className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-700">
+        {!loading && !hasCurriculums && lastQuery === null && (
+          <section className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+            <div className="mb-6 text-6xl">🔍</div>
+
+            <h2 className="text-2xl font-bold text-slate-900">
+              Encontre currículos
+            </h2>
+
+            <p className="mt-3 text-slate-600">
+              Use os filtros acima para buscar currículos por categoria e idioma.
+            </p>
+
+            <div className="mt-8">
+              <Link
+                to="/curriculums/form"
+                className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
+              >
+                Novo currículo
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {!loading && !hasCurriculums && lastQuery !== null && (
+          <section className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+            <div className="mb-6 text-6xl">📭</div>
+
+            <h2 className="text-2xl font-bold text-slate-900">
               Nenhum currículo encontrado
             </h2>
 
-            <p className="mt-2 text-slate-500">
+            <p className="mt-3 text-slate-600">
+              Não há resultados para os filtros selecionados.
+            </p>
+
+            <div className="mt-6 inline-flex flex-wrap justify-center gap-2 text-sm text-slate-500">
+              {lastQuery.category && (
+                <span className="rounded-full bg-slate-100 px-3 py-1">
+                  {lastQuery.category}
+                </span>
+              )}
+              {lastQuery.language && (
+                <span className="rounded-full bg-slate-100 px-3 py-1">
+                  {lastQuery.language}
+                </span>
+              )}
+            </div>
+
+            <p className="mt-6 text-sm text-slate-500">
               Tente alterar os filtros de categoria ou idioma.
             </p>
           </section>

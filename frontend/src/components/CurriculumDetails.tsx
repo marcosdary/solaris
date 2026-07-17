@@ -144,7 +144,7 @@ export function CurriculumDetails({
 
             <div className="space-y-6">
               {curriculum.educations.map((education) => (
-                <div className="flex items-start justify-between">
+                <div key={education.id} className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold">
                       {education.degree}
@@ -251,7 +251,7 @@ export function CurriculumDetails({
 
               <div className="space-y-5">
                 {curriculum.certifications.map((certification) => (
-                  <div className="flex items-start justify-between">
+                  <div key={certification.id} className="flex items-start justify-between">
                     <div>
                       <h3 className="font-semibold">
                         {certification.name}

@@ -1,8 +1,8 @@
-import { CVCategory, Language } from "../config/constants";
+import { CurriculumCategory, Language } from "../config/constants";
 
 export interface ICurriculumInput {
   language: Language;
-  category: CVCategory;
+  category: CurriculumCategory;
   name: string;
   email: string;
   role: string;
@@ -77,6 +77,6 @@ export interface ICertificationInput {
 
 export interface SearchCurriculums {
   language: Language;
-  category: CVCategory;
+  category: CurriculumCategory;
 }
 

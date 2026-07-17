@@ -1,4 +1,4 @@
-export const CVCategory = {
+export const CurriculumCategory = {
   BACKEND_DEVELOPER: "backend_developer",
   FRONTEND_DEVELOPER: "frontend_developer",
   FULLSTACK_DEVELOPER: "fullstack_developer",
@@ -92,7 +92,7 @@ export const CVCategory = {
   CONSULTANT: "consultant",
 } as const;
 
-export type CVCategory = (typeof CVCategory)[keyof typeof CVCategory];
+export type CurriculumCategory = (typeof CurriculumCategory)[keyof typeof CurriculumCategory];
 
 export const Language = {
   ENGLISH: "english",

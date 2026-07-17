@@ -158,13 +158,13 @@ async def generate_curriculum_pdf(
 @router.get(
     "/{id}",
     status_code=status.HTTP_200_OK,
-    response_model=StructuredCurriculumSchema,
+    response_model=StructuredCurriculumResponseSchema,
 )
 async def get_curriculum(
     id: str,
     current_user: CurrentUserDep,
     curriculum_service: CurriculumServiceDep,
-) -> StructuredCurriculumSchema:
+) -> StructuredCurriculumResponseSchema:
     try:
         await current_user.get_me()
         return await curriculum_service.get_by_id(id)

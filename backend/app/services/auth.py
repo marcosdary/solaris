@@ -60,9 +60,9 @@ class _CurrentUser:
                "Acesso negado."
             )
         try:
-
+            print(auth)
             t, token = auth.split(" ")
-
+            
             if t.lower() != "bearer":
                 raise ValueError(
                     "Token inválido"

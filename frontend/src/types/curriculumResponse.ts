@@ -1,4 +1,4 @@
-import { CVCategory, Language } from "../config/constants";
+import { CurriculumCategory, Language } from "../config/constants";
 
 export interface CVResponse {
   name: string;
@@ -8,7 +8,7 @@ export interface CVResponse {
 export interface ICurriculumResponse {
   id: string;
   language: Language;
-  category: CVCategory;
+  category: CurriculumCategory;
   name: string;
   role: string;
   email: string;

@@ -2,44 +2,11 @@ from fastapi import APIRouter, status
 from fastapi.exceptions import HTTPException
 from sqlalchemy.exc import IntegrityError, DBAPIError
 
-from app.schemas import UserCreateSchema, UserResponseSchema
+from app.schemas import UserResponseSchema
 from app.services import UserServiceDep, CurrentUserDep
 
 
 router = APIRouter()
-
-
-@router.post(
-    "",
-    status_code=status.HTTP_201_CREATED,
-    response_model=UserResponseSchema,
-)
-async def create_user(
-    schema: UserCreateSchema,
-    user_service: UserServiceDep,
-) -> UserResponseSchema:
-    try:
-        return await user_service.create(schema)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(exc),
-        )
-    except IntegrityError:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Já existe um usuário cadastrado com este email.",
-        )
-    except DBAPIError:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Serviço indisponível no momento.",
-        )
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erro interno do servidor.",
-        )
 
 
 @router.get(
@@ -62,10 +29,10 @@ async def list_users(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Serviço indisponível no momento.",
         )
-    except Exception:
+    except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erro interno do servidor.",
+            detail=f"Erro interno do servidor {exc}",
         )
 
 

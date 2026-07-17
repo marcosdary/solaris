@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import { CVCategory, Language } from "../../config/constants";
+import { CurriculumCategory, Language } from "../../config/constants";
 
 interface SearchCurriculumRequest {
-  category?: CVCategory;
+  category?: CurriculumCategory;
   language?: Language;
 }
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function CurriculumSearchForm({ onSearch }: Props) {
-  const [category, setCategory] = useState<CVCategory | "">("");
+  const [category, setCategory] = useState<CurriculumCategory | "">("");
   const [language, setLanguage] = useState<Language | "">("");
 
   function formatCategory(category: string) {
@@ -21,7 +21,7 @@ export function CurriculumSearchForm({ onSearch }: Props) {
       .replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     onSearch({
@@ -35,12 +35,12 @@ export function CurriculumSearchForm({ onSearch }: Props) {
       <div className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm md:flex-row">
         <select
           value={category}
-          onChange={(e) => setCategory(e.target.value as CVCategory | "")}
+          onChange={(e) => setCategory(e.target.value as CurriculumCategory | "")}
           className="flex-1 rounded-xl px-4 py-2 text-sm text-slate-700 outline-none"
         >
           <option value="">Todas as categorias</option>
 
-          {Object.values(CVCategory).map((value) => (
+          {Object.values(CurriculumCategory).map((value) => (
             <option key={value} value={value}>
               {formatCategory(value)}
             </option>
