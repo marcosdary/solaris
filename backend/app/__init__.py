@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
 
 # Inicializa a aplicação FastAPI
 app = FastAPI(
-    title="Auto CV",
+    title="Solaris",
     version="0.1.0",
     description="""
 API responsável pela integração para inserção de informações ao currículo 
@@ -139,7 +139,7 @@ def index():
 
     return IndexSchema(
         version="1.0.0",
-        message="Integração com Auto CV"
+        message="Integração com Solaris"
     )
 
 initialize_directories()

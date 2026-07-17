@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from tempfile import TemporaryDirectory
 
-from app.integrations import LoadInfoToFilePDFService
+from app.integrations import LoadInfoToFilePDFIntegration
 from app.config import Settings, DirPaths, PostgresAsyncDB, PostgresSyncDB
 
 @fixture(scope="session")
@@ -15,7 +15,7 @@ def faker():
 
 @fixture(scope="session")
 def loading_info_service():
-    return LoadInfoToFilePDFService()
+    return LoadInfoToFilePDFIntegration()
 
 @fixture(scope="function")
 def filename(faker):

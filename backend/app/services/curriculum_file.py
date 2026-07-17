@@ -50,14 +50,14 @@ class _CurriculumFileService:
 
     async def delete(self, file_id: str, bucket: BucketIntegration) -> None:
         file = await self.get_by_id(file_id)
-        await bucket.delete([file.name])
+        await bucket.delete([file.distpath])
         await CurriculumFileRepo.delete(self._db, file)
 
     async def get_download_url(
         self, file_id: str, bucket: BucketIntegration
     ) -> DownloadCurriculumResponseSchema:
         file = await self.get_by_id(file_id)
-        result = await bucket.download(file.name)
+        result = await bucket.download(file.distpath)
         return DownloadCurriculumResponseSchema(
             url=result["url"],
             name=file.name,

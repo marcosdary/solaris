@@ -16,7 +16,8 @@ from app.schemas import (
 )
 from app.services import (
     CurriculumServiceDep,
-    CurriculumFileServiceDep
+    CurriculumFileServiceDep,
+    CurrentUserDep
 )
 from app.integrations import (
     LoadInfoToFilePDFIntegration,
@@ -34,16 +35,17 @@ router = APIRouter()
 
 
 @router.post(
-    "/{user_id}",
+    "",
     status_code=status.HTTP_201_CREATED,
     response_model=StructuredCurriculumSummarySchema,
 )
 async def create_curriculum(
-    user_id: str,
     schema: StructuredCurriculumSchema,
     curriculum_service: CurriculumServiceDep,
+    current_user: CurrentUserDep,
 ) -> StructuredCurriculumSummarySchema:
     try:
+        user_id = await current_user.get_me()
         return await curriculum_service.create(user_id, schema)
     except ValueError as exc:
         raise HTTPException(
@@ -68,17 +70,18 @@ async def create_curriculum(
 
 
 @router.get(
-    "/users/{user_id}",
+    "/users",
     status_code=status.HTTP_200_OK,
     response_model=ListStructuredCurriculumResponse,
 )
 async def list_curriculums_to_user(
-    user_id: str,
+    current_user: CurrentUserDep,
     curriculum_service: CurriculumServiceDep,
     category: CurriculumCategory = None,
     language: Language = None,
 ) -> ListStructuredCurriculumResponse:
     try:
+        user_id = await current_user.get_me()
         return await curriculum_service.get_all(user_id, category, language)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
@@ -102,6 +105,7 @@ async def list_curriculums_to_user(
 async def generate_curriculum_pdf(
     id: str,
     request: Request,
+    current_user: CurrentUserDep,
     curriculum_service: CurriculumServiceDep,
     curriculum_file_service: CurriculumFileServiceDep,
     background_tasks: BackgroundTasks,
@@ -110,6 +114,7 @@ async def generate_curriculum_pdf(
     load_info_to_file = Depends(LoadInfoToFilePDFIntegration),
 ) -> GenerateCurriculumToFileSchema:
     try:
+        await current_user.get_me()
         context = await curriculum_service.prepare_pdf_context(id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
@@ -157,9 +162,11 @@ async def generate_curriculum_pdf(
 )
 async def get_curriculum(
     id: str,
+    current_user: CurrentUserDep,
     curriculum_service: CurriculumServiceDep,
 ) -> StructuredCurriculumSchema:
     try:
+        await current_user.get_me()
         return await curriculum_service.get_by_id(id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
@@ -173,10 +180,10 @@ async def get_curriculum(
             status_code=status.HTTP_409_CONFLICT,
             detail="Já existe um currículo com estes dados.",
         )
-    except Exception:
+    except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erro interno do servidor.",
+            detail=f"Erro interno do servidor: {exc}",
         )
 
 
@@ -187,6 +194,7 @@ async def get_curriculum(
 )
 async def delete_curriculum(
     id: str,
+    current_user: CurrentUserDep,
     curriculum_service: CurriculumServiceDep,
 ) -> None:
     try:

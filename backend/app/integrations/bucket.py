@@ -116,14 +116,14 @@ class SupabaseBucketService(BucketIntegration):
             "url": public_url
         }
      
-    async def download(self, filename: str) -> dict:
+    async def download(self, distpath: str) -> dict:
         client = await self._get_client()
 
         response = (
-            client.storage
+            await client.storage
             .from_(self._bucket_name)
             .create_signed_url(
-                filename,
+                distpath,
                 3600,
                 {"download": True},
             )
@@ -137,7 +137,7 @@ class SupabaseBucketService(BucketIntegration):
         client = await self._get_client()
 
         (
-            client.storage
+            await client.storage
             .from_(self._settings.SUPABASE_BUCKET_NAME)
             .remove(filename_list)
         )

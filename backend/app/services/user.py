@@ -39,7 +39,7 @@ class _UserService:
                 raise ValueError("Conta desativada.")
             return existing
         schema = UserCreateSchema(phone=phone, name=name, email=email)
-        return await _UserService.create(self._db, schema)
+        return await UserRepo.create(self._db, schema)
 
     async def get_by_id(
         self,
@@ -77,7 +77,9 @@ class _UserService:
         id: str,
         schema: UserUpdateSchema,
     ) -> UserModel:
-        user = await _UserService.get_by_id(self._db, id)
+        user = await UserRepo.get_by_id(self._db, id)
+        if not user.is_active:
+            raise ValueError("Conta desativada.")
         for key, value in schema.model_dump(exclude_unset=True).items():
             setattr(user, key, value)
         return await UserRepo.update(self._db, user)
@@ -86,7 +88,7 @@ class _UserService:
         self,
         id: str,
     ) -> None:
-        user = await _UserService.get_by_id(self._db, id)
+        user = await UserRepo.get_by_id(self._db, id)
         user.is_active = False
         await self._db.commit()
 

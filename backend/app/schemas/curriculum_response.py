@@ -124,7 +124,7 @@ class StructuredCurriculumSummarySchema(BaseSchema):
             f"*Contato e Redes*\n"
             f"*E-mail:* {self.email}\n"
             f"*LinkedIn:* https://{self.linkedin}\n"
-            f"*GitHub:* {github_info}\n\n",
+            f"*GitHub:* {github_info}\n\n"
             f"*Currículo completo:* http://localhost:5173/curriculums/{self.id}"
         )
 
