@@ -3,7 +3,7 @@ import type { ICurriculumResponse } from "../types/curriculumResponse";
 import type { ICurriculumInput } from "../types/curriculumCreate";
 import type { ICurriculumEditPayload } from "../types/curriculumEditPayload";
 import { CurriculumCategory, Language } from "../config/constants";
-import { createCurriculum, updateCurriculum } from "../services/api";
+import { createCurriculum, updateCurriculum } from "../services/curriculum";
 import { useExperiences } from "./useExperiences";
 import { useEducations } from "./useEducations";
 import { useProjects } from "./useProjects";

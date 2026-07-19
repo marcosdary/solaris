@@ -1,125 +1,56 @@
 import { Link } from "react-router-dom";
+import { FileText, Sparkles, Globe, Zap } from "lucide-react";
 
-import { ServerStatus } from "../components/ServerStatus";
-
-export default function CurriculumFormPage() {
+export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100">
-      <div className="mx-auto max-w-7xl px-6 py-10">
+    <div className="mx-auto max-w-5xl px-6 py-12">
+      <nav className="mb-24 flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-800">
+          Auto CV
+        </h1>
 
-        {/* NAVBAR */}
-        <nav className="mb-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-800">
-              Auto CV
-            </h1>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/login"
+            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-200/60 hover:text-slate-900"
+          >
+            Entrar
+          </Link>
 
-            <ServerStatus />
+          <Link
+            to="/curriculums"
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+          >
+            Meus Currículos
+          </Link>
+        </div>
+      </nav>
+
+      <section className="mb-24">
+        <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl">
+          Crie um currículo profissional em poucos minutos.
+        </h2>
+
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-500">
+          Gere currículos modernos em PDF, personalizados por IA, em português,
+          inglês e espanhol.
+        </p>
+      </section>
+
+      <section className="grid gap-1 sm:grid-cols-4">
+        {[
+          { icon: FileText, title: "PDF", desc: "Exporte currículos prontos para impressão e compartilhamento." },
+          { icon: Sparkles, title: "IA", desc: "Conteúdo gerado e personalizado por inteligência artificial." },
+          { icon: Globe, title: "Multilíngue", desc: "Português, inglês e espanhol com apenas um clique." },
+          { icon: Zap, title: "Rápido", desc: "Crie currículos completos em poucos minutos." },
+        ].map(({ icon: Icon, title, desc }) => (
+          <div key={title} className="rounded-xl p-6 transition hover:bg-white">
+            <Icon size={28} className="text-slate-400" strokeWidth={1.5} />
+            <h3 className="mt-5 text-sm font-semibold text-slate-800">{title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">{desc}</p>
           </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              to="/login"
-              className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
-            >
-              Entrar
-            </Link>
-
-            <Link
-              to="/curriculums"
-              className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
-            >
-              Meus Currículos
-            </Link>
-          </div>
-        </nav>
-
-        {/* HERO */}
-        <section className="grid gap-14 lg:grid-cols-2 lg:items-center">
-
-          {/* Texto */}
-          <div>
-            <span className="inline-flex rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700">
-              🚀 Currículos com IA
-            </span>
-
-            <h2 className="mt-6 text-5xl font-bold leading-tight tracking-tight text-slate-900">
-              Crie um currículo profissional em poucos minutos.
-            </h2>
-
-            <p className="mt-6 text-lg leading-8 text-slate-600">
-              Gere currículos modernos para diversas áreas profissionais,
-              personalize experiências, projetos, certificações e exporte tudo
-              automaticamente utilizando inteligência artificial.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-                <p className="text-sm font-semibold text-slate-700">
-                  📄 PDF
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-                <p className="text-sm font-semibold text-slate-700">
-                  🤖 IA
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-                <p className="text-sm font-semibold text-slate-700">
-                  🌎 Multilíngue
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-                <p className="text-sm font-semibold text-slate-700">
-                  ⚡ Rápido
-                </p>
-              </div>
-            </div>
-          </div>
-
-        </section>
-
-        {/* FEATURES */}
-        <section className="mt-20 grid gap-6 md:grid-cols-3">
-
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-slate-800">
-              🎯 Diversas áreas
-            </h3>
-
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              Tecnologia, Engenharia, Administração, Marketing, Saúde,
-              Comercial e dezenas de outras categorias.
-            </p>
-          </div>
-
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-slate-800">
-              🌍 Idiomas
-            </h3>
-
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              Gere currículos em Português, Inglês ou Espanhol com apenas um
-              clique.
-            </p>
-          </div>
-
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-slate-800">
-              🚀 Exportação
-            </h3>
-
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              Exporte seus currículos prontos para impressão e compartilhamento.
-            </p>
-          </div>
-
-        </section>
-
-      </div>
+        ))}
+      </section>
     </div>
   );
 }

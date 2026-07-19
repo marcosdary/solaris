@@ -11,10 +11,11 @@ from app.schemas import ProjectSchema, ProjectEditSchema
 
 class ProjectModel(BaseModel):
     __tablename__ = "projects"
+    __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
-    curriculum_id: Mapped[str] = mapped_column(ForeignKey("curriculum.id"))
+    curriculum_id: Mapped[str] = mapped_column(ForeignKey("private.curriculum.id"))
 
     name: Mapped[str]
     github: Mapped[str]
@@ -23,18 +24,18 @@ class ProjectModel(BaseModel):
     start_date: Mapped[date]
     end_date: Mapped[date] = mapped_column(nullable=True)
 
-    cv: Mapped["CurriculumModel"] = relationship(back_populates="projects")
+    curriculum: Mapped["CurriculumModel"] = relationship(back_populates="projects")
 
     descriptions: Mapped[list["ProjectDescriptionModel"]] = relationship(
         back_populates="project",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="raise",
     )
 
     technologies: Mapped[list["ProjectTechnologyModel"]] = relationship(
         back_populates="project",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="raise",
     )
 
     @classmethod

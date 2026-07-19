@@ -6,7 +6,7 @@ import { CurriculumCard } from "../components/page-curriculum/CurriculumCard";
 import { CurriculumSearchForm } from "../components/page-curriculum/CurriculumSearchForm";
 import { useAccessToken } from "../hooks/useAccessToken";
 
-import { searchCurriculums } from "../services/api";
+import { searchCurriculums } from "../services/curriculum";
 
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 import type { SearchCurriculums } from "../types/curriculumCreate";

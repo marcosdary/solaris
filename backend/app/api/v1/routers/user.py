@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 from fastapi.exceptions import HTTPException
-from sqlalchemy.exc import IntegrityError, DBAPIError
+from sqlalchemy.exc import DBAPIError
 
 from app.schemas import UserResponseSchema
 from app.services import UserServiceDep, CurrentUserDep

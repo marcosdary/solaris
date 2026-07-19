@@ -20,6 +20,7 @@ from app.schemas import (
 
 class CurriculumModel(BaseModel):
     __tablename__ = "curriculum"
+    __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
 
@@ -39,7 +40,7 @@ class CurriculumModel(BaseModel):
 
     resume: Mapped[str]
 
-    user_id: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id"), nullable=True)
+    user_id: Mapped[Optional[str]] = mapped_column(ForeignKey("private.users.id"), nullable=True)
 
     user: Mapped[Optional["UserModel"]] = relationship(
         back_populates="curriculums",
@@ -47,33 +48,33 @@ class CurriculumModel(BaseModel):
     )
 
     experiences: Mapped[list["ExperienceModel"]] = relationship(
-        back_populates="cv",
+        back_populates="curriculum",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="raise",
     )
 
     educations: Mapped[list["EducationModel"]] = relationship(
-        back_populates="cv",
+        back_populates="curriculum",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="raise",
     )
 
     projects: Mapped[list["ProjectModel"]] = relationship(
-        back_populates="cv",
+        back_populates="curriculum",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="raise",
     )
 
     certifications: Mapped[list["CertificationModel"]] = relationship(
-        back_populates="cv",
+        back_populates="curriculum",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="raise",
     )
 
     files: Mapped[list["CurriculumFileModel"]] = relationship(
         back_populates="curriculum",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="raise",
     )
 
     @classmethod

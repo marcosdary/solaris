@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import type { ICurriculumResponse } from "../../types/curriculumResponse";
-import { selectCurriculumByID } from "../../services/api";
+import { selectCurriculumByID } from "../../services/curriculum";
 import { useAccessToken } from "../../hooks/useAccessToken";
 
 interface Props {

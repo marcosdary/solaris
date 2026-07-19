@@ -10,10 +10,11 @@ from app.schemas import ExperienceSchema, ExperienceEditSchema
 
 class ExperienceModel(BaseModel):
     __tablename__ = "experiences"
+    __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
-    curriculum_id: Mapped[str] = mapped_column(ForeignKey("curriculum.id"))
+    curriculum_id: Mapped[str] = mapped_column(ForeignKey("private.curriculum.id"))
 
     role: Mapped[str]
     company: Mapped[str]
@@ -22,12 +23,12 @@ class ExperienceModel(BaseModel):
     start_date: Mapped[date]
     end_date: Mapped[date] = mapped_column(nullable=True)
 
-    cv: Mapped["CurriculumModel"] = relationship(back_populates="experiences")
+    curriculum: Mapped["CurriculumModel"] = relationship(back_populates="experiences")
 
     activities: Mapped[list["ExperienceActivityModel"]] = relationship(
         back_populates="experience",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="raise",
     )
 
     @classmethod

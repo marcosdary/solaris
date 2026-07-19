@@ -7,11 +7,12 @@ from app.schemas import ProjectTechnologySchema, ProjectTechnologyEditSchema
 
 class ProjectTechnologyModel(BaseModel):
     __tablename__ = "project_technologies"
+    __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
     project_id: Mapped[str] = mapped_column(
-        ForeignKey("projects.id")
+        ForeignKey("private.projects.id")
     )
 
     technology: Mapped[str]

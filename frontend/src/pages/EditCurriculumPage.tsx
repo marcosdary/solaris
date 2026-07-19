@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { CurriculumForm } from "../components/CurriculumForm";
-import { selectCurriculumByID } from "../services/api";
+import { selectCurriculumByID } from "../services/curriculum";
 import { useAccessToken } from "../hooks/useAccessToken";
 
 import type { ICurriculumResponse } from "../types/curriculumResponse";
@@ -90,12 +90,21 @@ export default function EditCurriculumPage() {
             </p>
           </div>
 
-          <Link
-            to={`/curriculums/${id}`}
-            className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
-          >
-            ← Voltar
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-slate-500 transition hover:bg-slate-200/60 hover:text-slate-900"
+            >
+              ← Home
+            </Link>
+
+            <Link
+              to={`/curriculums/${id}`}
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
+            >
+              ← Voltar
+            </Link>
+          </div>
         </header>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">

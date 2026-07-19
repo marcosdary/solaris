@@ -24,12 +24,21 @@ export default function CurriculumFormPage() {
             </p>
           </div>
 
-          <Link
-            to="/curriculums"
-            className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
-          >
-            ← Ver currículos
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-slate-500 transition hover:bg-slate-200/60 hover:text-slate-900"
+            >
+              ← Home
+            </Link>
+
+            <Link
+              to="/curriculums"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
+            >
+              ← Ver currículos
+            </Link>
+          </div>
         </header>
 
         {/* FORMULÁRIO */}

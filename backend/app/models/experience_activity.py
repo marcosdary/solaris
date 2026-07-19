@@ -7,11 +7,12 @@ from app.schemas import ActivitySchema, ActivityEditSchema
 
 class ExperienceActivityModel(BaseModel):
     __tablename__ = "experience_activities"
+    __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
     experience_id: Mapped[str] = mapped_column(
-        ForeignKey("experiences.id")
+        ForeignKey("private.experiences.id")
     )
 
     description: Mapped[str]

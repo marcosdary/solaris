@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime
 
-from pydantic import EmailStr, computed_field
+from pydantic import computed_field
 
 from app.schemas.base import BaseSchema
 
@@ -29,8 +29,6 @@ class UserResponseSchema(BaseSchema):
             f"*Nome:* {self.name}\n"
             f"*Registro:* {self.created_at.strftime('%d-%m-%y %H:%M')}\n"
             f"*Status:* {'Ativo' if self.is_active else 'Desativo'}\n\n"
-            f"*Contato e Redes*\n"
-            f"*E-mail:* {self.email}\n"
         )
 
 

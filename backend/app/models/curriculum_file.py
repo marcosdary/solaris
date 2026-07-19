@@ -8,12 +8,13 @@ from app.schemas import CurriculumFileCreateSchema
 
 class CurriculumFileModel(BaseModel):
     __tablename__ = "curriculum_files"
+    __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(
         primary_key=True, default=lambda: f"file_{uuid4()}"
     )
     curriculum_id: Mapped[str] = mapped_column(
-        ForeignKey("curriculum.id"), nullable=False
+        ForeignKey("private.curriculum.id"), nullable=False
     )
     name: Mapped[str]
     mimetype: Mapped[str]

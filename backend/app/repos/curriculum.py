@@ -2,8 +2,13 @@ from typing import List, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from app.models import CurriculumModel
+from app.models import (
+    CurriculumModel,
+    ExperienceModel,
+    ProjectModel,
+)
 from app.config import CurriculumCategory, Language
 
 
@@ -24,7 +29,20 @@ class CurriculumRepo:
         session: AsyncSession,
         id: str,
     ) -> Optional[CurriculumModel]:
-        stmt = select(CurriculumModel).filter(CurriculumModel.id == id)
+        stmt = select(
+            CurriculumModel
+        ).options(
+            # Experiences
+            selectinload(CurriculumModel.experiences).selectinload(ExperienceModel.activities),
+            # Certifications
+            selectinload(CurriculumModel.certifications),
+            # Educations
+            selectinload(CurriculumModel.educations),
+            # Projects + Descriptions
+            selectinload(CurriculumModel.projects).selectinload(ProjectModel.descriptions),
+            # Projects + Tecnologies
+            selectinload(CurriculumModel.projects).selectinload(ProjectModel.technologies),
+        ).filter(CurriculumModel.id == id)
         return await session.scalar(stmt)
 
     @staticmethod

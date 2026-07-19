@@ -6,6 +6,7 @@ from app.schemas import UserCreateSchema
 
 class UserModel(BaseModel):
     __tablename__ = "users"
+    __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
@@ -14,7 +15,7 @@ class UserModel(BaseModel):
 
     curriculums: Mapped[list["CurriculumModel"]] = relationship(
         back_populates="user",
-        lazy="selectin",
+        lazy="raise",
     )
 
     @classmethod

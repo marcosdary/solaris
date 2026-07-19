@@ -27,14 +27,6 @@ class UserRepo:
         return await session.scalar(stmt)
 
     @staticmethod
-    async def get_by_email(
-        session: AsyncSession,
-        email: str,
-    ) -> Optional[UserModel]:
-        stmt = select(UserModel).filter(UserModel.email == email)
-        return await session.scalar(stmt)
-
-    @staticmethod
     async def get_all(
         session: AsyncSession,
     ) -> List[UserModel]:

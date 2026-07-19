@@ -138,7 +138,6 @@ class _EditCurriculum:
         self._model.certifications = self.active_certifications
 
         await session.commit()
-        await session.refresh(self._model)
 
     @staticmethod
     async def _delete_by_ids(
@@ -189,7 +188,7 @@ class _CurriculumService:
         self,
         id: str,
     ) -> None:
-        curriculum = await _CurriculumService.get_by_id(self._db, id)
+        curriculum = await self.get_by_id(id)
         await CurriculumRepo.delete(self._db, curriculum)
 
     async def edit(
@@ -203,7 +202,7 @@ class _CurriculumService:
 
         editor = _EditCurriculum(model=curriculum, schema=schema)
         await editor.apply(self._db)
-        return curriculum
+        return await CurriculumRepo.get_by_id(self._db, id)
 
     async def prepare_pdf_context(
         self,

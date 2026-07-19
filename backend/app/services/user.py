@@ -38,7 +38,7 @@ class _UserService:
             if not existing.is_active:
                 raise ValueError("Conta desativada.")
             return existing
-        schema = UserCreateSchema(phone=phone, name=name, email=email)
+        schema = UserCreateSchema(phone=phone, name=name)
         return await UserRepo.create(self._db, schema)
 
     async def get_by_id(
@@ -46,17 +46,6 @@ class _UserService:
         id: str,
     ) -> UserModel:
         user = await UserRepo.get_by_id(self._db, id)
-        if not user:
-            raise ValueError("Usuário não encontrado.")
-        if not user.is_active:
-            raise ValueError("Conta desativada.")
-        return user
-
-    async def get_by_email(
-        self,
-        email: str,
-    ) -> UserModel:
-        user = await UserRepo.get_by_email(self._db, email)
         if not user:
             raise ValueError("Usuário não encontrado.")
         if not user.is_active:

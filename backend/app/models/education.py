@@ -9,10 +9,11 @@ from app.schemas import EducationSchema, EducationEditSchema
 
 class EducationModel(BaseModel):
     __tablename__ = "educations"
+    __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
-    curriculum_id: Mapped[str] = mapped_column(ForeignKey("curriculum.id"))
+    curriculum_id: Mapped[str] = mapped_column(ForeignKey("private.curriculum.id"))
 
     institution: Mapped[str]
     degree: Mapped[str]
@@ -21,7 +22,7 @@ class EducationModel(BaseModel):
     start_date: Mapped[date]
     end_date: Mapped[date] = mapped_column(nullable=True)
 
-    cv: Mapped["CurriculumModel"] = relationship(back_populates="educations")
+    curriculum: Mapped["CurriculumModel"] = relationship(back_populates="educations")
 
     @classmethod
     def from_schema(cls, schema: EducationSchema) -> "EducationModel":

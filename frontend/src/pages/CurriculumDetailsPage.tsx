@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { CurriculumDetails } from "../components/CurriculumDetails";
-import { selectCurriculumByID, deleteCurriculum } from "../services/api";
+import { selectCurriculumByID, deleteCurriculum } from "../services/curriculum";
 import { useAccessToken } from "../hooks/useAccessToken";
 
 import type { ICurriculumResponse } from "../types/curriculumResponse";

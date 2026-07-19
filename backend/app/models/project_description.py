@@ -7,11 +7,12 @@ from app.schemas import ProjectDescriptionSchema, ProjectDescriptionEditSchema
 
 class ProjectDescriptionModel(BaseModel):
     __tablename__ = "project_descriptions"
+    __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
     project_id: Mapped[str] = mapped_column(
-        ForeignKey("projects.id")
+        ForeignKey("private.projects.id")
     )
 
     description: Mapped[str]

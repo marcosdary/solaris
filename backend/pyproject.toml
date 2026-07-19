@@ -1,7 +1,7 @@
 [project]
-name = "autocv"
+name = "solaris"
 version = "0.1.0"
-description = "Add your description here"
+description = "Automatização para currículos"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

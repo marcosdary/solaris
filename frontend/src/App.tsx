@@ -6,6 +6,7 @@ import {
 
 import { AuthProvider } from "./context/AuthContext";
 import { AuthGuard } from "./components/auth/AuthGuard";
+import Layout from "./components/Layout";
 
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -19,47 +20,49 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
+        <Layout>
+          <Routes>
 
-          <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
 
-          <Route path="/register" element={<RegisterPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-          <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
 
-          <Route
-            path="/curriculums"
-            element={
-              <AuthGuard>
-                <CurriculumsPage />
-              </AuthGuard>
-            }
-          />
+            <Route
+              path="/curriculums"
+              element={
+                <AuthGuard>
+                  <CurriculumsPage />
+                </AuthGuard>
+              }
+            />
 
-          <Route
-            path="/curriculums/form"
-            element={
-              <AuthGuard>
-                <FormCurriculumPage />
-              </AuthGuard>
-            }
-          />
+            <Route
+              path="/curriculums/form"
+              element={
+                <AuthGuard>
+                  <FormCurriculumPage />
+                </AuthGuard>
+              }
+            />
 
-          <Route
-            path="/curriculums/:id"
-            element={<CurriculumDetailsPage />}
-          />
+            <Route
+              path="/curriculums/:id"
+              element={<CurriculumDetailsPage />}
+            />
 
-          <Route
-            path="/curriculums/:id/edit"
-            element={
-              <AuthGuard>
-                <EditCurriculumPage />
-              </AuthGuard>
-            }
-          />
+            <Route
+              path="/curriculums/:id/edit"
+              element={
+                <AuthGuard>
+                  <EditCurriculumPage />
+                </AuthGuard>
+              }
+            />
 
-        </Routes>
+          </Routes>
+        </Layout>
       </BrowserRouter>
     </AuthProvider>
   );

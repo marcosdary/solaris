@@ -80,7 +80,6 @@ async def get_me(
 ) -> UserResponseSchema:
     try: 
         user_id = await current_user.get_me()
-        print(user_id)
         return await user_service.get_by_id(user_id)
     except ValueError as exc:
         raise HTTPException(

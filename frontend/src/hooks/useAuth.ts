@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login as apiLogin, register as apiRegister } from "../services/api";
+import { login as apiLogin, register as apiRegister } from "../services/auth";
 import { setToken } from "../utils/tokenStorage";
 import type { ILoginInput, IRegisterInput, IAuthResponse } from "../types/auth";
 
