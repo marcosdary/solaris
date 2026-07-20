@@ -253,3 +253,9 @@ dist-ssr
 
 # Ignorar configurações locais do OpenCode
 .config/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
