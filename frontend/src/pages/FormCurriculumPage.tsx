@@ -1,23 +1,24 @@
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
-import { CurriculumFormCreate } from "../components/CurriculumFormCreate";
-import { ServerStatus } from "../components/ServerStatus";
+import { CurriculumForm } from "../components/CurriculumForm";
+import type { ICurriculumResponse } from "../types/curriculumResponse";
 
 export default function CurriculumFormPage() {
+  const navigate = useNavigate();
+
+  function handleSuccess(result: ICurriculumResponse) {
+    navigate(`/curriculums/${result.id}`);
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-5xl px-6 py-10">
 
-        {/* HEADER */}
         <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-4xl font-bold tracking-tight text-slate-800">
-                Novo Currículo
-              </h1>
-
-              <ServerStatus />
-            </div>
+            <h1 className="text-4xl font-bold tracking-tight text-slate-800">
+              Novo Currículo
+            </h1>
 
             <p className="mt-2 text-slate-600">
               Preencha suas informações para gerar um currículo profissional.
@@ -41,13 +42,10 @@ export default function CurriculumFormPage() {
           </div>
         </header>
 
-        {/* FORMULÁRIO */}
-        <section
-          aria-label="Formulário de currículo"
-          className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
-        >
-          <CurriculumFormCreate />
+        <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <CurriculumForm mode="create" onSuccess={handleSuccess} />
         </section>
+
       </div>
     </div>
   );

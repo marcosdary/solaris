@@ -12,6 +12,8 @@ import type { UseExperiencesReturn } from "./useExperiences";
 import type { UseEducationsReturn } from "./useEducations";
 import type { UseProjectsReturn } from "./useProjects";
 import type { UseCertificationsReturn } from "./useCertifications";
+import { useAccessToken } from "../hooks/useAccessToken";
+
 import type {
   IExperienceInput,
   IEducationInput,
@@ -31,7 +33,7 @@ export interface UseCurriculumFormReturn {
     key: K,
     value: ICurriculumInput[K]
   ): void;
-  handleSubmit(e: React.SubmitEvent<HTMLFormElement>, curriculumId?: string): Promise<void>;
+  handleSubmit(e: React.SubmitEvent<HTMLFormElement>): Promise<void>;
   loading: boolean;
   result: ICurriculumResponse | null;
   error: string | null;
@@ -44,7 +46,7 @@ export interface UseCurriculumFormReturn {
 interface UseCurriculumFormOptions {
   mode: "create" | "edit";
   initialData?: ICurriculumResponse;
-  onSuccess?: () => void;
+  onSuccess?: (result: ICurriculumResponse) => void;
 }
 
 function emptyForm(): ICurriculumInput {
@@ -117,6 +119,10 @@ export function useCurriculumForm({
     initial: initialData?.certifications?.map(cleanCertification) ?? [],
   });
 
+  const accessToken = useAccessToken();
+
+  const curriculumId = initialData?.id;
+
   function updateField<K extends keyof ICurriculumInput>(
     key: K,
     value: ICurriculumInput[K]
@@ -124,7 +130,7 @@ export function useCurriculumForm({
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>, curriculumId?: string) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setLoading(true);
@@ -132,13 +138,8 @@ export function useCurriculumForm({
     setError(null);
 
     try {
-      const visibleExperiences = experiences.visible();
-      const visibleEducations = educations.visible();
-      const visibleProjects = projects.visible();
-      const visibleCertifications = certifications.visible();
 
       const payload: ICurriculumEditPayload = {
-        id: curriculumId!,
         language: form.language,
         category: form.category,
         name: form.name,
@@ -149,26 +150,20 @@ export function useCurriculumForm({
         phone: form.phone,
         location: form.location,
         resume: form.resume,
-        experiences: visibleExperiences as ICurriculumEditPayload["experiences"],
-        educations: visibleEducations as ICurriculumEditPayload["educations"],
-        projects:
-          visibleProjects.length > 0
-            ? (visibleProjects as ICurriculumEditPayload["projects"])
-            : null,
-        certifications:
-          visibleCertifications.length > 0
-            ? (visibleCertifications as ICurriculumEditPayload["certifications"])
-            : null,
+        experiences: experiences.getExperiences(),
+        educations: educations.getEducations(),
+        projects: projects.getProjects(),
+        certifications: certifications.getCertifications(),
       };
 
       const response =
         mode === "create"
-          ? await createCurriculum(payload)
-          : await updateCurriculum(payload, curriculumId!);
+          ? await createCurriculum(payload, accessToken)
+          : await updateCurriculum(payload, curriculumId!, accessToken);
 
       setResult(response);
 
-      onSuccess?.();
+      onSuccess?.(response);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Erro ao processar currículo.";

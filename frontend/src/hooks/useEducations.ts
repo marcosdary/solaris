@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { IEducationInput } from "../types/curriculumCreate";
+import type { IEducationEditPayload } from "../types/curriculumEditPayload";
 
 export interface UseEducationsReturn<T extends IEducationInput> {
   educations: T[];
@@ -13,6 +14,7 @@ export interface UseEducationsReturn<T extends IEducationInput> {
   ): void;
   visible(): T[];
   isEmpty(): boolean;
+  getEducations(): IEducationEditPayload[] 
 }
 
 interface UseEducationsOptions<T extends IEducationInput> {
@@ -74,9 +76,21 @@ export function useEducations<T extends IEducationInput>({
     return educations.filter((e) => !e.depreciated);
   }
 
+  function getEducations(): IEducationEditPayload[]{
+    const educations = visible();
+    return educations.map((item) => ({
+      id: item.id,
+      institution: item.institution,
+      degree: item.degree,
+      location: item.location,
+      start_date: item.start_date,
+      end_date: item.end_date ?? null,
+    }))
+  }
+
   function isEmpty() {
     return visible().length === 0;
   }
 
-  return { educations, add, remove, restore, update, visible, isEmpty };
+  return { educations, add, remove, restore, update, visible, getEducations, isEmpty };
 }

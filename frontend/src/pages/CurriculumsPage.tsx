@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Search, FileX, Plus } from "lucide-react";
 
-import { ServerStatus } from "../components/ServerStatus";
 import { CurriculumCard } from "../components/page-curriculum/CurriculumCard";
 import { CurriculumSearchForm } from "../components/page-curriculum/CurriculumSearchForm";
 import { useAccessToken } from "../hooks/useAccessToken";
@@ -35,154 +35,128 @@ export default function CurriculumsPage() {
   const hasCurriculums = curriculums.length > 0;
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto max-w-7xl px-6 py-10">
+    <div className="mx-auto max-w-5xl px-6 py-12">
+      <nav className="mb-24 flex items-center justify-between">
+        <Link to="/" className="text-2xl font-bold tracking-tight text-slate-800">
+          Auto CV
+        </Link>
 
-        {/* HEADER */}
-        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                to="/"
-                className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
-              >
-                ← Home
-              </Link>
-
-              <h1 className="text-4xl font-bold tracking-tight text-slate-800">
-                Currículos
-              </h1>
-
-              <div className="mt-1">
-                <ServerStatus />
-              </div>
-            </div>
-
-            <p className="mt-2 text-slate-600">
-              Consulte currículos cadastrados por categoria e idioma.
-            </p>
-          </div>
+        <div className="flex items-center gap-2">
 
           <Link
             to="/curriculums/form"
-            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 font-medium text-white shadow-sm transition hover:bg-blue-700"
+            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-200/60 hover:text-slate-900"
           >
-            Novo currículo
+            Novo Currículo
           </Link>
-        </header>
+        </div>
+      </nav>
 
-        {/* SEARCH */}
-        <section className="mb-8" aria-label="Busca de currículos">
-          <CurriculumSearchForm onSearch={handleSearch} />
+      <section className="mb-24">
+        <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl">
+          Meus Currículos
+        </h2>
+
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-500">
+          Consulte e gerencie seus currículos cadastrados por categoria e
+          idioma.
+        </p>
+      </section>
+
+      <section className="mb-16" aria-label="Busca de currículos">
+        <CurriculumSearchForm onSearch={handleSearch} />
+      </section>
+
+      {loading && (
+        <section className="rounded-xl p-6 text-center transition hover:bg-white">
+          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
+
+          <p className="text-slate-700">Buscando currículos...</p>
+
+          {lastQuery && (
+            <p className="mt-2 text-xs text-slate-500">
+              {lastQuery.category && <>Categoria: {lastQuery.category}</>}
+              {lastQuery.category && lastQuery.language && " • "}
+              {lastQuery.language && <>Idioma: {lastQuery.language}</>}
+            </p>
+          )}
         </section>
+      )}
 
-        {/* LOADING */}
-        {loading && (
-          <section className="rounded-2xl border border-blue-100 bg-blue-50 p-6 text-center">
-            <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
+      {!loading && !hasCurriculums && lastQuery === null && (
+        <section className="rounded-xl p-6 text-center transition hover:bg-white">
+          <Search size={48} className="mx-auto text-slate-300" strokeWidth={1.5} />
 
-            <p className="text-slate-700">
-              Buscando currículos...
-            </p>
+          <h2 className="mt-5 text-sm font-semibold text-slate-800">
+            Nenhum currículo encontrado
+          </h2>
 
-            {lastQuery && (
-              <p className="mt-2 text-xs text-slate-500">
-                {lastQuery.category && (
-                  <>Categoria: {lastQuery.category}</>
-                )}
+          <p className="mt-2 text-sm leading-relaxed text-slate-500">
+            Use os filtros acima para buscar currículos por categoria e idioma.
+          </p>
 
-                {lastQuery.category && lastQuery.language && " • "}
+          <div className="mt-6">
+            <Link
+              to="/curriculums/form"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+            >
+              <Plus size={16} strokeWidth={1.5} />
+              Criar currículo
+            </Link>
+          </div>
+        </section>
+      )}
 
-                {lastQuery.language && (
-                  <>Idioma: {lastQuery.language}</>
-                )}
-              </p>
+      {!loading && !hasCurriculums && lastQuery !== null && (
+        <section className="rounded-xl p-6 text-center transition hover:bg-white">
+          <FileX size={48} className="mx-auto text-slate-300" strokeWidth={1.5} />
+
+          <h2 className="mt-5 text-sm font-semibold text-slate-800">
+            Nenhum currículo encontrado
+          </h2>
+
+          <p className="mt-2 text-sm leading-relaxed text-slate-500">
+            Não há resultados para os filtros selecionados.
+          </p>
+
+          <div className="mt-6 inline-flex flex-wrap justify-center gap-2 text-sm text-slate-500">
+            {lastQuery.category && (
+              <span className="rounded-full bg-slate-100 px-3 py-1">
+                {lastQuery.category}
+              </span>
             )}
-          </section>
-        )}
+            {lastQuery.language && (
+              <span className="rounded-full bg-slate-100 px-3 py-1">
+                {lastQuery.language}
+              </span>
+            )}
+          </div>
 
-        {/* EMPTY */}
-        {!loading && !hasCurriculums && lastQuery === null && (
-          <section className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-            <div className="mb-6 text-6xl">🔍</div>
+          <p className="mt-6 text-sm text-slate-500">
+            Tente alterar os filtros de categoria ou idioma.
+          </p>
+        </section>
+      )}
 
-            <h2 className="text-2xl font-bold text-slate-900">
-              Encontre currículos
-            </h2>
+      {!loading && hasCurriculums && (
+        <section className="mb-6 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-800">Resultados</h2>
 
-            <p className="mt-3 text-slate-600">
-              Use os filtros acima para buscar currículos por categoria e idioma.
-            </p>
+          <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600">
+            {curriculums.length} currículo(s)
+          </span>
+        </section>
+      )}
 
-            <div className="mt-8">
-              <Link
-                to="/curriculums/form"
-                className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
-              >
-                Novo currículo
-              </Link>
+      {!loading && hasCurriculums && (
+        <section className="grid gap-1 sm:grid-cols-2">
+          {curriculums.map((curriculum) => (
+            <div key={curriculum.id} className="rounded-xl transition hover:bg-white">
+              <CurriculumCard curriculum={curriculum} />
             </div>
-          </section>
-        )}
-
-        {!loading && !hasCurriculums && lastQuery !== null && (
-          <section className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-            <div className="mb-6 text-6xl">📭</div>
-
-            <h2 className="text-2xl font-bold text-slate-900">
-              Nenhum currículo encontrado
-            </h2>
-
-            <p className="mt-3 text-slate-600">
-              Não há resultados para os filtros selecionados.
-            </p>
-
-            <div className="mt-6 inline-flex flex-wrap justify-center gap-2 text-sm text-slate-500">
-              {lastQuery.category && (
-                <span className="rounded-full bg-slate-100 px-3 py-1">
-                  {lastQuery.category}
-                </span>
-              )}
-              {lastQuery.language && (
-                <span className="rounded-full bg-slate-100 px-3 py-1">
-                  {lastQuery.language}
-                </span>
-              )}
-            </div>
-
-            <p className="mt-6 text-sm text-slate-500">
-              Tente alterar os filtros de categoria ou idioma.
-            </p>
-          </section>
-        )}
-
-        {/* RESULTS */}
-        {!loading && hasCurriculums && (
-          <section className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-slate-800">
-              Resultados
-            </h2>
-
-            <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700">
-              {curriculums.length} currículo(s)
-            </span>
-          </section>
-        )}
-
-        {/* GRID */}
-        {!loading && hasCurriculums && (
-          <section>
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {curriculums.map((curriculum) => (
-                <CurriculumCard
-                  key={curriculum.id}
-                  curriculum={curriculum}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+          ))}
+        </section>
+      )}
     </div>
   );
 }

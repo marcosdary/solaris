@@ -4,6 +4,9 @@ import type {
   IProjectInput,
   IProjectTechnologyInput,
 } from "../types/curriculumCreate";
+import type { 
+  IProjectEditPayload
+} from "../types/curriculumEditPayload";
 
 export interface UseProjectsReturn<T extends IProjectInput> {
   projects: T[];
@@ -31,6 +34,7 @@ export interface UseProjectsReturn<T extends IProjectInput> {
   ): void;
   visible(): T[];
   isEmpty(): boolean;
+  getProjects(): IProjectEditPayload[];
 }
 
 interface UseProjectsOptions<T extends IProjectInput> {
@@ -196,6 +200,26 @@ export function useProjects<T extends IProjectInput>({
     return projects.filter((p) => !p.depreciated);
   }
 
+  function getProjects(): IProjectEditPayload[] {
+    const projects = visible();
+    return projects.map((item) => ({
+      id: item.id,
+      name: item.name,
+      github: item.github ?? null,
+      demo_url: item.demo_url ?? null,
+      start_date: item.start_date,
+      end_date: item.end_date ?? null,
+      descriptions: item.descriptions.map((item) => ({
+        id: item.id,
+        description: item.description
+      })),
+      technologies: item.technologies.map((item) => ({
+        id: item.id,
+        technology: item.technology
+      }))
+    }));
+  }
+
   function isEmpty() {
     return visible().length === 0;
   }
@@ -213,6 +237,7 @@ export function useProjects<T extends IProjectInput>({
     removeTechnology,
     updateTechnology,
     visible,
+    getProjects,
     isEmpty,
   };
 }

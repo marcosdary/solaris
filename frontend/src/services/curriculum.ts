@@ -7,7 +7,6 @@ export async function createCurriculum(
     form: ICurriculumInput,
     token?: string
 ): Promise<ICurriculumResponse> {
-    
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
     };
@@ -17,7 +16,7 @@ export async function createCurriculum(
     }
 
     const response = await fetch(
-        `${settings.baseURL}/api/v1/cv`,
+        `${settings.baseURL}/api/v1/curriculums`,
         {
             method: "POST",
             headers,
@@ -105,7 +104,7 @@ export async function deleteCurriculum(
     }
 
     const response = await fetch(
-        `${settings.baseURL}/api/v1/cv/${id}`,
+        `${settings.baseURL}/api/v1/curriculums/${id}`,
         {
         method: "DELETE",
         headers,

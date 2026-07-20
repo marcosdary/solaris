@@ -13,7 +13,6 @@ export function EducationForm({
   restore,
   update,
   visible: _visible,
-  isEmpty,
 }: EducationFormProps) {
   return (
     <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
@@ -31,12 +30,8 @@ export function EducationForm({
         </button>
       </div>
 
-      {isEmpty() && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-sm font-medium text-red-700">
-            ⚠ É necessário adicionar pelo menos uma formação acadêmica.
-          </p>
-        </div>
+      {educations.length === 0 && (
+        <p className="text-sm text-slate-500">Nenhum formação adicionada.</p>
       )}
 
       {educations.map((education, index) => {

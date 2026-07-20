@@ -13,7 +13,7 @@ import { CertificationForm } from "./form-curriculum/CertificationForm";
 interface CurriculumFormProps {
   mode: "create" | "edit";
   initialData?: ICurriculumResponse;
-  onSuccess?: () => void;
+  onSuccess?: (result: ICurriculumResponse) => void;
 }
 
 export function CurriculumForm({
@@ -22,7 +22,6 @@ export function CurriculumForm({
   onSuccess,
 }: CurriculumFormProps) {
   const ctx = useCurriculumForm({ mode, initialData, onSuccess });
-
   return (
     <>
       <form

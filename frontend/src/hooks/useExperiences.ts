@@ -3,6 +3,7 @@ import type {
   IExperienceActivityInput,
   IExperienceInput,
 } from "../types/curriculumCreate";
+import type { IExperienceEditPayload } from "../types/curriculumEditPayload";
 
 export interface UseExperiencesReturn<T extends IExperienceInput> {
   experiences: T[];
@@ -23,6 +24,7 @@ export interface UseExperiencesReturn<T extends IExperienceInput> {
   ): void;
   visible(): T[];
   isEmpty(): boolean;
+  getExperiences(): IExperienceEditPayload[]
 }
 
 interface UseExperiencesOptions<T extends IExperienceInput> {
@@ -136,6 +138,22 @@ export function useExperiences<T extends IExperienceInput>({
     return experiences.filter((e) => !e.depreciated);
   }
 
+  function getExperiences(): IExperienceEditPayload[] {
+    const experiences = visible();
+    return experiences.map((item) => ({
+      id: item.id,
+      role: item.role,
+      company: item.company,
+      location: item.location,
+      start_date: item.start_date,
+      end_date: item.end_date ?? null,
+      activities: item.activities.map((item) => ({
+        id: item.id,
+        description: item.description
+      }))
+    }));
+  }
+
   function isEmpty() {
     return visible().length === 0;
   }
@@ -150,6 +168,7 @@ export function useExperiences<T extends IExperienceInput>({
     removeActivity,
     updateActivity,
     visible,
+    getExperiences,
     isEmpty,
   };
 }

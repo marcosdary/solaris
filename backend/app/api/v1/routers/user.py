@@ -34,6 +34,7 @@ async def list_users(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro interno do servidor {exc}",
         )
+    
 
 
 __all__ = ["router"]

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { ICertificationInput } from "../types/curriculumCreate";
+import type { ICertificationEditPayload } from "../types/curriculumEditPayload";
 
 export interface UseCertificationsReturn<T extends ICertificationInput> {
   certifications: T[];
@@ -12,6 +13,7 @@ export interface UseCertificationsReturn<T extends ICertificationInput> {
     value: string | null
   ): void;
   visible(): T[];
+  getCertifications(): ICertificationEditPayload[];
   isEmpty(): boolean;
 }
 
@@ -74,9 +76,31 @@ export function useCertifications<T extends ICertificationInput>({
     return certifications.filter((c) => !c.depreciated);
   }
 
+  function getCertifications(): ICertificationEditPayload[] {
+    const certifications = visible();
+    return certifications.map((item) => ({
+      id: item.id,
+      institution: item.institution,
+      name: item.name,
+      location: item.location,
+      start_date: item.start_date,
+      end_date: item.end_date ?? null
+    }))
+      
+  }
+
   function isEmpty() {
     return visible().length === 0;
   }
 
-  return { certifications, add, remove, restore, update, visible, isEmpty };
+  return { 
+    certifications, 
+    add, 
+    remove, 
+    restore, 
+    update, 
+    visible,
+    getCertifications, 
+    isEmpty 
+  };
 }

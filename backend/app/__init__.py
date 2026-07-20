@@ -65,7 +65,6 @@ app.include_router(
     tags=["API"]
 )
 
-
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(
     request: Request,

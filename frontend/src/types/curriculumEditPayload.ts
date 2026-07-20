@@ -1,7 +1,6 @@
 import type { Language, CurriculumCategory } from "../config/constants";
 
 export interface ICurriculumEditPayload {
-  id: string;
   language: Language;
   category: CurriculumCategory;
   name: string;
@@ -19,7 +18,7 @@ export interface ICurriculumEditPayload {
 }
 
 export interface IExperienceEditPayload {
-  id: string;
+  id?: string;
   role: string;
   company: string;
   location: string;
@@ -29,12 +28,12 @@ export interface IExperienceEditPayload {
 }
 
 export interface IExperienceActivityEditPayload {
-  id: string;
+  id?: string;
   description: string;
 }
 
 export interface IEducationEditPayload {
-  id: string;
+  id?: string;
   institution: string;
   degree: string;
   location: string;
@@ -43,7 +42,7 @@ export interface IEducationEditPayload {
 }
 
 export interface IProjectEditPayload {
-  id: string;
+  id?: string;
   name: string;
   github: string | null;
   demo_url: string | null;
@@ -54,17 +53,17 @@ export interface IProjectEditPayload {
 }
 
 export interface IProjectDescriptionEditPayload {
-  id: string;
+  id?: string;
   description: string;
 }
 
 export interface IProjectTechnologyEditPayload {
-  id: string;
+  id?: string;
   technology: string;
 }
 
 export interface ICertificationEditPayload {
-  id: string;
+  id?: string;
   institution: string;
   name: string;
   location: string;

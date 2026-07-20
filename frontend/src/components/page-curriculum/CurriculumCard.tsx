@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
+import { MapPin, Mail, Globe } from "lucide-react";
 import type { ICurriculumResponse } from "../../types/curriculumResponse";
-
 
 interface Props {
   curriculum: ICurriculumResponse;
@@ -15,11 +15,11 @@ function formatCategory(category: string) {
 function formatLanguage(language: string) {
   switch (language) {
     case "portuguese":
-      return "🇧🇷 Português";
+      return "Português";
     case "english":
-      return "🇺🇸 English";
+      return "English";
     case "spanish":
-      return "🇪🇸 Español";
+      return "Español";
     default:
       return language;
   }
@@ -27,84 +27,75 @@ function formatLanguage(language: string) {
 
 export function CurriculumCard({ curriculum }: Props) {
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
-        {/* Cabeçalho */}
-        <div className="flex items-start justify-between gap-4">
-            <div>
-            <h2 className="text-xl font-bold text-slate-800">
-                {curriculum.name}
-            </h2>
+    <article className="p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-sm font-semibold text-slate-800">
+            {curriculum.name}
+          </h2>
 
-            <p className="mt-1 text-sm font-medium text-blue-600">
-                {curriculum.role}
-            </p>
-
-            <p className="mt-2 text-sm text-slate-500">
-                📍 {curriculum.location}
-            </p>
-            </div>
-
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-700">
-            {formatLanguage(curriculum.language)}
-            </span>
+          <p className="mt-1 text-sm text-slate-500">
+            {curriculum.role}
+          </p>
         </div>
 
-        {/* Categoria */}
-        <div className="mt-5">
-            <span className="inline-flex rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700">
-            {formatCategory(curriculum.category)}
-            </span>
-        </div>
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+          {formatLanguage(curriculum.language)}
+        </span>
+      </div>
 
-        {/* Contatos */}
-        <div className="mt-6 space-y-2 text-sm">
-            <p className="truncate text-slate-600">
-            📧 {curriculum.email}
-            </p>
+      <div className="mt-3 flex items-center gap-1.5 text-sm text-slate-500">
+        <MapPin size={14} strokeWidth={1.5} className="text-slate-400" />
+        {curriculum.location}
+      </div>
 
-            {curriculum.github && (
-            <p className="truncate">
-                <a
-                href={curriculum.github}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-600 hover:underline"
-                >
-                💻 GitHub
-                </a>
-            </p>
-            )}
+      <p className="mt-2 text-sm text-slate-500">
+        {formatCategory(curriculum.category)}
+      </p>
 
-            {curriculum.linkedin && (
-            <p className="truncate">
-                <a
-                href={curriculum.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-600 hover:underline"
-                >
-                🔗 LinkedIn
-                </a>
-            </p>
-            )}
-        </div>
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+        <span className="inline-flex items-center gap-1.5 text-slate-500">
+          <Mail size={14} strokeWidth={1.5} className="text-slate-400" />
+          {curriculum.email}
+        </span>
 
-        {/* Rodapé */}
-        <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 text-xs text-slate-500">
-            <span>
-            Criado em{" "}
-            {new Date(curriculum.created_at).toLocaleDateString("pt-BR")}
-            </span>
+        {curriculum.github && (
+          <a
+            href={curriculum.github}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900"
+          >
+            <Globe size={14} strokeWidth={1.5} className="text-slate-400" />
+            GitHub
+          </a>
+        )}
 
-            <Link
-                to={`/curriculums/${curriculum.id}`}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-            >
-                Ver currículo
-            </Link>
-        </div>
+        {curriculum.linkedin && (
+          <a
+            href={curriculum.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900"
+          >
+            <Globe size={14} strokeWidth={1.5} className="text-slate-400" />
+            LinkedIn
+          </a>
+        )}
+      </div>
 
-      
+      <div className="mt-6 flex items-center justify-between text-xs text-slate-500">
+        <span>
+          {new Date(curriculum.created_at).toLocaleDateString("pt-BR")}
+        </span>
+
+        <Link
+          to={`/curriculums/${curriculum.id}`}
+          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+        >
+          Ver currículo
+        </Link>
+      </div>
     </article>
   );
 }

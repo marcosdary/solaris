@@ -16,7 +16,6 @@ export function ExperienceForm({
   removeActivity,
   updateActivity,
   visible: _visible,
-  isEmpty,
 }: ExperienceFormProps) {
   return (
     <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
@@ -34,12 +33,8 @@ export function ExperienceForm({
         </button>
       </div>
 
-      {isEmpty() && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-sm font-medium text-red-700">
-            ⚠ É necessário adicionar pelo menos uma experiência profissional.
-          </p>
-        </div>
+      {experiences.length === 0 && (
+        <p className="text-sm text-slate-500">Nenhuma experiência profissional adicionada.</p>
       )}
 
       {experiences.map((experience, experienceIndex) => {
