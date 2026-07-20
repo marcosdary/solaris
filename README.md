@@ -1,4 +1,4 @@
-# Auto CV
+# Solaris
 
 API full-stack para criação e geração automática de currículos em PDF e DOCX.
 
