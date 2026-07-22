@@ -25,7 +25,7 @@ export default function CurriculumsPage() {
 
       setCurriculums(result);
     } catch (error) {
-      console.error(error);
+      console.error(`Erro: ${error}`);
     } finally {
       setLoading(false);
     }

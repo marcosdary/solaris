@@ -68,7 +68,7 @@ export function PersonalInfo({
 
           <input
             type="tel"
-            placeholder="+55 98 98142-1077"
+            placeholder="+99 99 99999-9999"
             className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
             value={form.phone}
             onChange={(e) =>
