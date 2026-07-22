@@ -21,7 +21,6 @@ export default function CurriculumsPage() {
     try {
       setLoading(true);
       setLastQuery(payload);
-
       const result = await searchCurriculums(payload, accessToken ?? undefined);
 
       setCurriculums(result);
@@ -38,7 +37,7 @@ export default function CurriculumsPage() {
     <div className="mx-auto max-w-5xl px-6 py-12">
       <nav className="mb-24 flex items-center justify-between">
         <Link to="/" className="text-2xl font-bold tracking-tight text-slate-800">
-          Auto CV
+          Solaris
         </Link>
 
         <div className="flex items-center gap-2">

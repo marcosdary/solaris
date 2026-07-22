@@ -6,7 +6,7 @@ export default function HomePage() {
     <div className="mx-auto max-w-5xl px-6 py-12">
       <nav className="mb-24 flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight text-slate-800">
-          Auto CV
+          Solaris
         </h1>
 
         <div className="flex items-center gap-2">

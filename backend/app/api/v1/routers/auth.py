@@ -9,6 +9,7 @@ from app.schemas import (
     UserUpdateSchema,
     UserCreateSchema
 )
+from app.exceptions import InvalidCredentialsException, NotFoundError
 from app.services import UserServiceDep, AuthServiceDep, CurrentUserDep
 
 router = APIRouter()
@@ -24,9 +25,14 @@ async def create_user(
 ) -> UserResponseSchema:
     try:
         return await user_service.create(schema)
-    except ValueError as exc:
+    except InvalidCredentialsException as exc:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
         )
     except IntegrityError:
@@ -53,9 +59,14 @@ async def login(
 ) -> TokenResponseSchema:
     try:
         user = await user_service.get_by_id(body.phone)
-    except ValueError as exc:
+    except InvalidCredentialsException as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
         )
     except Exception:
@@ -81,9 +92,15 @@ async def get_me(
     try: 
         user_id = await current_user.get_me()
         return await user_service.get_by_id(user_id)
-    except ValueError as exc:
+    except InvalidCredentialsException as exc:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
         )
     except Exception as exc:
         raise HTTPException(
@@ -100,9 +117,15 @@ async def update_me(
     try:
         user_id = await current_user.get_me()
         return await user_service.update(user_id, schema)
-    except ValueError as exc:
+    except InvalidCredentialsException as exc:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
         )
     except IntegrityError:
         raise HTTPException(
@@ -124,9 +147,15 @@ async def deactivate_me(
     try:
         user_id = await current_user.get_me()
         await user_service.deactivate(user_id)
-    except ValueError as exc:
+    except InvalidCredentialsException as exc:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
         )
     except DBAPIError:
         raise HTTPException(
@@ -148,9 +177,15 @@ async def activate_me(
     try:
         user_id = await current_user.get_me()
         await user_service.activate(user_id)
-    except ValueError as exc:
+    except InvalidCredentialsException as exc:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
         )
     except DBAPIError:
         raise HTTPException(

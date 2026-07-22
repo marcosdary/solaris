@@ -59,11 +59,17 @@ export async function searchCurriculums(
         }
     );
 
+    const data = await response.json();
+
+    if (response.status === 404) {
+        throw new Error(``)
+    }
+
     if (!response.ok) {
         throw new Error(`Erro HTTP: ${response.status}`);
     }
 
-    return await response.json();
+    return data;
 }
 
 export async function selectCurriculumByID(

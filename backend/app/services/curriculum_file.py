@@ -11,6 +11,7 @@ from app.repos import CurriculumFileRepo
 from app.integrations import BucketIntegration, FilePDFIntegration, LoadInfoToFilePDFIntegration
 from app.config import DirPaths
 from app.config.database import PostgresAsyncDB
+from app.exceptions import NotFoundError
 
 
 async def get_session(
@@ -35,7 +36,7 @@ class _CurriculumFileService:
     async def get_by_id(self, file_id: str) -> CurriculumFileModel:
         file = await CurriculumFileRepo.get_by_id(self._db, file_id)
         if not file:
-            raise ValueError("Arquivo não encontrado.")
+            raise NotFoundError("Arquivo não encontrado.")
         return file
 
     async def get_by_curriculum_id(
@@ -45,7 +46,7 @@ class _CurriculumFileService:
             self._db, curriculum_id
         )
         if not files:
-            raise ValueError("Nenhum arquivo encontrado para este currículo.")
+            raise NotFoundError("Nenhum arquivo encontrado para este currículo.")
         return files
 
     async def delete(self, file_id: str, bucket: BucketIntegration) -> None:

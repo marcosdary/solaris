@@ -11,6 +11,7 @@ from app.schemas import (
 )
 from app.services import CurriculumFileServiceDep
 from app.integrations import SupabaseBucketService
+from app.exceptions import NotFoundError
 
 
 async def get_supabase_bucket(
@@ -33,9 +34,10 @@ async def list_files_by_curriculum(
 ) -> List[CurriculumFileResponseSchema]:
     try:
         return await file_service.get_by_curriculum_id(curriculum_id)
-    except ValueError as exc:
+    except NotFoundError as exc:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
         )
     except DBAPIError:
         raise HTTPException(
@@ -61,9 +63,10 @@ async def download_file(
 ) -> DownloadCurriculumResponseSchema:
     try:
         return await file_service.get_download_url(file_id, supabase_bucket)
-    except ValueError as exc:
+    except NotFoundError as exc:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
         )
     except DBAPIError:
         raise HTTPException(
@@ -89,9 +92,10 @@ async def delete_file(
 ) -> None:
     try:
         await file_service.delete(file_id, supabase_bucket)
-    except ValueError as exc:
+    except NotFoundError as exc:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
         )
     except DBAPIError:
         raise HTTPException(

@@ -23,7 +23,7 @@ export default function Footer() {
     <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
         <Link to="/" className="text-sm text-slate-500 transition hover:text-slate-800">
-          &copy; {new Date().getFullYear()} Auto CV
+          &copy; {new Date().getFullYear()} Solaris
         </Link>
 
         <div className="flex items-center gap-3">

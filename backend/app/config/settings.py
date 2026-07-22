@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_KEY: str
 
+    SUPABASE_POSTGRES_URL: str
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     JWT_ALGORITHM: str
 

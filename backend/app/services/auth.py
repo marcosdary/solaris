@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends, Request
 from jose import JWTError, jwt
 
+from app.exceptions import InvalidCredentialsException
 from app.config import get_settings, Settings
 
 
@@ -56,7 +57,7 @@ class _CurrentUser:
     ) -> str:
         auth = self._request.headers.get("authorization")
         if not auth:
-            raise ValueError(
+            raise InvalidCredentialsException(
                "Acesso negado."
             )
         try:
@@ -78,11 +79,11 @@ class _CurrentUser:
 
             return sub
         except JWTError:
-            raise ValueError(
+            raise InvalidCredentialsException(
                 "Token inválido ou expirado"
             )
         except ValueError:
-            raise ValueError(
+            raise InvalidCredentialsException(
                 "Usuário inativo ou não encontrado"
             )
 

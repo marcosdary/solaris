@@ -100,4 +100,5 @@ export const Language = {
   SPANISH: "spanish",
 } as const;
 
+
 export type Language = (typeof Language)[keyof typeof Language];

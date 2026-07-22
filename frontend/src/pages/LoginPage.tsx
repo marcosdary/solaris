@@ -18,7 +18,7 @@ export default function LoginPage() {
 
         <div className="mb-8 text-center">
           <Link to="/" className="inline-block text-sm font-medium text-slate-400 transition hover:text-slate-600">
-            Auto CV
+            Solaris
           </Link>
 
           <div className="mt-6 flex justify-center">

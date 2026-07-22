@@ -1,7 +1,7 @@
-import type { CVResponse } from "../../types/curriculumResponse";
+import type { CurriculumResponse } from "../../types/curriculumResponse";
 
 interface Props {
-  data: CVResponse;
+  data: CurriculumResponse;
   onClose(): void;
 }
 

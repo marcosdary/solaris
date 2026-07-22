@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
     # Chama a função/classe diretamente, sem Depends
     settings = get_settings() 
     
-    postgres_db = PostgresAsyncDB(settings.DB_URL)
+    postgres_db = PostgresAsyncDB(settings.SUPABASE_POSTGRES_URL)
     
     yield {"postgres_db": postgres_db}
     

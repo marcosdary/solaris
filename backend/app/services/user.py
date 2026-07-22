@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import UserModel
 from app.schemas import UserCreateSchema, UserUpdateSchema
 from app.repos.user import UserRepo
+from app.exceptions import InvalidCredentialsException, NotFoundError
 
 async def get_session(
     request: Request,
@@ -31,12 +32,11 @@ class _UserService:
         self,
         phone: str,
         name: str,
-        email: str,
     ) -> UserModel:
         existing = await UserRepo.get_by_id(self._db, phone)
         if existing:
             if not existing.is_active:
-                raise ValueError("Conta desativada.")
+                raise InvalidCredentialsException("Conta desativada.")
             return existing
         schema = UserCreateSchema(phone=phone, name=name)
         return await UserRepo.create(self._db, schema)
@@ -47,9 +47,9 @@ class _UserService:
     ) -> UserModel:
         user = await UserRepo.get_by_id(self._db, id)
         if not user:
-            raise ValueError("Usuário não encontrado.")
+            raise NotFoundError("Usuário não encontrado.")
         if not user.is_active:
-            raise ValueError("Conta desativada.")
+            raise NotFoundError("Conta desativada.")
         return user
 
     async def get_all(
@@ -58,7 +58,7 @@ class _UserService:
         users = await UserRepo.get_all(self._db)
         active_users = [user for user in users if user.is_active]
         if not active_users:
-            raise ValueError("Nenhum usuário encontrado.")
+            raise NotFoundError("Nenhum usuário encontrado.")
         return active_users
 
     async def update(
@@ -68,7 +68,7 @@ class _UserService:
     ) -> UserModel:
         user = await UserRepo.get_by_id(self._db, id)
         if not user.is_active:
-            raise ValueError("Conta desativada.")
+            raise NotFoundError("Conta desativada.")
         for key, value in schema.model_dump(exclude_unset=True).items():
             setattr(user, key, value)
         return await UserRepo.update(self._db, user)
@@ -87,7 +87,7 @@ class _UserService:
     ) -> None:
         user = await UserRepo.get_by_id(self._db, id)
         if not user:
-            raise ValueError("Usuário não encontrado.")
+            raise NotFoundError("Usuário não encontrado.")
         user.is_active = True
         await self._db.commit()
 

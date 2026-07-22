@@ -1,6 +1,6 @@
 import { CurriculumCategory, Language } from "../config/constants";
 
-export interface CVResponse {
+export interface CurriculumResponse {
   name: string;
   mimetype: string;
 }

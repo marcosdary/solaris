@@ -27,7 +27,7 @@ from app.schemas import (
     StructuredCurriculumEditSchema,
 )
 from app.repos.curriculum import CurriculumRepo
-
+from app.exceptions import NotFoundError
 
 async def get_session(
     request: Request,
@@ -170,7 +170,7 @@ class _CurriculumService:
     ) -> CurriculumModel:
         curriculum = await CurriculumRepo.get_by_id(self._db, id)
         if not curriculum:
-            raise ValueError("Conteúdo não encontrado. Tente novamente.")
+            raise NotFoundError("Conteúdo não encontrado. Tente novamente.")
         return curriculum
 
     async def get_all(
@@ -181,7 +181,7 @@ class _CurriculumService:
     ) -> List[CurriculumModel]:
         data = await CurriculumRepo.get_all(self._db, user_id, category, language)
         if not data:
-            raise ValueError("Conteúdo não encontrado. Tente novamente.")
+            raise NotFoundError("Conteúdo não encontrado. Tente novamente.")
         return data
 
     async def delete(
@@ -198,7 +198,7 @@ class _CurriculumService:
     ) -> CurriculumModel:
         curriculum = await CurriculumRepo.get_by_id(self._db, id)
         if not curriculum:
-            raise ValueError("Currículo não encontrado.")
+            raise NotFoundError("Currículo não encontrado.")
 
         editor = _EditCurriculum(model=curriculum, schema=schema)
         await editor.apply(self._db)

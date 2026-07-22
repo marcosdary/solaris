@@ -51,10 +51,11 @@ RUN apt-get update && \
 RUN groupadd -g 1000 python && \
     useradd -m -u 1000 -g python python
 
-WORKDIR /app
-
 COPY --from=builder --chown=python:python /opt/venv /opt/venv
 COPY --from=builder --chown=python:python /app/app app/app
+COPY --from=builder --chown=python:python /app/templates app/templates
+
+WORKDIR /app
 
 USER python
 
