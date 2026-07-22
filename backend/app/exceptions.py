@@ -38,7 +38,7 @@ class EntityValidationError(Exception):
     Attributes:
         status_code (int): Código HTTP 422.
     """
-    status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+    status_code = status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 class InvalidFieldsException(Exception):
@@ -47,7 +47,7 @@ class InvalidFieldsException(Exception):
     Attributes:
         status_code (int): Código HTTP 422.
     """
-    status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+    status_code = status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 class UnprocessableEntity(Exception):
@@ -56,7 +56,7 @@ class UnprocessableEntity(Exception):
     Attributes:
         status_code (int): Código HTTP 422.
     """
-    status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+    status_code = status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 # =============================================================================
