@@ -1,10 +1,19 @@
 import { useState } from "react";
-import type { ICurriculumResponse } from "../types/curriculumResponse";
+import { Loader2 } from "lucide-react";
+import type { ICurriculumResponse, ICurriculumPDFResponse } from "../types/curriculumResponse";
+import { generateCurriculumPDF } from "../services/curriculum";
+import { GenerateCurriculumCard } from "./cards/GenerateCurriculumCard";
 
 type TemplateType = "standard" | "modern";
 
+const namesTemplates: Record<string, string> = {
+  standard: "standard.html",
+  modern: "modern.html"
+}
+
 interface Props {
   curriculum: ICurriculumResponse;
+  token?: string;
 }
 
 const TEMPLATE_LABELS: Record<TemplateType, string> = {
@@ -17,8 +26,31 @@ function stripHtml(html: string): string {
   return doc.body.textContent || "";
 }
 
-export function CurriculumPreview({ curriculum }: Props) {
+function getNameTemplate(template: TemplateType): string {
+  return namesTemplates[template];
+}
+
+export function CurriculumPreview({ curriculum, token }: Props) {
   const [template, setTemplate] = useState<TemplateType>("standard");
+  const [generating, setGenerating] = useState(false);
+  const [result, setResult] = useState<ICurriculumPDFResponse | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  const nameTemplate = getNameTemplate(template);
+
+  async function handleGeneratePDF() {
+    setGenerating(true);
+    setPdfError(null);
+    setResult(null);
+
+    try {
+      const data = await generateCurriculumPDF(curriculum.id, nameTemplate, token);
+      setResult(data);
+    } catch (err) {
+      setPdfError(err instanceof Error ? err.message : "Erro ao gerar PDF.");
+    } finally {
+      setGenerating(false);
+    }
+  }
   const isModern = template === "modern";
   const isEnglish = curriculum.language === "english";
 
@@ -65,7 +97,7 @@ export function CurriculumPreview({ curriculum }: Props) {
 
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div className="inline-flex rounded-lg bg-white border border-slate-200 p-0.5 shadow-sm">
           {(Object.keys(TEMPLATE_LABELS) as TemplateType[]).map((t) => (
             <button
@@ -81,7 +113,31 @@ export function CurriculumPreview({ curriculum }: Props) {
             </button>
           ))}
         </div>
+
+        <div className="flex items-center gap-3">
+          {pdfError && (
+            <p className="text-sm text-red-600">{pdfError}</p>
+          )}
+
+          <button
+            onClick={handleGeneratePDF}
+            disabled={generating}
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"
+          >
+            {generating ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : null}
+            {generating ? "Gerando..." : "Gerar PDF"}
+          </button>
+        </div>
       </div>
+
+      {result && (
+        <GenerateCurriculumCard
+          data={result}
+          onClose={() => setResult(null)}
+        />
+      )}
 
       <div
         className={`mx-auto max-w-[210mm] bg-white shadow-2xl ${

@@ -1,8 +1,9 @@
-import type { 
+import type {
   ICurriculumFileResponse,
-  ICurriculumFileDownloadResponse
+  ICurriculumFileDownloadResponse,
 } from "../types/curriculumFileResponse";
 import { settings } from "../config/settings";
+import { request } from "./apiClient";
 
 export async function searchCurriculumFiles(
     curriculumId: string,
@@ -16,25 +17,10 @@ export async function searchCurriculumFiles(
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(
+    return request<ICurriculumFileResponse[]>(
         `${settings.baseURL}/api/v1/curriculum-files/curriculum/${curriculumId}`,
-        {
-            method: "GET",
-            headers,
-        }
+        { method: "GET", headers },
     );
-
-    const data = await response.json();
-
-    if (response.status === 404) {
-        throw new Error(`${data?.detail[0]?.msg}`);
-    }
-
-    if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-    }
-
-    return data;
 }
 
 export async function deleteCurriculumFile(
@@ -49,19 +35,10 @@ export async function deleteCurriculumFile(
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(
+    return request<void>(
         `${settings.baseURL}/api/v1/curriculum-files/${curriculumFileId}`,
-        {
-            method: "DELETE",
-            headers,
-        }
+        { method: "DELETE", headers },
     );
-
-    if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-    }
-
-    return
 }
 
 
@@ -77,18 +54,9 @@ export async function downloadCurriculumFile(
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(
+    return request<ICurriculumFileDownloadResponse>(
         `${settings.baseURL}/api/v1/curriculum-files/${curriculumFileId}/download`,
-        {
-            method: "GET",
-            headers,
-        }
+        { method: "GET", headers },
     );
-
-    if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-    }
-
-    return await response.json();
 }
 

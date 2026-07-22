@@ -1,7 +1,6 @@
 export interface DetailItem {
   loc: string[]
   msg: string
-  type: string
 }
 
 export interface ApiErrorInit {

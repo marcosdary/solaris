@@ -91,7 +91,7 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
       setFiles(data);
     } catch (err) {
       console.error(err);
-      setError("Erro ao carregar histórico.");
+      setError(err instanceof Error ? err.message : "Erro ao carregar arquivos.");
     } finally {
       setLoading(false);
     }

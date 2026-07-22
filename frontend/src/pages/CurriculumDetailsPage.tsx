@@ -169,7 +169,7 @@ export default function CurriculumDetailsPage() {
         ) : viewMode === "preview" ? (
           <div className="min-h-screen bg-slate-100">
             <div className="mx-auto max-w-6xl px-6 py-10">
-              <CurriculumPreview curriculum={curriculum} />
+              <CurriculumPreview curriculum={curriculum} token={accessToken ?? undefined} />
             </div>
           </div>
         ) : (

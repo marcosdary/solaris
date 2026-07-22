@@ -1,7 +1,7 @@
-import type { CurriculumResponse } from "../../types/curriculumResponse";
+import type { ICurriculumPDFResponse } from "../../types/curriculumResponse";
 
 interface Props {
-  data: CurriculumResponse;
+  data: ICurriculumPDFResponse;
   onClose(): void;
 }
 

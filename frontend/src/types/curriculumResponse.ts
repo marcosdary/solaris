@@ -1,8 +1,8 @@
 import { CurriculumCategory, Language } from "../config/constants";
 
-export interface CurriculumResponse {
+export interface ICurriculumPDFResponse {
   name: string;
-  mimetype: string;
+  created_at: string;
 }
 
 export interface ICurriculumResponse {

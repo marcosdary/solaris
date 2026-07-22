@@ -1,7 +1,8 @@
 import { settings } from "../config/settings";
-import type { ICurriculumResponse } from "../types/curriculumResponse";
+import type { ICurriculumResponse, ICurriculumPDFResponse } from "../types/curriculumResponse";
 import type { ICurriculumInput, SearchCurriculums } from "../types/curriculumCreate";
 import type { ICurriculumEditPayload } from "../types/curriculumEditPayload";
+import { request } from "./apiClient";
 
 export async function createCurriculum(
     form: ICurriculumInput,
@@ -15,7 +16,7 @@ export async function createCurriculum(
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(
+    return request<ICurriculumResponse>(
         `${settings.baseURL}/api/v1/curriculums`,
         {
             method: "POST",
@@ -23,12 +24,28 @@ export async function createCurriculum(
             body: JSON.stringify(form),
         }
     );
+}
 
-    if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
+export async function generateCurriculumPDF(
+    curriculumId: string,
+    template: string,
+    token?: string
+): Promise<ICurriculumPDFResponse> {
+    const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+    };
+
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
     }
 
-    return await response.json();
+    return request<ICurriculumPDFResponse>(
+        `${settings.baseURL}/api/v1/curriculums/pdf/${curriculumId}?template=${template}`,
+        {
+            method: "POST",
+            headers,
+        }
+    );
 }
 
 export async function searchCurriculums(
@@ -51,86 +68,58 @@ export async function searchCurriculums(
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(
+    return request<ICurriculumResponse[]>(
         `${settings.baseURL}/api/v1/curriculums/users?${params.toString()}`,
         {
-        method: "GET",
-        headers,
+            method: "GET",
+            headers,
         }
     );
-
-    const data = await response.json();
-
-    if (response.status === 404) {
-        throw new Error(``)
-    }
-
-    if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-    }
-
-    return data;
 }
 
 export async function selectCurriculumByID(
     id: string,
     token?: string
 ): Promise<ICurriculumResponse> {
-
     const headers: Record<string, string> = {};
 
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(
+    return request<ICurriculumResponse>(
         `${settings.baseURL}/api/v1/curriculums/${id}`,
         {
-        method: "GET",
-        headers,
+            method: "GET",
+            headers,
         }
     );
-
-    if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-    }
-
-    return await response.json();
 }
 
 export async function deleteCurriculum(
     id: string,
     token?: string
 ): Promise<void> {
-
     const headers: Record<string, string> = {};
 
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(
+    return request<void>(
         `${settings.baseURL}/api/v1/curriculums/${id}`,
         {
-        method: "DELETE",
-        headers,
+            method: "DELETE",
+            headers,
         }
     );
-
-    if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-    }
-
-    return;
 }
-
 
 export async function updateCurriculum(
     form: ICurriculumEditPayload,
     curriculumId: string,
     token?: string
 ): Promise<ICurriculumResponse> {
-    
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
     };
@@ -139,7 +128,7 @@ export async function updateCurriculum(
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(
+    return request<ICurriculumResponse>(
         `${settings.baseURL}/api/v1/curriculums/${curriculumId}`,
         {
             method: "PUT",
@@ -147,10 +136,4 @@ export async function updateCurriculum(
             body: JSON.stringify(form),
         }
     );
-
-    if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-    }
-
-    return await response.json();
 }
