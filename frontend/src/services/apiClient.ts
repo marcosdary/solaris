@@ -34,6 +34,7 @@ export async function request<T>(url: string, init?: RequestInit): Promise<T> {
     body = null;
   }
 
+
   if (!response.ok) {
     const detail: DetailItem[] | undefined = (
       body as { detail?: DetailItem[] } | null
@@ -46,6 +47,7 @@ export async function request<T>(url: string, init?: RequestInit): Promise<T> {
       body: body ?? undefined,
       detail,
     };
+    console.log(errorCtx);
 
     switch (response.status) {
       case 400:

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { login as apiLogin, register as apiRegister } from "../services/auth";
 import { setToken } from "../utils/tokenStorage";
+import { NotFoundError, ConflictError } from "../errors";
 import type { ILoginInput, IRegisterInput, IAuthResponse } from "../types/auth";
 
 export function useAuth() {
@@ -20,7 +21,7 @@ export function useAuth() {
       return response;
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Erro ao fazer login.";
+        err instanceof NotFoundError ? err.detail[0].msg : "Erro ao fazer login.";
       setError(message);
       return null;
     } finally {
@@ -40,7 +41,7 @@ export function useAuth() {
       return response;
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Erro ao cadastrar.";
+        err instanceof ConflictError ? err.detail[0].msg : "Erro ao cadastrar.";
       setError(message);
       return null;
     } finally {
