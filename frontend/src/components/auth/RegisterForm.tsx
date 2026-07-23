@@ -12,6 +12,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -20,6 +21,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
     const result = await register({
       name: name.trim(),
       phone: phone.replace(/\D/g, ""),
+      password: password,
     });
 
     if (result) {
@@ -59,6 +61,20 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           placeholder="(99) 99 99999-9999"
           value={phone}
           onChange={(e) => setPhone(phoneMask(e.target.value))}
+          className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-slate-700">
+          Senha
+        </label>
+        <input
+          type="password"
+          required
+          placeholder="Sua senha"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
         />
       </div>

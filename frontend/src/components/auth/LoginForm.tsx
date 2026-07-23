@@ -12,12 +12,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const { loading, error, login, clearError } = useAuth();
 
   const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     clearError();
 
-    const result = await login({ phone: phone.replace(/\D/g, "") });
+    const result = await login({ phone: phone.replace(/\D/g, ""), password });
     if (result) {
       onSuccess();
     }
@@ -43,6 +44,26 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           onChange={(e) => setPhone(phoneMask(e.target.value))}
           className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
         />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-slate-700">
+          Senha
+        </label>
+        <input
+          type="password"
+          required
+          placeholder="Sua senha"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+        />
+      </div>
+
+      <div className="text-right">
+        <Link to="/password-forgot" className="text-sm font-medium text-slate-500 underline underline-offset-2 transition hover:text-slate-900">
+          Esqueceu sua senha?
+        </Link>
       </div>
 
       <button

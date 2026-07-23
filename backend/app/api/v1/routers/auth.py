@@ -11,7 +11,12 @@ from app.schemas import (
     PasswordForgotSchema 
 )
 from app.exceptions import InvalidCredentialsException, NotFoundError
-from app.services import UserServiceDep, AuthServiceDep, CurrentUserDep
+from app.services import (
+    UserServiceDep, 
+    PasswordForgotDep,
+    AuthServiceDep, 
+    CurrentUserDep
+)
 
 router = APIRouter()
 
@@ -196,7 +201,7 @@ async def activate_me(
 
 @router.post("/password/forgot", status_code=status.HTTP_201_CREATED)
 async def password_forgot(
-    current_user: CurrentUserDep,
+    password_forgot: PasswordForgotDep,
     user_service: UserServiceDep,
     background_tasks: BackgroundTasks,
     body: PasswordForgotSchema
@@ -221,7 +226,7 @@ async def password_forgot(
     
     try:
         background_tasks.add_task(
-            current_user.password_forgot,
+            password_forgot.send_password_reset_link,
             phone=user.id
         )
         return {

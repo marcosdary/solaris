@@ -43,9 +43,10 @@ class Settings(BaseSettings):
 
     EVOLUTION_API_URL: str
     EVOLUTION_API_INSTANCE: str
-    EVOLUTION_API_API_KEY: str
+    EVOLUTION_API_APIKEY: str
 
     PASSWORD_RESET_URL: str
+    PASSWORD_RESET_EXPIRE_MINUTES: int
 
 @lru_cache(maxsize=1)
 def get_settings():

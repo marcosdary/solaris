@@ -13,19 +13,21 @@ class _AuthService:
     def __init__(self, settings: Settings):
         self._settings = settings
 
-    @property
-    def expires_in(self) -> int:
-        return self._settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    def expires_in(self, expire_minutes: int) -> int:
+        return expire_minutes * 60
 
     def create_access_token(self, phone: str) -> dict:
+        access_token = self._settings.ACCESS_TOKEN_EXPIRE_MINUTES
         expire = datetime.now(timezone.utc) + timedelta(
-            minutes=self._settings.ACCESS_TOKEN_EXPIRE_MINUTES
+            minutes=access_token
         )
         payload = {
             "sub": phone,
             "iat": datetime.now(timezone.utc),
             "exp": expire,
+            "type": "access"
         }
+        expires_in = self.expires_in(access_token)
         return {
             "access_token": jwt.encode(
                 payload,
@@ -33,28 +35,62 @@ class _AuthService:
                 algorithm=self._settings.JWT_ALGORITHM,
             ),
             "token_type": "bearer",
-            "expires_in": self.expires_in,
+            "expires_in": expires_in,
         }
 
     def decode_access_token(self, token: str) -> dict:
-        return jwt.decode(
+        payload = jwt.decode(
             token,
             self._settings.JWT_SECRET,
             algorithms=[self._settings.JWT_ALGORITHM],
         )
+        if payload.get("type") != "access":
+            raise jwt.InvalidTokenError("Tipo de token inválido")
+        return payload
+    
+    def create_password_reset_token(self, phone: str) -> str:
+        reset_password = self._settings.PASSWORD_RESET_EXPIRE_MINUTES
+        
+        expire = datetime.now(timezone.utc) + timedelta(minutes=reset_password)
+
+        payload = {
+            "sub": phone,
+            "iat": datetime.now(timezone.utc),
+            "exp": expire,
+            "type": "password_reset"
+        }
+        
+        return jwt.encode(
+            payload,
+            self._settings.JWT_SECRET,
+            algorithm=self._settings.JWT_ALGORITHM,
+        )
+
+    def decode_password_reset_token(self, token: str) -> dict:
+        payload = jwt.decode(
+            token,
+            self._settings.JWT_SECRET,
+            algorithms=[self._settings.JWT_ALGORITHM],
+        )
+        if payload.get("type") != "password_reset":
+            raise jwt.InvalidTokenError("Tipo de token inválido")
+        return payload
 
 
 class _PasswordForgotService: 
-    def __init__(self, settings: Settings):
+    def __init__(self, settings: Settings, auth_service: _AuthService):
         self._settings = settings
         self._evolution_api_integration = EvolutionAPIIntegration(
-            api_key=self._settings.EVOLUTION_API_API_KEY,
+            api_key=self._settings.EVOLUTION_API_APIKEY,
             url=self._settings.EVOLUTION_API_URL,
             instance=self._settings.EVOLUTION_API_INSTANCE
         )
+        self._auth_service = auth_service
 
     def send_password_reset_link(self, phone: str) -> None:
-        TEXT = f"""Acesse o link para realizar sua redefinição de senha:\n{self._settings.PASSWORD_RESET_URL}"""
+        token = self._auth_service.create_password_reset_token(phone)
+        url = f"{self._settings.PASSWORD_RESET_URL}?token={token}"
+        TEXT = f"""Acesse o link para realizar sua redefinição de senha:\n{url}"""
         self._evolution_api_integration.send_text(
             phone,
             text=TEXT
@@ -65,11 +101,9 @@ class _CurrentUser:
         self, 
         request: Request, 
         auth_service: _AuthService,
-        password_forgot: _PasswordForgotService
     ):
         self._request = request
         self._auth_service = auth_service
-        self._password_forgot = password_forgot
 
     async def get_me(
         self,
@@ -117,23 +151,22 @@ def get_auth_service(
     return _AuthService(settings)
 
 def get_password_forgot_service(
-    settings: Annotated[Settings, Depends(get_settings)]
+    settings: Annotated[Settings, Depends(get_settings)],
+    auth_service: Annotated[_AuthService, Depends(get_auth_service)]
 ):
-    return _PasswordForgotService(settings)
+    return _PasswordForgotService(settings, auth_service)
 
 def get_current_user_service(
     auth_service: Annotated[_AuthService, Depends(get_auth_service)],
     request: Request,
-    password_forgot: Annotated[EvolutionAPIIntegration, Depends(get_password_forgot_service)]
 ) -> _CurrentUser:
     return _CurrentUser(
         auth_service=auth_service,
         request=request,
-        password_forgot=password_forgot
     )
 
 AuthServiceDep = Annotated[_AuthService, Depends(get_auth_service)]
 CurrentUserDep = Annotated[_CurrentUser, Depends(get_current_user_service)]
+PasswordForgotDep = Annotated[_PasswordForgotService, Depends(get_password_forgot_service)]
 
-
-__all__ = ["AuthServiceDep", "CurrentUserDep"]
+__all__ = ["AuthServiceDep", "CurrentUserDep", "PasswordForgotDep"]
