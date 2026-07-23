@@ -5,14 +5,15 @@ from pydantic import computed_field
 
 from app.schemas.base import BaseSchema
 
-
 class UserCreateSchema(BaseSchema):
     phone: str
     name: str
+    password: str
 
 
 class UserUpdateSchema(BaseSchema):
     name: Optional[str] = None
+    password: Optional[str] = None
 
 
 class UserResponseSchema(BaseSchema):

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, BackgroundTasks
 from fastapi.exceptions import HTTPException
 from sqlalchemy.exc import IntegrityError, DBAPIError
 
@@ -7,7 +7,8 @@ from app.schemas import (
     LoginRequestSchema,
     UserResponseSchema,
     UserUpdateSchema,
-    UserCreateSchema
+    UserCreateSchema,
+    PasswordForgotSchema 
 )
 from app.exceptions import InvalidCredentialsException, NotFoundError
 from app.services import UserServiceDep, AuthServiceDep, CurrentUserDep
@@ -25,11 +26,6 @@ async def create_user(
 ) -> UserResponseSchema:
     try:
         return await user_service.create(schema)
-    except InvalidCredentialsException as exc:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(exc),
-        )
     except NotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -38,7 +34,7 @@ async def create_user(
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Já existe um usuário cadastrado com este número.",
+            detail="Já existe um usuário cadastrado com essas informações.",
         )
     except DBAPIError:
         raise HTTPException(
@@ -58,7 +54,7 @@ async def login(
     auth_service: AuthServiceDep,
 ) -> TokenResponseSchema:
     try:
-        user = await user_service.get_by_id(body.phone)
+        user = await user_service.login(body.phone, body.password)
     except InvalidCredentialsException as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -69,10 +65,10 @@ async def login(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
         )
-    except Exception:
+    except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erro externo do servidor",
+            detail=f"Erro externo do servidor: {exc}",
         )
 
     try:
@@ -197,6 +193,46 @@ async def activate_me(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erro interno do servidor.",
         )
+
+@router.post("/password/forgot", status_code=status.HTTP_201_CREATED)
+async def password_forgot(
+    current_user: CurrentUserDep,
+    user_service: UserServiceDep,
+    background_tasks: BackgroundTasks,
+    body: PasswordForgotSchema
+) -> dict:
+    try:
+        user = await user_service.get_by_id(body.phone)
+    except InvalidCredentialsException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
+    
+    try:
+        background_tasks.add_task(
+            current_user.password_forgot,
+            phone=user.id
+        )
+        return {
+            "message": "Link enviado com sucesso."
+        } 
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
+
 
 
 __all__ = ["router"]

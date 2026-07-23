@@ -8,6 +8,8 @@ from app.models import UserModel
 from app.schemas import UserCreateSchema, UserUpdateSchema
 from app.repos.user import UserRepo
 from app.exceptions import InvalidCredentialsException, NotFoundError
+from app.config import get_settings, Settings
+from app.utils import AuthenticatorUtil
 
 async def get_session(
     request: Request,
@@ -16,16 +18,22 @@ async def get_session(
     async with postgres_db.get_session() as session:
         yield session
 
-
 class _UserService:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession, settings: Settings):
         self._db = db
+        self._settings = settings
+        self._auth = AuthenticatorUtil(self._settings.PASSWORD_PEPPER)
 
     async def create(
         self,
         schema: UserCreateSchema,
     ) -> UserModel:
-        user = UserModel.from_schema(schema)
+        password_hash = self._auth.hash_password(schema.password)
+        user = UserModel.from_schema(UserCreateSchema(
+            name=schema.name,
+            phone=schema.phone,
+            password=password_hash
+        ))
         return await UserRepo.create(self._db, user)
 
     async def get_or_create(
@@ -51,6 +59,19 @@ class _UserService:
         if not user.is_active:
             raise NotFoundError("Conta desativada.")
         return user
+    
+    async def login(
+        self,
+        phone: str,
+        password: str
+    ) -> UserModel:
+        user = await UserRepo.get_by_id(self._db, phone)
+        if not user:
+            raise InvalidCredentialsException("Usuário não encontrado ou informações inválidas.")
+        if not self._auth.verify_password(password, user.password):
+            raise InvalidCredentialsException("Usuário não encontrado ou informações inválidas.")
+        return user
+
 
     async def get_all(
         self,
@@ -91,8 +112,11 @@ class _UserService:
         user.is_active = True
         await self._db.commit()
 
-def get_user_service(db: Annotated[AsyncSession, Depends(get_session)]):
-    return _UserService(db)
+def get_user_service(
+    db: Annotated[AsyncSession, Depends(get_session)],
+    settings: Annotated[Settings, Depends(get_settings)]
+):
+    return _UserService(db, settings)
 
 UserServiceDep = Annotated[_UserService, Depends(get_user_service)]
 

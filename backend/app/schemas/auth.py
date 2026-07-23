@@ -4,6 +4,10 @@ from app.schemas.base import BaseSchema
 
 class LoginRequestSchema(BaseSchema):
     phone: Annotated[str, Field(min_length=1)]
+    password: Annotated[str, Field(min_length=1)]
+
+class PasswordForgotSchema(BaseSchema):
+    phone: Annotated[str, Field(min_length=1)]
 
 class TokenResponseSchema(BaseSchema):
     access_token: str

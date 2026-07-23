@@ -5,6 +5,7 @@ description = "Automatização para currículos"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "argon2-cffi>=25.1.0",
     "asyncpg>=0.31.0",
     "fastapi[standard]>=0.136.3",
     "psycopg2-binary>=2.9.12",

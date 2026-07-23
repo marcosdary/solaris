@@ -11,6 +11,7 @@ class UserModel(BaseModel):
     id: Mapped[str] = mapped_column(primary_key=True)
 
     name: Mapped[str]
+    password: Mapped[str]
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     curriculums: Mapped[list["CurriculumModel"]] = relationship(
@@ -23,6 +24,7 @@ class UserModel(BaseModel):
         return cls(
             id=schema.phone,
             name=schema.name,
+            password=schema.password
         )
 
 

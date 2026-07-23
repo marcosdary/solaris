@@ -42,7 +42,11 @@ from .curriculum_file import (
     CurriculumFileResponseSchema,
     DownloadCurriculumResponseSchema,
 )
-from .auth import LoginRequestSchema, TokenResponseSchema
+from .auth import (
+    LoginRequestSchema, 
+    TokenResponseSchema,
+    PasswordForgotSchema
+)
 
 __all__ = [
     "IndexSchema",
@@ -83,4 +87,5 @@ __all__ = [
     "DownloadCurriculumResponseSchema",
     "LoginRequestSchema",
     "TokenResponseSchema",
+    "PasswordForgotSchema"
 ]

@@ -39,6 +39,14 @@ class Settings(BaseSettings):
     SUPABASE_BUCKET_NAME: str
     SUPABASE_FOLDER_PUBLIC: str
 
+    PASSWORD_PEPPER: str
+
+    EVOLUTION_API_URL: str
+    EVOLUTION_API_INSTANCE: str
+    EVOLUTION_API_API_KEY: str
+
+    PASSWORD_RESET_URL: str
+
 @lru_cache(maxsize=1)
 def get_settings():
     """
