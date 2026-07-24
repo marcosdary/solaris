@@ -18,7 +18,7 @@ export function ExperienceForm({
   visible: _visible,
 }: ExperienceFormProps) {
   return (
-    <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
+    <section className="space-y-6 py-8">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-800">
           Experiência Profissional
@@ -43,7 +43,7 @@ export function ExperienceForm({
         return (
           <div
             key={experienceIndex}
-            className={`space-y-5 rounded-xl border p-5 ${
+            className={`space-y-6 rounded-xl border p-5 ${
               isExcluded
                 ? "border-slate-200 bg-slate-100 opacity-50"
                 : "border-slate-200"
@@ -162,7 +162,7 @@ export function ExperienceForm({
             </div>
 
             {!isExcluded && (
-              <div className="space-y-3 rounded-lg border border-slate-100 bg-slate-50 p-4">
+              <div className="space-y-4 rounded-lg border border-slate-100 bg-slate-50 p-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium text-slate-700">Atividades</h4>
 

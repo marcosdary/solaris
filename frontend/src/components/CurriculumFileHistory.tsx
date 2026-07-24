@@ -4,6 +4,7 @@ import { Download, Trash2, File, FileText, Clock } from "lucide-react";
 import { searchCurriculumFiles, downloadCurriculumFile, deleteCurriculumFile } from "../services/curriculumFiles";
 
 import type { ICurriculumFileResponse } from "../types/curriculumFileResponse";
+import { ApiError } from "../errors";
 
 interface Props {
   curriculumId: string;
@@ -91,7 +92,7 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
       setFiles(data);
     } catch (err) {
       console.error(err);
-      setError(err instanceof Error ? err.message : "Erro ao carregar arquivos.");
+      setError(err instanceof ApiError && err.detail ? err.detail[0].msg : "Erro ao carregar arquivos.");
     } finally {
       setLoading(false);
     }

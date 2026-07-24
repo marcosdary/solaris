@@ -17,7 +17,7 @@ export function CertificationForm({
   isEmpty: _isEmpty,
 }: CertificationFormProps) {
   return (
-    <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
+    <section className="space-y-6 py-8">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-800">
           Certificações
@@ -44,7 +44,7 @@ export function CertificationForm({
         return (
           <div
             key={index}
-            className={`space-y-4 rounded-xl border p-5 ${
+            className={`space-y-6 rounded-xl border p-5 ${
               isExcluded
                 ? "border-slate-200 bg-slate-100 opacity-50"
                 : "border-slate-200"

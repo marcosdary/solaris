@@ -26,17 +26,18 @@ export function CurriculumForm({
     <>
       <form
         onSubmit={ctx.handleSubmit}
-        className="space-y-8 rounded-2xl border border-slate-100 bg-white p-8 shadow-sm"
       >
-        <PersonalInfo form={ctx.form} updateField={ctx.updateField} />
+        <div className="divide-y divide-slate-100">
+          <PersonalInfo form={ctx.form} updateField={ctx.updateField} />
 
-        <ExperienceForm mode={mode} {...ctx.experiences} />
+          <ExperienceForm mode={mode} {...ctx.experiences} />
 
-        <EducationForm mode={mode} {...ctx.educations} />
+          <EducationForm mode={mode} {...ctx.educations} />
 
-        <ProjectForm mode={mode} {...ctx.projects} />
+          <ProjectForm mode={mode} {...ctx.projects} />
 
-        <CertificationForm mode={mode} {...ctx.certifications} />
+          <CertificationForm mode={mode} {...ctx.certifications} />
+        </div>
 
         <button
           type="submit"

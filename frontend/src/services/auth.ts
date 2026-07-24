@@ -36,7 +36,7 @@ export async function forgotPassword(data: IForgotPasswordInput): Promise<IForgo
 
 export async function resetPassword(data: IResetPasswordInput): Promise<IResetPasswordResponse> {
   return request<IResetPasswordResponse>(`${settings.baseURL}/api/v1/auth/password/reset`, {
-    method: "POST",
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });

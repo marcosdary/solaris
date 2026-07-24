@@ -20,7 +20,7 @@ export function ProjectForm({
   updateTechnology,
 }: ProjectFormProps) {
   return (
-    <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
+    <section className="space-y-6 py-8">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-800">Projetos</h2>
 
@@ -43,7 +43,7 @@ export function ProjectForm({
         return (
           <div
             key={projectIndex}
-            className={`space-y-5 rounded-xl border p-5 ${
+            className={`space-y-6 rounded-xl border p-5 ${
               isExcluded
                 ? "border-slate-200 bg-slate-100 opacity-50"
                 : "border-slate-200"
@@ -132,7 +132,7 @@ export function ProjectForm({
 
             {!isExcluded && (
               <>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex justify-between">
                     <h4 className="font-medium">Descrições</h4>
 
@@ -146,7 +146,7 @@ export function ProjectForm({
                   </div>
 
                   {project.descriptions.map((description, index) => (
-                    <div key={index} className="flex gap-2">
+                    <div key={index} className="flex gap-3">
                       <input
                         className="flex-1 rounded-lg border p-2"
                         value={description.description}
@@ -172,7 +172,7 @@ export function ProjectForm({
                   ))}
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex justify-between">
                     <h4 className="font-medium">Tecnologias</h4>
 
@@ -186,7 +186,7 @@ export function ProjectForm({
                   </div>
 
                   {project.technologies.map((technology, index) => (
-                    <div key={index} className="flex gap-2">
+                    <div key={index} className="flex gap-3">
                       <input
                         className="flex-1 rounded-lg border p-2"
                         value={technology.technology}

@@ -16,12 +16,12 @@ export function PersonalInfo({
 }: PersonalInfoProps) {
   
   return (
-    <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
+    <section className="space-y-6 py-8">
       <h2 className="text-lg font-semibold text-slate-800">
         Informações Pessoais
       </h2>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-700">
             Nome*
@@ -47,7 +47,7 @@ export function PersonalInfo({
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-700">
             E-mail*
@@ -90,7 +90,7 @@ export function PersonalInfo({
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-700">
             GitHub
@@ -132,7 +132,7 @@ export function PersonalInfo({
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-700">
             Idioma*

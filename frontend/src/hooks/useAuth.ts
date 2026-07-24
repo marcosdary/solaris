@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { login as apiLogin, register as apiRegister, forgotPassword as apiForgotPassword, resetPassword as apiResetPassword } from "../services/auth";
 import { setToken } from "../utils/tokenStorage";
-import { NotFoundError, ConflictError } from "../errors";
+import { ApiError } from "../errors";
 import type { ILoginInput, IRegisterInput, IAuthResponse } from "../types/auth";
 
 export function useAuth() {
@@ -21,7 +21,8 @@ export function useAuth() {
       return response;
     } catch (err) {
       const message =
-        err instanceof NotFoundError && err.detail ? err.detail[0].msg : "Erro ao fazer login.";
+        err instanceof ApiError && err.detail ? err.detail[0].msg : "Erro ao fazer login.";
+      console.error(message);
       setError(message);
       return null;
     } finally {
@@ -41,7 +42,7 @@ export function useAuth() {
       return response;
     } catch (err) {
       const message =
-        err instanceof ConflictError && err.detail ? err.detail[0].msg : "Erro ao cadastrar.";
+        err instanceof ApiError && err.detail ? err.detail[0].msg : "Erro ao cadastrar.";
       setError(message);
       return null;
     } finally {
@@ -58,7 +59,7 @@ export function useAuth() {
       return response;
     } catch (err) {
       const message =
-        err instanceof NotFoundError && err.detail ? err.detail[0].msg : "Erro ao solicitar redefinição.";
+        err instanceof ApiError && err.detail ? err.detail[0].msg : "Erro ao solicitar redefinição.";
       setError(message);
       return null;
     } finally {
@@ -75,7 +76,7 @@ export function useAuth() {
       return response;
     } catch (err) {
       const message =
-        err instanceof NotFoundError && err.detail ? err.detail[0].msg : "Erro ao redefinir senha.";
+        err instanceof ApiError && err.detail ? err.detail[0].msg : "Erro ao redefinir senha.";
       setError(message);
       return null;
     } finally {
