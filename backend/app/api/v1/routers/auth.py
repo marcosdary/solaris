@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status, BackgroundTasks
 from fastapi.exceptions import HTTPException
+from jwt import InvalidTokenError
 from sqlalchemy.exc import IntegrityError, DBAPIError
 
 from app.schemas import (
@@ -8,9 +9,14 @@ from app.schemas import (
     UserResponseSchema,
     UserUpdateSchema,
     UserCreateSchema,
-    PasswordForgotSchema 
+    PasswordForgotSchema,
+    PasswordResetSchema
 )
-from app.exceptions import InvalidCredentialsException, NotFoundError
+from app.exceptions import (
+    InvalidCredentialsException, 
+    NotFoundError,
+    ExpirationError
+)
 from app.services import (
     UserServiceDep, 
     PasswordForgotDep,
@@ -232,6 +238,47 @@ async def password_forgot(
         return {
             "message": "Link enviado com sucesso."
         } 
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
+
+@router.patch("/password/reset", status_code=status.HTTP_201_CREATED)
+async def password_reset(
+    password_forgot: PasswordForgotDep,
+    user_service: UserServiceDep,
+    body: PasswordResetSchema
+) -> dict:
+    try:
+        phone = password_forgot.decode_password_token(body.token)
+
+    except InvalidTokenError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except ExpirationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
+    
+    try:
+        await user_service.update(phone, UserUpdateSchema(password=body.password))
+        return {
+            "message": "Senha alterada com sucesso."
+        }
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

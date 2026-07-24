@@ -4,7 +4,11 @@ from typing import Annotated
 from fastapi import Depends, Request
 from jose import JWTError, jwt
 
-from app.exceptions import InvalidCredentialsException
+from app.exceptions import (
+    InvalidCredentialsException,
+    ExpirationError
+)
+
 from app.config import get_settings, Settings
 from app.integrations import EvolutionAPIIntegration
 
@@ -94,7 +98,18 @@ class _PasswordForgotService:
         self._evolution_api_integration.send_text(
             phone,
             text=TEXT
-        )    
+        ) 
+
+    def decode_password_token(self, token: str) -> str:
+        payload = self._auth_service.decode_password_reset_token(token)
+        sub = payload.get("sub")
+        exp = payload.get("exp")
+        now = int(datetime.now(timezone.utc).timestamp())
+        
+        if now > exp:
+            raise ExpirationError("Token inválido. Tente novamente.")
+        
+        return sub
 
 class _CurrentUser:
     def __init__(

@@ -91,6 +91,11 @@ class _UserService:
         if not user.is_active:
             raise NotFoundError("Conta desativada.")
         for key, value in schema.model_dump(exclude_unset=True).items():
+            if key == "password":
+                password_hash = self._auth.hash_password(schema.password)
+                setattr(user, key, password_hash)
+                continue
+
             setattr(user, key, value)
         return await UserRepo.update(self._db, user)
 

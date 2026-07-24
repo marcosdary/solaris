@@ -54,7 +54,7 @@ API responsável pela integração para inserção de informações ao currícul
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["GET", "POST", "DELETE", "PUT"],
+    allow_methods=["GET", "POST", "DELETE", "PUT", "PATCH"],
     allow_headers=["*"],
 )
 

@@ -45,7 +45,8 @@ from .curriculum_file import (
 from .auth import (
     LoginRequestSchema, 
     TokenResponseSchema,
-    PasswordForgotSchema
+    PasswordForgotSchema,
+    PasswordResetSchema
 )
 
 __all__ = [
@@ -87,5 +88,6 @@ __all__ = [
     "DownloadCurriculumResponseSchema",
     "LoginRequestSchema",
     "TokenResponseSchema",
-    "PasswordForgotSchema"
+    "PasswordForgotSchema",
+    "PasswordResetSchema"
 ]
