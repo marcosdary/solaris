@@ -1,12 +1,9 @@
 {
   "name": "solaris",
   "compatibility_date": "2026-07-20",
-
   "assets": {
     "directory": "./dist"
   },
-
-  {
   "observability": {
     "enabled": false,
     "head_sampling_rate": 1,
@@ -22,5 +19,4 @@
       "head_sampling_rate": 1
     }
   }
-}
 }
