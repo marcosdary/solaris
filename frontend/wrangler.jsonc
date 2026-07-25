@@ -2,7 +2,8 @@
   "name": "solaris",
   "compatibility_date": "2026-07-20",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
   },
   "observability": {
     "enabled": false,

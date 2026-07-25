@@ -10,7 +10,8 @@ from app.schemas import (
     UserUpdateSchema,
     UserCreateSchema,
     PasswordForgotSchema,
-    PasswordResetSchema
+    PasswordResetSchema,
+    WhatsappLoginRequestSchema
 )
 from app.exceptions import (
     InvalidCredentialsException, 
@@ -89,7 +90,38 @@ async def login(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro externo do servidor: {exc}",
         )
+    
+@router.post("/whatsapp/login", response_model=TokenResponseSchema)
+async def login_whatsspp(
+    user_service: UserServiceDep,
+    auth_service: AuthServiceDep,
+    body: WhatsappLoginRequestSchema,
+) -> TokenResponseSchema:
+    try:
+        user = await user_service.get_by_id(body.phone)
+    except InvalidCredentialsException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
 
+    try:
+        return auth_service.create_access_token(user.id)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
 
 @router.get("/me", response_model=UserResponseSchema)
 async def get_me(

@@ -46,7 +46,8 @@ from .auth import (
     LoginRequestSchema, 
     TokenResponseSchema,
     PasswordForgotSchema,
-    PasswordResetSchema
+    PasswordResetSchema,
+    WhatsappLoginRequestSchema
 )
 
 __all__ = [
@@ -89,5 +90,6 @@ __all__ = [
     "LoginRequestSchema",
     "TokenResponseSchema",
     "PasswordForgotSchema",
-    "PasswordResetSchema"
+    "PasswordResetSchema",
+    "WhatsappLoginRequestSchema"
 ]

@@ -6,6 +6,9 @@ class LoginRequestSchema(BaseSchema):
     phone: Annotated[str, Field(min_length=1)]
     password: Annotated[str, Field(min_length=1)]
 
+class WhatsappLoginRequestSchema(BaseSchema):
+    phone: Annotated[str, Field(min_length=1)]
+
 class PasswordForgotSchema(BaseSchema):
     phone: Annotated[str, Field(min_length=1)]
 
@@ -20,5 +23,6 @@ class TokenResponseSchema(BaseSchema):
 __all__ = [
     "LoginRequestSchema", 
     "TokenResponseSchema",
-    "PasswordResetSchema"
+    "PasswordResetSchema",
+    "WhatsappLoginRequestSchema"
 ]
