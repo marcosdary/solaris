@@ -1,7 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { UserPlus } from "lucide-react";
 import { RegisterForm } from "../components/auth/RegisterForm";
-import { useAuthContext } from "../context/AuthContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function RegisterPage() {
   const navigate = useNavigate();

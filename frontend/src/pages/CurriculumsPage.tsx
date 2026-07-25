@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Search, FileX, Plus } from "lucide-react";
 
 import { CurriculumCard } from "../components/page-curriculum/CurriculumCard";
@@ -10,8 +10,10 @@ import { searchCurriculums } from "../services/curriculum";
 
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 import type { SearchCurriculums } from "../types/curriculumCreate";
+import { AuthenticationError } from "../errors";
 
 export default function CurriculumsPage() {
+  const navegate = useNavigate();
   const [curriculums, setCurriculums] = useState<ICurriculumResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [lastQuery, setLastQuery] = useState<SearchCurriculums | null>(null);
@@ -25,7 +27,9 @@ export default function CurriculumsPage() {
 
       setCurriculums(result);
     } catch (error) {
-      console.error(`Erro: ${error}`);
+      if ( error instanceof AuthenticationError ) {
+        navegate(`/login`);
+      }
     } finally {
       setLoading(false);
     }

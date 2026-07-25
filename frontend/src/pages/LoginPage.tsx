@@ -1,7 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { LogIn } from "lucide-react";
 import { LoginForm } from "../components/auth/LoginForm";
-import { useAuthContext } from "../context/AuthContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function LoginPage() {
   const navigate = useNavigate();

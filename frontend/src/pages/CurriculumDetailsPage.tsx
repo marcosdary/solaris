@@ -7,8 +7,12 @@ import { CurriculumPreview } from "../components/CurriculumPreview";
 import { CurriculumFileHistory } from "../components/CurriculumFileHistory";
 import { selectCurriculumByID, deleteCurriculum } from "../services/curriculum";
 import { useAccessToken } from "../hooks/useAccessToken";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 import type { ICurriculumResponse } from "../types/curriculumResponse";
+
+// errors
+import { AuthenticationError } from "../errors";
 
 type ViewMode = "details" | "preview" | "history";
 
@@ -16,6 +20,8 @@ export default function CurriculumDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const accessToken = useAccessToken();
     const navigate = useNavigate();
+
+    const { logout } = useAuthContext(); 
 
     const [curriculum, setCurriculum] =
         useState<ICurriculumResponse | null>(null);
@@ -25,20 +31,22 @@ export default function CurriculumDetailsPage() {
 
     useEffect(() => {
         async function loadCurriculum() {
-        if (!id) return;
+          if (!id) return;
 
-        try {
-            const data = await selectCurriculumByID(id, accessToken ?? undefined);
-            setCurriculum(data);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
+          try {
+              const data = await selectCurriculumByID(id, accessToken ?? undefined);
+              setCurriculum(data);
+          } catch (err) {
+              if (err instanceof AuthenticationError) {
+                logout();
+              }
+          } finally {
+              setLoading(false);
+          }
         }
 
         loadCurriculum();
-    }, [id, accessToken]);
+    }, [id, accessToken, logout]);
 
     async function handleDelete() {
         if (!curriculum) return;

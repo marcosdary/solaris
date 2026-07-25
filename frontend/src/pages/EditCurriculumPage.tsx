@@ -4,13 +4,19 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { CurriculumForm } from "../components/CurriculumForm";
 import { selectCurriculumByID } from "../services/curriculum";
 import { useAccessToken } from "../hooks/useAccessToken";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 import type { ICurriculumResponse } from "../types/curriculumResponse";
+
+// errors
+import { AuthenticationError } from "../errors";
 
 export default function EditCurriculumPage() {
   const { id } = useParams<{ id: string }>();
   const accessToken = useAccessToken();
   const navigate = useNavigate();
+
+  const { logout } = useAuthContext();  
 
   const [curriculum, setCurriculum] =
     useState<ICurriculumResponse | null>(null);
@@ -22,9 +28,13 @@ export default function EditCurriculumPage() {
 
     selectCurriculumByID(id, accessToken ?? undefined)
       .then(setCurriculum)
-      .catch(console.error)
+      .catch((err) => {
+        if (err instanceof AuthenticationError) {
+        logout();
+      }
+      })
       .finally(() => setLoading(false));
-  }, [id, accessToken]);
+  }, [id, accessToken, logout]);
 
   if (loading) {
     return (

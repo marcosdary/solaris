@@ -4,16 +4,20 @@ import type { ICurriculumInput } from "../types/curriculumCreate";
 import type { ICurriculumEditPayload } from "../types/curriculumEditPayload";
 import { CurriculumCategory, Language } from "../config/constants";
 import { createCurriculum, updateCurriculum } from "../services/curriculum";
-import { useExperiences } from "./useExperiences";
-import { useEducations } from "./useEducations";
-import { useProjects } from "./useProjects";
-import { useCertifications } from "./useCertifications";
+
+// hooks
 import type { UseExperiencesReturn } from "./useExperiences";
 import type { UseEducationsReturn } from "./useEducations";
 import type { UseProjectsReturn } from "./useProjects";
 import type { UseCertificationsReturn } from "./useCertifications";
+import { useExperiences } from "./useExperiences";
+import { useEducations } from "./useEducations";
+import { useProjects } from "./useProjects";
+import { useCertifications } from "./useCertifications";
 import { useAccessToken } from "../hooks/useAccessToken";
+import { useAuthContext } from "../hooks/useAuthContext";
 
+// interfaces
 import type {
   IExperienceInput,
   IEducationInput,
@@ -26,6 +30,9 @@ import {
   cleanProject,
   cleanCertification,
 } from "../utils/curriculumMappers";
+
+// errors
+import { AuthenticationError } from "../errors";
 
 export interface UseCurriculumFormReturn {
   form: ICurriculumInput;
@@ -98,6 +105,7 @@ export function useCurriculumForm({
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ICurriculumResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { logout } = useAuthContext();
 
   const experiences = useExperiences({
     mode,
@@ -138,7 +146,7 @@ export function useCurriculumForm({
     setError(null);
 
     try {
-
+      
       const payload: ICurriculumEditPayload = {
         language: form.language,
         category: form.category,
@@ -165,9 +173,13 @@ export function useCurriculumForm({
 
       onSuccess?.(response);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao processar currículo.";
-      console.error(err);
+
+      const message = "Erro ao processar currículo.";
+      
+      if (err instanceof AuthenticationError) {
+        logout();
+      }
+      
       setError(message);
     } finally {
       setLoading(false);

@@ -19,8 +19,8 @@ import EditCurriculumPage from "./pages/EditCurriculumPage";
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Layout>
           <Routes>
 
@@ -66,8 +66,8 @@ function App() {
 
           </Routes>
         </Layout>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

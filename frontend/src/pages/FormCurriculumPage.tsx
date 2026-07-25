@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { CurriculumForm } from "../components/CurriculumForm";
 import type { ICurriculumResponse } from "../types/curriculumResponse";
@@ -34,9 +34,6 @@ export default function CurriculumFormPage() {
               ← Voltar
             </button>
 
-            <Link to="/" className="transition hover:text-slate-800">
-              Home
-            </Link>
           </div>
         </header>
 
