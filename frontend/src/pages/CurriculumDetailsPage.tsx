@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
 import { Eye, FileText, Clock } from "lucide-react";
 
 import { CurriculumDetails } from "../components/CurriculumDetails";
@@ -20,6 +20,7 @@ export default function CurriculumDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const accessToken = useAccessToken();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { logout } = useAuthContext(); 
 
@@ -38,6 +39,7 @@ export default function CurriculumDetailsPage() {
               setCurriculum(data);
           } catch (err) {
               if (err instanceof AuthenticationError) {
+                sessionStorage.setItem("redirectAfterLogin", location.pathname);
                 logout();
               }
           } finally {
@@ -46,7 +48,7 @@ export default function CurriculumDetailsPage() {
         }
 
         loadCurriculum();
-    }, [id, accessToken, logout]);
+    }, [id, accessToken, logout, location]);
 
     async function handleDelete() {
         if (!curriculum) return;

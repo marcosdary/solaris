@@ -6,10 +6,13 @@ import { useAuthContext } from "../hooks/useAuthContext";
 export default function LoginPage() {
   const navigate = useNavigate();
   const { refresh } = useAuthContext();
+  const redirect = sessionStorage.getItem("redirectAfterLogin");
+
+  console.log(redirect);
 
   function handleSuccess() {
     refresh();
-    navigate("/curriculums");
+    navigate(redirect ?? "/curriculums");
   }
 
   return (

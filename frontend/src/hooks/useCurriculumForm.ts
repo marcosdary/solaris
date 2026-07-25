@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 import type { ICurriculumInput } from "../types/curriculumCreate";
 import type { ICurriculumEditPayload } from "../types/curriculumEditPayload";
@@ -106,6 +107,7 @@ export function useCurriculumForm({
   const [result, setResult] = useState<ICurriculumResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { logout } = useAuthContext();
+  const location = useLocation();
 
   const experiences = useExperiences({
     mode,
@@ -178,6 +180,7 @@ export function useCurriculumForm({
       
       if (err instanceof AuthenticationError) {
         logout();
+        sessionStorage.setItem("redirectAfterLogin", location.pathname);
       }
       
       setError(message);
