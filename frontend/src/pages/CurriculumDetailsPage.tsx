@@ -80,11 +80,11 @@ export default function CurriculumDetailsPage() {
     if (!curriculum) {
     return (
         <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
-            <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+            <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-5 sm:p-10 text-center shadow-sm">
 
-                <div className="mb-6 text-6xl">📄</div>
+                <div className="mb-4 sm:mb-6 text-4xl sm:text-6xl">📄</div>
 
-                    <h1 className="text-2xl font-bold text-slate-900">
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
                     Currículo não encontrado
                     </h1>
 
@@ -128,7 +128,7 @@ export default function CurriculumDetailsPage() {
                 }`}
               >
                 <Eye size={15} />
-                Detalhes
+                <span className="hidden sm:inline">Detalhes</span>
               </button>
               <button
                 onClick={() => setViewMode("preview")}
@@ -139,7 +139,7 @@ export default function CurriculumDetailsPage() {
                 }`}
               >
                 <FileText size={15} />
-                Pré-visualização PDF
+                <span className="hidden sm:inline">Pré-visualização PDF</span>
               </button>
               <button
                 onClick={() => setViewMode("history")}
@@ -150,23 +150,25 @@ export default function CurriculumDetailsPage() {
                 }`}
               >
                 <Clock size={15} />
-                Histórico
+                <span className="hidden sm:inline">Histórico</span>
               </button>
             </div>
 
             <div className="flex items-center gap-2">
-              <Link
-                to="/curriculums"
-                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
-              >
-                ← Lista
-              </Link>
-              <Link
-                to="/"
-                className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-700"
-              >
-                Home
-              </Link>
+                <Link
+                  to="/curriculums"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+                >
+                  <span className="sm:hidden">←</span>
+                  <span className="hidden sm:inline">← Lista</span>
+                </Link>
+                <Link
+                  to="/"
+                  className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-700"
+                >
+                  <span className="sm:hidden">🏠</span>
+                  <span className="hidden sm:inline">Home</span>
+                </Link>
             </div>
           </div>
         </div>
@@ -178,7 +180,7 @@ export default function CurriculumDetailsPage() {
           />
         ) : viewMode === "preview" ? (
           <div className="min-h-screen bg-slate-100">
-            <div className="mx-auto max-w-6xl px-6 py-10">
+            <div className="mx-auto max-w-6xl overflow-x-auto px-3 sm:px-6 py-6 sm:py-10">
               <CurriculumPreview curriculum={curriculum} token={accessToken ?? undefined} />
             </div>
           </div>

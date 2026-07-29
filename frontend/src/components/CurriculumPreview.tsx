@@ -97,7 +97,7 @@ export function CurriculumPreview({ curriculum, token }: Props) {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="inline-flex rounded-lg bg-white border border-slate-200 p-0.5 shadow-sm">
           {(Object.keys(TEMPLATE_LABELS) as TemplateType[]).map((t) => (
             <button
@@ -140,7 +140,7 @@ export function CurriculumPreview({ curriculum, token }: Props) {
       )}
 
       <div
-        className={`mx-auto max-w-[210mm] bg-white shadow-2xl ${
+        className={`mx-auto max-w-[210mm] bg-white shadow-2xl overflow-x-auto ${
           isModern ? "font-serif" : "font-sans"
         } text-slate-700`}
         style={{ padding: isModern ? "1.6cm" : "1.2cm 1.4cm" }}

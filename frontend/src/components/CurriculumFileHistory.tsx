@@ -135,7 +135,7 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="mx-auto max-w-4xl px-3 sm:px-6 py-6 md:py-10">
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-slate-900">
           Histórico de Downloads
@@ -160,7 +160,7 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
       )}
 
       {!loading && !error && files.length === 0 && (
-        <div className="rounded-3xl border border-slate-200 bg-white px-10 py-20 text-center shadow-sm">
+        <div className="rounded-3xl border border-slate-200 bg-white px-4 py-12 md:px-10 md:py-20 text-center shadow-sm">
           <div className="mb-4 flex justify-center">
             <div className="rounded-full bg-slate-100 p-4">
               <Clock size={32} className="text-slate-300" />
@@ -184,7 +184,7 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
             return (
               <div
                 key={file.id}
-                className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:shadow-sm"
+                className="group flex flex-wrap items-center gap-2 sm:gap-4 rounded-xl border border-slate-200 bg-white p-3 sm:p-4 transition hover:border-slate-300 hover:shadow-sm"
               >
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
@@ -211,17 +211,17 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleDownload(file)}
-                    disabled={downloadingId === file.id}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-2 text-xs font-medium text-white transition hover:bg-slate-700 disabled:opacity-50"
-                  >
-                    <Download
-                      size={13}
-                      className={downloadingId === file.id ? "animate-bounce" : ""}
-                    />
-                    {downloadingId === file.id ? "Baixando..." : "Download"}
-                  </button>
+                    <button
+                      onClick={() => handleDownload(file)}
+                      disabled={downloadingId === file.id}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-2 sm:px-3 py-2 text-xs font-medium text-white transition hover:bg-slate-700 disabled:opacity-50"
+                    >
+                      <Download
+                        size={13}
+                        className={downloadingId === file.id ? "animate-bounce" : ""}
+                      />
+                      <span className="hidden sm:inline">{downloadingId === file.id ? "Baixando..." : "Download"}</span>
+                    </button>
 
                   <button
                     onClick={() => handleDelete(file)}
