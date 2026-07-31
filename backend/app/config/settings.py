@@ -20,13 +20,9 @@ class Settings(BaseSettings):
         extra="ignore"
     )
     
-    DB_URL: str
-    API_KEY: str
     
     JWT_SECRET: str
     JWT_ALGORITHM: str = "HS256"
-    
-    APP_SCRIPT_KEY: str
     
     SUPABASE_URL: str
     SUPABASE_KEY: str

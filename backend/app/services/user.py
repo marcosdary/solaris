@@ -71,7 +71,7 @@ class _UserService:
         phone: str,
         password: str
     ) -> UserModel:
-        user = await UserRepo.get_by_id(self._db, phone)
+        user = await self.get_by_phone(phone)
         if not user:
             raise InvalidCredentialsException("Usuário não encontrado ou informações inválidas.")
         if not self._auth.verify_password(password, user.password):

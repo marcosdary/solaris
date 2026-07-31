@@ -19,6 +19,7 @@ class UserResponseSchema(BaseSchema):
     name: str
     is_active: bool
     created_at: datetime
+    updated_at: datetime
 
 
 __all__ = ["UserCreateSchema", "UserUpdateSchema", "UserResponseSchema"]
