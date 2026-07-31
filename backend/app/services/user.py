@@ -9,7 +9,7 @@ from app.schemas import UserCreateSchema, UserUpdateSchema
 from app.repos.user import UserRepo
 from app.exceptions import InvalidCredentialsException, NotFoundError
 from app.config import get_settings, Settings
-from app.utils import AuthenticatorUtil
+from app.utils import AuthenticatorUtil, NormalizePhoneUtil
 
 async def get_session(
     request: Request,
@@ -24,30 +24,36 @@ class _UserService:
         self._settings = settings
         self._auth = AuthenticatorUtil(self._settings.PASSWORD_PEPPER)
 
+    def _normalize_phone(self, phone: str) -> NormalizePhoneUtil:
+        return NormalizePhoneUtil(phone)
+
     async def create(
         self,
         schema: UserCreateSchema,
     ) -> UserModel:
+        
         password_hash = self._auth.hash_password(schema.password)
+        normalize_phone = self._normalize_phone(phone=schema.phone)
+        phone_format_national = normalize_phone.format_e164()
         user = UserModel.from_schema(UserCreateSchema(
             name=schema.name,
-            phone=schema.phone,
+            phone=phone_format_national,
             password=password_hash
         ))
         return await UserRepo.create(self._db, user)
 
-    async def get_or_create(
+    async def get_by_phone(
         self,
         phone: str,
-        name: str,
     ) -> UserModel:
-        existing = await UserRepo.get_by_id(self._db, phone)
-        if existing:
-            if not existing.is_active:
-                raise InvalidCredentialsException("Conta desativada.")
-            return existing
-        schema = UserCreateSchema(phone=phone, name=name)
-        return await UserRepo.create(self._db, schema)
+        normalize_phone = self._normalize_phone(phone=phone)
+        phone_register_in_db = normalize_phone.normalize_whatsapp_number()
+        existing = await UserRepo.get_by_phone(self._db, phone_register_in_db)
+        
+        if not existing:
+            raise InvalidCredentialsException("Conta desativada.")
+        
+        return existing
 
     async def get_by_id(
         self,

@@ -20,13 +20,13 @@ class _AuthService:
     def expires_in(self, expire_minutes: int) -> int:
         return expire_minutes * 60
 
-    def create_access_token(self, phone: str) -> dict:
+    def create_access_token(self, user_id: str) -> dict:
         access_token = self._settings.ACCESS_TOKEN_EXPIRE_MINUTES
         expire = datetime.now(timezone.utc) + timedelta(
             minutes=access_token
         )
         payload = {
-            "sub": phone,
+            "sub": user_id,
             "iat": datetime.now(timezone.utc),
             "exp": expire,
             "type": "access"
@@ -52,13 +52,13 @@ class _AuthService:
             raise jwt.InvalidTokenError("Tipo de token inválido")
         return payload
     
-    def create_password_reset_token(self, phone: str) -> str:
+    def create_password_reset_token(self, user_id: str) -> str:
         reset_password = self._settings.PASSWORD_RESET_EXPIRE_MINUTES
         
         expire = datetime.now(timezone.utc) + timedelta(minutes=reset_password)
 
         payload = {
-            "sub": phone,
+            "sub": user_id,
             "iat": datetime.now(timezone.utc),
             "exp": expire,
             "type": "password_reset"
@@ -91,8 +91,8 @@ class _PasswordForgotService:
         )
         self._auth_service = auth_service
 
-    def send_password_reset_link(self, phone: str) -> None:
-        token = self._auth_service.create_password_reset_token(phone)
+    def send_password_reset_link(self, user_id: str, phone: str) -> None:
+        token = self._auth_service.create_password_reset_token(user_id)
         url = f"{self._settings.PASSWORD_RESET_URL}?token={token}"
         TEXT = f"""Acesse o link para realizar sua redefinição de senha:\n{url}"""
         self._evolution_api_integration.send_text(

@@ -25,6 +25,14 @@ class UserRepo:
     ) -> Optional[UserModel]:
         stmt = select(UserModel).filter(UserModel.id == id)
         return await session.scalar(stmt)
+    
+    @staticmethod
+    async def get_by_phone(
+        session: AsyncSession,
+        phone: str
+    ) -> Optional[UserModel]:
+        stmt = select(UserModel).filter(UserModel.phone == phone)
+        return await session.scalar(stmt)
 
     @staticmethod
     async def get_all(

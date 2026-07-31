@@ -98,7 +98,7 @@ async def login_whatsspp(
     body: WhatsappLoginRequestSchema,
 ) -> TokenResponseSchema:
     try:
-        user = await user_service.get_by_id(body.phone)
+        user = await user_service.get_by_phone(body.phone)
     except InvalidCredentialsException as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -245,7 +245,7 @@ async def password_forgot(
     body: PasswordForgotSchema
 ) -> dict:
     try:
-        user = await user_service.get_by_id(body.phone)
+        user = await user_service.get_by_phone(body.phone)
     except InvalidCredentialsException as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -265,7 +265,8 @@ async def password_forgot(
     try:
         background_tasks.add_task(
             password_forgot.send_password_reset_link,
-            phone=user.id
+            user_id=user.id,
+            phone=user.phone
         )
         return {
             "message": "Link enviado com sucesso."
@@ -283,7 +284,7 @@ async def password_reset(
     body: PasswordResetSchema
 ) -> dict:
     try:
-        phone = password_forgot.decode_password_token(body.token)
+        user_id = password_forgot.decode_password_token(body.token)
 
     except InvalidTokenError as exc:
         raise HTTPException(
@@ -302,7 +303,7 @@ async def password_reset(
         )
     
     try:
-        await user_service.update(phone, UserUpdateSchema(password=body.password))
+        await user_service.update(user_id, UserUpdateSchema(password=body.password))
         return {
             "message": "Senha alterada com sucesso."
         }
