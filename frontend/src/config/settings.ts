@@ -1,6 +1,7 @@
 export const settings = {
   baseWS: import.meta.env.VITE_WS!,
-  baseURL: import.meta.env.VITE_API_URL!
+  baseURL: import.meta.env.VITE_API_URL!,
+  numberWhatsApp: import.meta.env.VITE_WHATSAPP_NUMBER!,
 };
 
 

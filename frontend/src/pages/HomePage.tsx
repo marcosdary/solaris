@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FileText, Sparkles, Globe, Zap } from "lucide-react";
+import { settings } from "../config/settings";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -99,7 +100,7 @@ export default function HomePage() {
           </div>
 
           <a
-            href="https://wa.me/SEUNUMERO"
+            href={`https://wa.me/${settings.numberWhatsApp}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-border-default px-5 py-2.5 text-[15px] font-medium text-accent-horizon transition hover:bg-bg-base"
