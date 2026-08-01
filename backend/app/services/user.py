@@ -71,7 +71,9 @@ class _UserService:
         phone: str,
         password: str
     ) -> UserModel:
-        user = await self.get_by_phone(phone)
+        normalize_phone = self._normalize_phone(phone=phone)
+        phone_format_national = normalize_phone.format_e164()
+        user = await UserRepo.get_by_phone(self._db, phone_format_national)
         if not user:
             raise InvalidCredentialsException("Usuário não encontrado ou informações inválidas.")
         if not self._auth.verify_password(password, user.password):
