@@ -20,21 +20,21 @@ export function ExperienceForm({
   return (
     <section className="space-y-6 py-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-800">
+        <h2 className="text-lg font-semibold text-text-primary">
           Experiência Profissional
         </h2>
 
         <button
           type="button"
           onClick={add}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition hover:bg-blue-700"
+          className="rounded-lg bg-accent-horizon px-4 py-2 text-sm text-white transition hover:brightness-110"
         >
           + Adicionar Experiência
         </button>
       </div>
 
       {experiences.length === 0 && (
-        <p className="text-sm text-slate-500">Nenhuma experiência profissional adicionada.</p>
+        <p className="text-[15px] text-text-secondary">Nenhuma experiência profissional adicionada.</p>
       )}
 
       {experiences.map((experience, experienceIndex) => {
@@ -43,21 +43,21 @@ export function ExperienceForm({
         return (
           <div
             key={experienceIndex}
-            className={`space-y-6 rounded-xl border p-5 ${
+            className={`space-y-6 rounded-2xl border p-5 ${
               isExcluded
-                ? "border-slate-200 bg-slate-100 opacity-50"
-                : "border-slate-200"
+                ? "border-border-default bg-bg-surface opacity-50"
+                : "border-border-default bg-white"
             }`}
           >
             <div className="flex items-center justify-between">
               <h3
-                className={`font-medium text-slate-700 ${
+                className={`font-medium text-text-primary ${
                   isExcluded ? "line-through" : ""
                 }`}
               >
                 Experiência {experienceIndex + 1}
                 {isExcluded && (
-                  <span className="ml-2 text-xs font-normal text-red-500">
+                  <span className="ml-2 text-xs font-normal text-red-600">
                     (Removido)
                   </span>
                 )}
@@ -83,12 +83,12 @@ export function ExperienceForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                 Cargo*
               </label>
 
               <input
-                className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                 value={experience.role}
                 onChange={(e) =>
                   update(experienceIndex, "role", e.target.value)
@@ -98,12 +98,12 @@ export function ExperienceForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                 Empresa*
               </label>
 
               <input
-                className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                 value={experience.company}
                 onChange={(e) =>
                   update(experienceIndex, "company", e.target.value)
@@ -113,12 +113,12 @@ export function ExperienceForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                 Local*
               </label>
 
               <input
-                className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                 value={experience.location}
                 onChange={(e) =>
                   update(experienceIndex, "location", e.target.value)
@@ -129,13 +129,13 @@ export function ExperienceForm({
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                   Data de Início*
                 </label>
 
                 <input
                   type="date"
-                  className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
                   value={experience.start_date}
                   onChange={(e) =>
                     update(experienceIndex, "start_date", e.target.value)
@@ -145,13 +145,13 @@ export function ExperienceForm({
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                   Data de Término
                 </label>
 
                 <input
                   type="date"
-                  className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
                   value={experience.end_date ?? ""}
                   onChange={(e) =>
                     update(experienceIndex, "end_date", e.target.value || null)
@@ -162,21 +162,21 @@ export function ExperienceForm({
             </div>
 
             {!isExcluded && (
-              <div className="space-y-4 rounded-lg border border-slate-100 bg-slate-50 p-4">
+              <div className="space-y-4 rounded-2xl border border-border-default bg-bg-surface p-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-slate-700">Atividades</h4>
+                  <h4 className="text-[15px] font-medium text-text-primary">Atividades</h4>
 
                   <button
                     type="button"
                     onClick={() => addActivity(experienceIndex)}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                    className="text-sm font-medium text-accent-horizon transition hover:brightness-110"
                   >
                     + Adicionar Atividade
                   </button>
                 </div>
 
                 {experience.activities.length === 0 && (
-                  <p className="text-sm text-slate-500">
+                  <p className="text-[15px] text-text-secondary">
                     Nenhuma atividade adicionada.
                   </p>
                 )}
@@ -185,7 +185,7 @@ export function ExperienceForm({
                   <div key={activityIndex} className="flex items-start gap-2">
                     <textarea
                       rows={3}
-                      className="flex-1 rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                      className="flex-1 rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                       placeholder="Descreva a atividade..."
                       value={activity.description}
                       onChange={(e) =>
@@ -202,7 +202,7 @@ export function ExperienceForm({
                       onClick={() =>
                         removeActivity(experienceIndex, activityIndex)
                       }
-                      className="rounded-lg px-3 py-2 text-red-600 hover:bg-red-50"
+                      className="rounded-md px-3 py-2 text-red-600 transition hover:bg-red-50"
                     >
                       ✕
                     </button>

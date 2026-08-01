@@ -16,7 +16,7 @@ export default function EditCurriculumPage() {
   const accessToken = useAccessToken();
   const navigate = useNavigate();
 
-  const { logout } = useAuthContext();  
+  const { logout } = useAuthContext();
 
   const [curriculum, setCurriculum] =
     useState<ICurriculumResponse | null>(null);
@@ -38,7 +38,7 @@ export default function EditCurriculumPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center text-text-secondary">
         Carregando...
       </div>
     );
@@ -46,16 +46,16 @@ export default function EditCurriculumPage() {
 
   if (!curriculum) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
-        <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+      <div className="flex min-h-screen items-center justify-center px-6">
+        <div className="w-full max-w-md rounded-2xl border border-border-default bg-white p-10 text-center">
 
           <div className="mb-6 text-6xl">📄</div>
 
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-text-primary">
             Currículo não encontrado
           </h1>
 
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 text-[15px] text-text-secondary">
             O currículo pode ter sido removido ou o link informado é inválido.
           </p>
 
@@ -63,14 +63,17 @@ export default function EditCurriculumPage() {
 
             <Link
               to="/"
-              className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
+              className="rounded-lg px-7 py-3 text-[15px] font-medium text-white transition hover:brightness-110"
+              style={{
+                background: "linear-gradient(135deg, #FFB200 0%, #FF8A00 100%)",
+              }}
             >
               Ir para Home
             </Link>
 
             <Link
               to="/curriculums"
-              className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
+              className="rounded-lg border border-border-default bg-white px-5 py-3 text-[15px] font-medium text-accent-horizon transition hover:bg-bg-surface"
             >
               Ver Currículos
             </Link>
@@ -86,30 +89,30 @@ export default function EditCurriculumPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-bg-base">
       <div className="w-full px-4 py-6 sm:px-8 md:px-12 sm:py-12">
 
         <header className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-800 sm:text-3xl">
+            <h1 className="text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
               Editar Currículo
             </h1>
 
-            <p className="mt-1.5 text-sm text-slate-400">
+            <p className="mt-1.5 text-[15px] text-text-secondary">
               Atualize as informações do currículo.
             </p>
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-slate-500">
+          <div className="flex items-center gap-4 text-[15px] text-text-secondary">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="transition hover:text-slate-800"
+              className="transition hover:text-text-primary"
             >
               ← Voltar
             </button>
 
-            <Link to="/" className="transition hover:text-slate-800">
+            <Link to="/" className="transition hover:text-text-primary">
               Home
             </Link>
           </div>

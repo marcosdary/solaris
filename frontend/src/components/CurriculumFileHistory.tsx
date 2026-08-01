@@ -61,15 +61,15 @@ function LoadingSkeleton() {
   return (
     <div className="space-y-4">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="animate-pulse rounded-xl border border-slate-200 bg-white p-5">
+        <div key={i} className="animate-pulse rounded-xl border border-border-default bg-white p-5">
           <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-slate-100" />
+            <div className="h-10 w-10 rounded-lg bg-bg-surface" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 w-28 rounded bg-slate-100" />
-              <div className="h-3 w-40 rounded bg-slate-50" />
+              <div className="h-4 w-28 rounded bg-bg-surface" />
+              <div className="h-3 w-40 rounded bg-border-default" />
             </div>
-            <div className="h-8 w-24 rounded-lg bg-slate-100" />
-            <div className="h-8 w-8 rounded-lg bg-slate-50" />
+            <div className="h-8 w-24 rounded-lg bg-bg-surface" />
+            <div className="h-8 w-8 rounded-lg bg-border-default" />
           </div>
         </div>
       ))}
@@ -137,10 +137,10 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
   return (
     <div className="mx-auto max-w-4xl px-3 sm:px-6 py-6 md:py-10">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-900">
+        <h2 className="text-2xl font-bold text-text-primary">
           Histórico de Downloads
         </h2>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-[15px] text-text-secondary">
           Arquivos gerados a partir deste currículo.
         </p>
       </div>
@@ -160,16 +160,16 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
       )}
 
       {!loading && !error && files.length === 0 && (
-        <div className="rounded-3xl border border-slate-200 bg-white px-4 py-12 md:px-10 md:py-20 text-center shadow-sm">
+        <div className="rounded-2xl border border-border-default bg-white px-4 py-12 md:px-10 md:py-20 text-center">
           <div className="mb-4 flex justify-center">
-            <div className="rounded-full bg-slate-100 p-4">
-              <Clock size={32} className="text-slate-300" />
+            <div className="rounded-full bg-bg-surface p-4">
+              <Clock size={32} className="text-text-muted" />
             </div>
           </div>
-          <h3 className="text-lg font-semibold text-slate-700">
+          <h3 className="text-lg font-semibold text-text-primary">
             Nenhum arquivo gerado
           </h3>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-[15px] text-text-secondary">
             Os PDFs e DOCXs gerados aparecerão aqui.
           </p>
         </div>
@@ -184,7 +184,7 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
             return (
               <div
                 key={file.id}
-                className="group flex flex-wrap items-center gap-2 sm:gap-4 rounded-xl border border-slate-200 bg-white p-3 sm:p-4 transition hover:border-slate-300 hover:shadow-sm"
+                className="group flex flex-wrap items-center gap-2 sm:gap-4 rounded-xl border border-border-default bg-white p-3 sm:p-4 transition hover:border-accent-horizon"
               >
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
@@ -196,7 +196,7 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="truncate text-sm font-medium text-slate-800">
+                    <span className="truncate text-sm font-medium text-text-primary">
                       {file.name}
                     </span>
                     <span
@@ -205,7 +205,7 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
                       {badge.label}
                     </span>
                   </div>
-                  <p className="mt-0.5 text-xs text-slate-400">
+                  <p className="mt-0.5 text-xs text-text-muted">
                     {relativeDate(file.created_at)}
                   </p>
                 </div>
@@ -214,7 +214,10 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
                     <button
                       onClick={() => handleDownload(file)}
                       disabled={downloadingId === file.id}
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-2 sm:px-3 py-2 text-xs font-medium text-white transition hover:bg-slate-700 disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-white transition hover:brightness-110 disabled:opacity-50"
+                      style={{
+                        background: "linear-gradient(135deg, #FFB200 0%, #FF8A00 100%)",
+                      }}
                     >
                       <Download
                         size={13}
@@ -226,7 +229,7 @@ export function CurriculumFileHistory({ curriculumId, token }: Props) {
                   <button
                     onClick={() => handleDelete(file)}
                     disabled={deletingId === file.id}
-                    className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+                    className="rounded-lg p-2 text-text-muted transition hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
                   >
                     <Trash2 size={15} />
                   </button>

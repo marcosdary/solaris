@@ -11,25 +11,25 @@ export default function CurriculumFormPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-bg-base">
       <div className="w-full px-4 py-6 sm:px-8 md:px-12 sm:py-12">
 
         <header className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-800 sm:text-3xl">
+            <h1 className="text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
               Novo Currículo
             </h1>
 
-            <p className="mt-1.5 text-sm text-slate-400">
+            <p className="mt-1.5 text-[15px] text-text-secondary">
               Preencha suas informações para gerar um currículo profissional.
             </p>
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-slate-500">
+          <div className="flex items-center gap-4 text-[15px] text-text-secondary">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="transition hover:text-slate-800"
+              className="transition hover:text-text-primary"
             >
               ← Voltar
             </button>

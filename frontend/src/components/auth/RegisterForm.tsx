@@ -32,13 +32,13 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-[15px] text-red-700">
           {error}
         </div>
       )}
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
+        <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
           Nome
         </label>
         <input
@@ -47,12 +47,12 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           placeholder="Seu nome completo"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+          className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
+        <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
           Telefone
         </label>
         <input
@@ -61,12 +61,12 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           placeholder="(99) 99 99999-9999"
           value={phone}
           onChange={(e) => setPhone(phoneMask(e.target.value))}
-          className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+          className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
+        <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
           Senha
         </label>
         <input
@@ -75,21 +75,21 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           placeholder="Sua senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+          className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-slate-900 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-[6px] bg-accent-primary py-3 text-[15px] font-medium text-accent-text transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? "Criando conta..." : "Criar conta"}
       </button>
 
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-[15px] text-text-secondary">
         Já tem conta?{" "}
-        <Link to="/login" className="font-medium text-slate-900 underline underline-offset-2 transition hover:text-slate-600">
+        <Link to="/login" className="font-medium text-text-primary underline underline-offset-2 transition hover:text-accent-primary">
           Faça login
         </Link>
       </p>

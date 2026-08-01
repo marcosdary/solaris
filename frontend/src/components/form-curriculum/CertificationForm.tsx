@@ -19,21 +19,21 @@ export function CertificationForm({
   return (
     <section className="space-y-6 py-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-800">
+        <h2 className="text-lg font-semibold text-text-primary">
           Certificações
         </h2>
 
         <button
           type="button"
           onClick={add}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+          className="rounded-lg bg-accent-horizon px-4 py-2 text-sm text-white transition hover:brightness-110"
         >
           + Adicionar
         </button>
       </div>
 
       {certifications.length === 0 && (
-        <p className="text-sm text-slate-500">
+        <p className="text-[15px] text-text-secondary">
           Nenhuma certificação adicionada.
         </p>
       )}
@@ -44,19 +44,21 @@ export function CertificationForm({
         return (
           <div
             key={index}
-            className={`space-y-6 rounded-xl border p-5 ${
+            className={`space-y-6 rounded-2xl border p-5 ${
               isExcluded
-                ? "border-slate-200 bg-slate-100 opacity-50"
-                : "border-slate-200"
+                ? "border-border-default bg-bg-surface opacity-50"
+                : "border-border-default bg-white"
             }`}
           >
             <div className="flex items-center justify-between">
               <h3
-                className={`font-medium ${isExcluded ? "line-through" : ""}`}
+                className={`font-medium text-text-primary ${
+                  isExcluded ? "line-through" : ""
+                }`}
               >
                 Certificação {index + 1}
                 {isExcluded && (
-                  <span className="ml-2 text-xs font-normal text-red-500">
+                  <span className="ml-2 text-xs font-normal text-red-600">
                     (Removido)
                   </span>
                 )}
@@ -66,7 +68,7 @@ export function CertificationForm({
                 <button
                   type="button"
                   onClick={() => restore(index)}
-                  className="text-sm text-green-600 hover:text-green-700"
+                  className="text-sm text-green-600 transition hover:text-green-700"
                 >
                   Restaurar
                 </button>
@@ -74,7 +76,7 @@ export function CertificationForm({
                 <button
                   type="button"
                   onClick={() => remove(index)}
-                  className="text-sm text-red-600 hover:text-red-700"
+                  className="text-sm text-red-600 transition hover:text-red-700"
                 >
                   Remover
                 </button>
@@ -82,10 +84,12 @@ export function CertificationForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Nome</label>
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
+                Nome
+              </label>
 
               <input
-                className="w-full rounded-lg border p-2"
+                className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                 value={certification.name}
                 onChange={(e) => update(index, "name", e.target.value)}
                 disabled={!!isExcluded}
@@ -93,12 +97,12 @@ export function CertificationForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                 Instituição
               </label>
 
               <input
-                className="w-full rounded-lg border p-2"
+                className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                 value={certification.institution}
                 onChange={(e) => update(index, "institution", e.target.value)}
                 disabled={!!isExcluded}
@@ -106,10 +110,12 @@ export function CertificationForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Local</label>
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
+                Local
+              </label>
 
               <input
-                className="w-full rounded-lg border p-2"
+                className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                 value={certification.location}
                 onChange={(e) => update(index, "location", e.target.value)}
                 disabled={!!isExcluded}
@@ -118,13 +124,13 @@ export function CertificationForm({
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium">
+                <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                   Data de início
                 </label>
 
                 <input
                   type="date"
-                  className="w-full rounded-lg border p-2"
+                  className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
                   value={certification.start_date}
                   onChange={(e) => update(index, "start_date", e.target.value)}
                   disabled={!!isExcluded}
@@ -132,13 +138,13 @@ export function CertificationForm({
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium">
+                <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                   Data de término
                 </label>
 
                 <input
                   type="date"
-                  className="w-full rounded-lg border p-2"
+                  className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
                   value={certification.end_date ?? ""}
                   onChange={(e) =>
                     update(index, "end_date", e.target.value || null)

@@ -13,21 +13,21 @@ export function ActionButtons({
   data
 }: ActionButtonsProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
       <Link
         to={`/curriculums/${data.id}/edit`}
-        className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-100"
+        title="Editar"
+        className="rounded-lg p-2 text-text-secondary transition hover:bg-accent-horizon/10 hover:text-accent-horizon"
       >
         <Pencil size={16} />
-        Atualizar
       </Link>
 
       <button
         onClick={onDelete}
-        className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-100"
+        title="Excluir"
+        className="rounded-lg p-2 text-text-secondary transition hover:bg-red-50 hover:text-red-600"
       >
         <Trash2 size={16} />
-        Excluir
       </button>
     </div>
   );

@@ -22,19 +22,19 @@ export function ProjectForm({
   return (
     <section className="space-y-6 py-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-800">Projetos</h2>
+        <h2 className="text-lg font-semibold text-text-primary">Projetos</h2>
 
         <button
           type="button"
           onClick={add}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+          className="rounded-lg bg-accent-horizon px-4 py-2 text-sm text-white transition hover:brightness-110"
         >
           + Adicionar Projeto
         </button>
       </div>
 
       {projects.length === 0 && (
-        <p className="text-sm text-slate-500">Nenhum projeto adicionado.</p>
+        <p className="text-[15px] text-text-secondary">Nenhum projeto adicionado.</p>
       )}
 
       {projects.map((project, projectIndex) => {
@@ -43,19 +43,21 @@ export function ProjectForm({
         return (
           <div
             key={projectIndex}
-            className={`space-y-6 rounded-xl border p-5 ${
+            className={`space-y-6 rounded-2xl border p-5 ${
               isExcluded
-                ? "border-slate-200 bg-slate-100 opacity-50"
-                : "border-slate-200"
+                ? "border-border-default bg-bg-surface opacity-50"
+                : "border-border-default bg-white"
             }`}
           >
             <div className="flex items-center justify-between">
               <h3
-                className={`font-medium ${isExcluded ? "line-through" : ""}`}
+                className={`font-medium text-text-primary ${
+                  isExcluded ? "line-through" : ""
+                }`}
               >
                 Projeto {projectIndex + 1}
                 {isExcluded && (
-                  <span className="ml-2 text-xs font-normal text-red-500">
+                  <span className="ml-2 text-xs font-normal text-red-600">
                     (Removido)
                   </span>
                 )}
@@ -65,7 +67,7 @@ export function ProjectForm({
                 <button
                   type="button"
                   onClick={() => restore(projectIndex)}
-                  className="text-sm text-green-600 hover:text-green-700"
+                  className="text-sm text-green-600 transition hover:text-green-700"
                 >
                   Restaurar
                 </button>
@@ -73,7 +75,7 @@ export function ProjectForm({
                 <button
                   type="button"
                   onClick={() => remove(projectIndex)}
-                  className="text-sm text-red-600 hover:text-red-700"
+                  className="text-sm text-red-600 transition hover:text-red-700"
                 >
                   Remover
                 </button>
@@ -81,7 +83,7 @@ export function ProjectForm({
             </div>
 
             <input
-              className="w-full rounded-lg border p-2"
+              className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
               placeholder="Nome"
               value={project.name}
               onChange={(e) => update(projectIndex, "name", e.target.value)}
@@ -89,7 +91,7 @@ export function ProjectForm({
             />
 
             <input
-              className="w-full rounded-lg border p-2"
+              className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
               placeholder="GitHub"
               value={project.github ?? ""}
               onChange={(e) =>
@@ -99,7 +101,7 @@ export function ProjectForm({
             />
 
             <input
-              className="w-full rounded-lg border p-2"
+              className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
               placeholder="Demo"
               value={project.demo_url ?? ""}
               onChange={(e) =>
@@ -111,7 +113,7 @@ export function ProjectForm({
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="date"
-                className="rounded-lg border p-2"
+                className="rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
                 value={project.start_date}
                 onChange={(e) =>
                   update(projectIndex, "start_date", e.target.value)
@@ -121,7 +123,7 @@ export function ProjectForm({
 
               <input
                 type="date"
-                className="rounded-lg border p-2"
+                className="rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
                 value={project.end_date ?? ""}
                 onChange={(e) =>
                   update(projectIndex, "end_date", e.target.value || null)
@@ -133,13 +135,13 @@ export function ProjectForm({
             {!isExcluded && (
               <>
                 <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <h4 className="font-medium">Descrições</h4>
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-[15px] font-medium text-text-primary">Descrições</h4>
 
                     <button
                       type="button"
                       onClick={() => addDescription(projectIndex)}
-                      className="text-blue-600"
+                      className="text-sm font-medium text-accent-horizon transition hover:brightness-110"
                     >
                       + Adicionar
                     </button>
@@ -148,7 +150,7 @@ export function ProjectForm({
                   {project.descriptions.map((description, index) => (
                     <div key={index} className="flex gap-3">
                       <input
-                        className="flex-1 rounded-lg border p-2"
+                        className="flex-1 rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                         value={description.description}
                         onChange={(e) =>
                           updateDescription(
@@ -164,7 +166,7 @@ export function ProjectForm({
                         onClick={() =>
                           removeDescription(projectIndex, index)
                         }
-                        className="text-red-600"
+                        className="rounded-md px-3 py-2 text-red-600 transition hover:bg-red-50"
                       >
                         ✕
                       </button>
@@ -173,13 +175,13 @@ export function ProjectForm({
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <h4 className="font-medium">Tecnologias</h4>
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-[15px] font-medium text-text-primary">Tecnologias</h4>
 
                     <button
                       type="button"
                       onClick={() => addTechnology(projectIndex)}
-                      className="text-blue-600"
+                      className="text-sm font-medium text-accent-horizon transition hover:brightness-110"
                     >
                       + Adicionar
                     </button>
@@ -188,7 +190,7 @@ export function ProjectForm({
                   {project.technologies.map((technology, index) => (
                     <div key={index} className="flex gap-3">
                       <input
-                        className="flex-1 rounded-lg border p-2"
+                        className="flex-1 rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                         value={technology.technology}
                         onChange={(e) =>
                           updateTechnology(
@@ -204,7 +206,7 @@ export function ProjectForm({
                         onClick={() =>
                           removeTechnology(projectIndex, index)
                         }
-                        className="text-red-600"
+                        className="rounded-md px-3 py-2 text-red-600 transition hover:bg-red-50"
                       >
                         ✕
                       </button>

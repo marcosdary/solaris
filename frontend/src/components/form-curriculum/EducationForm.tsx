@@ -17,21 +17,21 @@ export function EducationForm({
   return (
     <section className="space-y-6 py-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-800">
+        <h2 className="text-lg font-semibold text-text-primary">
           Formação Acadêmica
         </h2>
 
         <button
           type="button"
           onClick={add}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition hover:bg-blue-700"
+          className="rounded-lg bg-accent-horizon px-4 py-2 text-sm text-white transition hover:brightness-110"
         >
           + Adicionar Formação
         </button>
       </div>
 
       {educations.length === 0 && (
-        <p className="text-sm text-slate-500">Nenhum formação adicionada.</p>
+        <p className="text-[15px] text-text-secondary">Nenhuma formação adicionada.</p>
       )}
 
       {educations.map((education, index) => {
@@ -40,21 +40,21 @@ export function EducationForm({
         return (
           <div
             key={index}
-            className={`space-y-6 rounded-xl border p-5 ${
+            className={`space-y-6 rounded-2xl border p-5 ${
               isExcluded
-                ? "border-slate-200 bg-slate-100 opacity-50"
-                : "border-slate-200"
+                ? "border-border-default bg-bg-surface opacity-50"
+                : "border-border-default bg-white"
             }`}
           >
             <div className="flex items-center justify-between">
               <h3
-                className={`font-medium text-slate-700 ${
+                className={`font-medium text-text-primary ${
                   isExcluded ? "line-through" : ""
                 }`}
               >
                 Formação {index + 1}
                 {isExcluded && (
-                  <span className="ml-2 text-xs font-normal text-red-500">
+                  <span className="ml-2 text-xs font-normal text-red-600">
                     (Removido)
                   </span>
                 )}
@@ -80,12 +80,12 @@ export function EducationForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                 Instituição*
               </label>
 
               <input
-                className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                 value={education.institution}
                 onChange={(e) => update(index, "institution", e.target.value)}
                 disabled={!!isExcluded}
@@ -93,12 +93,12 @@ export function EducationForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                 Curso*
               </label>
 
               <input
-                className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                 value={education.degree}
                 onChange={(e) => update(index, "degree", e.target.value)}
                 disabled={!!isExcluded}
@@ -106,12 +106,12 @@ export function EducationForm({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                 Local*
               </label>
 
               <input
-                className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
                 value={education.location}
                 onChange={(e) => update(index, "location", e.target.value)}
                 disabled={!!isExcluded}
@@ -120,13 +120,13 @@ export function EducationForm({
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                   Data de Início*
                 </label>
 
                 <input
                   type="date"
-                  className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
                   value={education.start_date}
                   onChange={(e) => update(index, "start_date", e.target.value)}
                   disabled={!!isExcluded}
@@ -134,13 +134,13 @@ export function EducationForm({
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
                   Data de Término
                 </label>
 
                 <input
                   type="date"
-                  className="w-full rounded-lg border border-slate-300 p-2 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
                   value={education.end_date ?? ""}
                   onChange={(e) =>
                     update(index, "end_date", e.target.value || null)

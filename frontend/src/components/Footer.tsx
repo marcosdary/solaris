@@ -20,9 +20,9 @@ const SOCIALS = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white">
+    <footer className="border-t border-border-default bg-bg-base">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
-        <Link to="/" className="text-sm text-slate-500 transition hover:text-slate-800">
+        <Link to="/" className="text-sm text-text-muted transition hover:text-text-primary">
           &copy; {new Date().getFullYear()} Solaris
         </Link>
 
@@ -34,7 +34,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={s.label}
-              className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+              className="rounded-lg p-2 text-text-muted transition hover:bg-bg-surface hover:text-text-primary"
             >
               <svg
                 viewBox="0 0 24 24"

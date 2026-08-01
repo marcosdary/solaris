@@ -16,13 +16,37 @@ import { AuthenticationError } from "../errors";
 
 type ViewMode = "details" | "preview" | "history";
 
+interface TabProps {
+  mode: ViewMode;
+  label: string;
+  Icon: React.ComponentType<{ size: number }>;
+  current: ViewMode;
+  onChange: (mode: ViewMode) => void;
+}
+
+function Tab({ mode, label, Icon, current, onChange }: TabProps) {
+  return (
+    <button
+      onClick={() => onChange(mode)}
+      className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium transition ${
+        current === mode
+          ? "bg-bg-base text-text-primary"
+          : "text-text-secondary hover:text-text-primary"
+      }`}
+    >
+      <Icon size={15} />
+      <span className="hidden sm:inline">{label}</span>
+    </button>
+  );
+}
+
 export default function CurriculumDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const accessToken = useAccessToken();
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { logout } = useAuthContext(); 
+    const { logout } = useAuthContext();
 
     const [curriculum, setCurriculum] =
         useState<ICurriculumResponse | null>(null);
@@ -72,23 +96,26 @@ export default function CurriculumDetailsPage() {
     if (loading) {
         return (
         <div className="flex min-h-screen items-center justify-center">
-            Carregando...
+            <div className="flex flex-col items-center gap-3">
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-accent-horizon/20 border-t-accent-horizon" />
+                <span className="text-text-secondary">Carregando...</span>
+            </div>
         </div>
         );
     }
 
     if (!curriculum) {
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
-            <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-5 sm:p-10 text-center shadow-sm">
+        <div className="flex min-h-screen items-center justify-center px-6">
+            <div className="w-full max-w-md rounded-2xl border border-border-default bg-white p-5 sm:p-10 text-center">
 
                 <div className="mb-4 sm:mb-6 text-4xl sm:text-6xl">📄</div>
 
-                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    <h1 className="text-xl sm:text-2xl font-bold text-text-primary">
                     Currículo não encontrado
                     </h1>
 
-                    <p className="mt-3 text-slate-600">
+                    <p className="mt-3 text-[15px] text-text-secondary">
                     O currículo pode ter sido removido ou o link informado é inválido.
                     </p>
 
@@ -96,14 +123,17 @@ export default function CurriculumDetailsPage() {
 
                     <Link
                         to="/"
-                        className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
+                        className="rounded-lg px-7 py-3 text-[15px] font-medium text-white transition hover:brightness-110"
+                        style={{
+                          background: "linear-gradient(135deg, #FFB200 0%, #FF8A00 100%)",
+                        }}
                     >
                         🏠 Ir para Home
                     </Link>
 
                     <Link
                         to="/curriculums"
-                        className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
+                        className="rounded-lg border border-border-default bg-white px-5 py-3 text-[15px] font-medium text-accent-horizon transition hover:bg-bg-surface"
                     >
                         📄 Ver Currículos
                     </Link>
@@ -116,59 +146,19 @@ export default function CurriculumDetailsPage() {
 
     return (
       <>
-        <div className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-            <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-1">
-              <button
-                onClick={() => setViewMode("details")}
-                className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium transition ${
-                  viewMode === "details"
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                <Eye size={15} />
-                <span className="hidden sm:inline">Detalhes</span>
-              </button>
-              <button
-                onClick={() => setViewMode("preview")}
-                className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium transition ${
-                  viewMode === "preview"
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                <FileText size={15} />
-                <span className="hidden sm:inline">Pré-visualização PDF</span>
-              </button>
-              <button
-                onClick={() => setViewMode("history")}
-                className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium transition ${
-                  viewMode === "history"
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                <Clock size={15} />
-                <span className="hidden sm:inline">Histórico</span>
-              </button>
-            </div>
+        <div className="sticky top-0 z-30 border-b border-border-default bg-bg-base/80 backdrop-blur">
+          <div className="mx-auto flex max-w-6xl items-center gap-3 px-6 py-3">
+            <Link
+              to="/curriculums"
+              className="rounded-md px-3 py-1.5 text-sm font-medium text-text-secondary transition hover:text-text-primary"
+            >
+              ← <span className="hidden sm:inline">Voltar</span>
+            </Link>
 
-            <div className="flex items-center gap-2">
-                <Link
-                  to="/curriculums"
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
-                >
-                  <span className="sm:hidden">←</span>
-                  <span className="hidden sm:inline">← Lista</span>
-                </Link>
-                <Link
-                  to="/"
-                  className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-700"
-                >
-                  <span className="sm:hidden">🏠</span>
-                  <span className="hidden sm:inline">Home</span>
-                </Link>
+            <div className="flex items-center gap-1 rounded-lg bg-bg-surface p-1">
+              <Tab mode="details" label="Detalhes" Icon={Eye} current={viewMode} onChange={setViewMode} />
+              <Tab mode="preview" label="Pré-visualização" Icon={FileText} current={viewMode} onChange={setViewMode} />
+              <Tab mode="history" label="Histórico" Icon={Clock} current={viewMode} onChange={setViewMode} />
             </div>
           </div>
         </div>
@@ -179,13 +169,13 @@ export default function CurriculumDetailsPage() {
             onDelete={handleDelete}
           />
         ) : viewMode === "preview" ? (
-          <div className="min-h-screen bg-slate-100">
+          <div className="min-h-screen bg-bg-surface">
             <div className="mx-auto max-w-6xl overflow-x-auto px-3 sm:px-6 py-6 sm:py-10">
               <CurriculumPreview curriculum={curriculum} token={accessToken ?? undefined} />
             </div>
           </div>
         ) : (
-          <div className="min-h-screen bg-slate-50">
+          <div className="min-h-screen bg-bg-base">
             {id && (
               <CurriculumFileHistory
                 curriculumId={id}

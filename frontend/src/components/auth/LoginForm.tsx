@@ -27,13 +27,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-[15px] text-red-700">
           {error}
         </div>
       )}
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
+        <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
           Telefone
         </label>
         <input
@@ -42,12 +42,12 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           placeholder="(99) 99 99999-9999"
           value={phone}
           onChange={(e) => setPhone(phoneMask(e.target.value))}
-          className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+          className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
+        <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
           Senha
         </label>
         <input
@@ -56,12 +56,12 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           placeholder="Sua senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+          className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>
 
       <div className="text-right">
-        <Link to="/password-forgot" className="text-sm font-medium text-slate-500 underline underline-offset-2 transition hover:text-slate-900">
+        <Link to="/password-forgot" className="text-[15px] font-medium text-text-secondary underline underline-offset-2 transition hover:text-text-primary">
           Esqueceu sua senha?
         </Link>
       </div>
@@ -69,14 +69,14 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-slate-900 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-[6px] bg-accent-primary py-3 text-[15px] font-medium text-accent-text transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? "Entrando..." : "Entrar"}
       </button>
 
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-[15px] text-text-secondary">
         Não tem conta?{" "}
-        <Link to="/register" className="font-medium text-slate-900 underline underline-offset-2 transition hover:text-slate-600">
+        <Link to="/register" className="font-medium text-text-primary underline underline-offset-2 transition hover:text-accent-primary">
           Cadastre-se
         </Link>
       </p>

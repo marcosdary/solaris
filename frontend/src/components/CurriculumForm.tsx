@@ -27,7 +27,7 @@ export function CurriculumForm({
       <form
         onSubmit={ctx.handleSubmit}
       >
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-border-default">
           <PersonalInfo form={ctx.form} updateField={ctx.updateField} />
 
           <ExperienceForm mode={mode} {...ctx.experiences} />
@@ -42,7 +42,10 @@ export function CurriculumForm({
         <button
           type="submit"
           disabled={ctx.loading}
-          className="w-full rounded-xl bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-lg px-7 py-3 text-[15px] font-medium text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+          style={{
+            background: "linear-gradient(135deg, #FFB200 0%, #FF8A00 100%)",
+          }}
         >
           {mode === "create" ? "Criar currículo" : "Salvar Alterações"}
         </button>
@@ -51,7 +54,7 @@ export function CurriculumForm({
       {ctx.loading && <Loading />}
 
       {ctx.error && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+        <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-[15px] text-red-700">
           {ctx.error}
         </div>
       )}

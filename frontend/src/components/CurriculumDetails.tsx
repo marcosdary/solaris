@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 import { ActionButtons } from "./ButtonActions";
 
@@ -13,49 +11,26 @@ export function CurriculumDetails({
   onDelete,
 }: Props) {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-bg-base">
       <div className="mx-auto max-w-6xl px-6 py-10">
 
         {/* HEADER */}
-        <header className="mb-8 rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 md:p-8 shadow-sm">
+        <header className="mb-8 rounded-2xl border border-border-default bg-white p-4 sm:p-6 md:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
 
-            {/* NAVEGAÇÃO */}
-            <div className="mb-4 hidden md:flex md:flex-wrap md:items-center md:justify-between gap-3">
-
-              <div className="flex flex-wrap items-center gap-3">
-
-                <Link
-                  to="/"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
-                >
-                  ← Home
-                </Link>
-
-                <Link
-                  to="/curriculums"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
-                >
-                  📄 Lista de Currículos
-                </Link>
-
-              </div>
-
-            </div>
-
             <div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary">
                 {curriculum.name}
               </h1>
 
-              <p className="mt-2 text-lg sm:text-xl text-blue-600">
+              <p className="mt-2 text-lg sm:text-xl text-accent-horizon">
                 {curriculum.role}
               </p>
 
-              <div className="mt-5 flex flex-wrap gap-4 text-sm text-slate-600">
-                <span>📧 {curriculum.email}</span>
-                <span>📱 {curriculum.phone}</span>
-                <span>📍 {curriculum.location}</span>
+              <div className="mt-5 flex flex-wrap gap-4 text-[15px] text-text-secondary">
+                <span>{curriculum.email}</span>
+                <span>{curriculum.phone}</span>
+                <span>{curriculum.location}</span>
               </div>
             </div>
 
@@ -73,8 +48,8 @@ export function CurriculumDetails({
         <div className="grid gap-8">
 
           {/* RESUMO */}
-          <section className="rounded-2xl bg-white p-4 sm:p-6 md:p-8 shadow-sm">
-            <h2 className="mb-5 text-xl sm:text-2xl font-bold">
+          <section className="rounded-2xl border border-border-default bg-white p-4 sm:p-6 md:p-8">
+            <h2 className="mb-5 text-xl sm:text-2xl font-bold text-text-primary">
               Resumo Profissional
             </h2>
 
@@ -87,8 +62,8 @@ export function CurriculumDetails({
           </section>
 
           {/* EXPERIÊNCIAS */}
-          <section className="rounded-2xl bg-white p-4 sm:p-6 md:p-8 shadow-sm">
-            <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold">
+          <section className="rounded-2xl border border-border-default bg-white p-4 sm:p-6 md:p-8">
+            <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-text-primary">
               Experiência Profissional
             </h2>
 
@@ -97,25 +72,25 @@ export function CurriculumDetails({
                 <article key={experience.id}>
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                     <div>
-                      <h3 className="font-semibold text-lg">
+                      <h3 className="font-semibold text-lg text-text-primary">
                         {experience.role}
                       </h3>
 
-                      <p className="text-blue-600">
+                      <p className="text-accent-horizon">
                         {experience.company}
                       </p>
 
-                      <p className="text-sm text-slate-500">
+                      <p className="text-[15px] text-text-secondary">
                         {experience.location}
                       </p>
                     </div>
 
                     <div className="flex flex-col items-start sm:items-end gap-1 sm:gap-3">
-                      <span className="text-sm text-slate-500">
+                      <span className="text-[15px] text-text-secondary">
                         {experience.period}
                       </span>
 
-    
+
                     </div>
                   </div>
 
@@ -137,8 +112,8 @@ export function CurriculumDetails({
           </section>
 
           {/* FORMAÇÃO */}
-          <section className="rounded-2xl bg-white p-4 sm:p-6 md:p-8 shadow-sm">
-            <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold">
+          <section className="rounded-2xl border border-border-default bg-white p-4 sm:p-6 md:p-8">
+            <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-text-primary">
               Formação
             </h2>
 
@@ -146,17 +121,17 @@ export function CurriculumDetails({
               {curriculum.educations.map((education) => (
                 <div key={education.id} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                   <div>
-                    <h3 className="font-semibold">
+                    <h3 className="font-semibold text-text-primary">
                       {education.degree}
                     </h3>
 
-                    <p>{education.institution}</p>
+                    <p className="text-[15px] text-text-secondary">{education.institution}</p>
 
-                    <p className="text-sm text-slate-500">
+                    <p className="text-[15px] text-text-secondary">
                       {education.location}
                     </p>
 
-                    <p className="text-sm text-slate-500">
+                    <p className="text-[15px] text-text-secondary">
                       {education.period}
                     </p>
                   </div>
@@ -168,8 +143,8 @@ export function CurriculumDetails({
 
           {/* PROJETOS */}
           {curriculum.projects.length > 0 && (
-            <section className="rounded-2xl bg-white p-4 sm:p-6 md:p-8 shadow-sm">
-              <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold">
+            <section className="rounded-2xl border border-border-default bg-white p-4 sm:p-6 md:p-8">
+              <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-text-primary">
                 Projetos
               </h2>
 
@@ -178,11 +153,11 @@ export function CurriculumDetails({
                   <article key={project.id}>
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                       <div>
-                        <h3 className="text-lg font-semibold">
+                        <h3 className="text-lg font-semibold text-text-primary">
                           {project.name}
                         </h3>
 
-                        <span className="text-sm text-slate-500">
+                        <span className="text-[15px] text-text-secondary">
                           {project.period}
                         </span>
                       </div>
@@ -195,7 +170,7 @@ export function CurriculumDetails({
                           href={project.github}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-blue-600 hover:underline"
+                          className="text-[15px] text-accent-horizon transition hover:underline"
                         >
                           GitHub
                         </a>
@@ -206,7 +181,7 @@ export function CurriculumDetails({
                           href={project.demo_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-blue-600 hover:underline"
+                          className="text-[15px] text-accent-horizon transition hover:underline"
                         >
                           Demo
                         </a>
@@ -230,7 +205,7 @@ export function CurriculumDetails({
                       {project.technologies.map((technology) => (
                         <span
                           key={technology.id}
-                          className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700"
+                          className="rounded-full bg-accent-horizon/10 px-3 py-1 text-sm text-accent-horizon"
                         >
                           {technology.technology}
                         </span>
@@ -244,8 +219,8 @@ export function CurriculumDetails({
 
           {/* CERTIFICAÇÕES */}
           {curriculum.certifications.length > 0 && (
-            <section className="rounded-2xl bg-white p-4 sm:p-6 md:p-8 shadow-sm">
-              <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold">
+            <section className="rounded-2xl border border-border-default bg-white p-4 sm:p-6 md:p-8">
+              <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-text-primary">
                 Certificações
               </h2>
 
@@ -253,13 +228,13 @@ export function CurriculumDetails({
                 {curriculum.certifications.map((certification) => (
                   <div key={certification.id} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                     <div>
-                      <h3 className="font-semibold">
+                      <h3 className="font-semibold text-text-primary">
                         {certification.name}
                       </h3>
 
-                      <p>{certification.institution}</p>
+                      <p className="text-[15px] text-text-secondary">{certification.institution}</p>
 
-                      <p className="text-sm text-slate-500">
+                      <p className="text-[15px] text-text-secondary">
                         {certification.period}
                       </p>
                     </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Search } from "lucide-react";
 
 import { CurriculumCategory, Language } from "../../config/constants";
 
@@ -32,11 +33,11 @@ export function CurriculumSearchForm({ onSearch }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm md:flex-row">
+      <div className="flex items-center gap-2">
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value as CurriculumCategory | "")}
-          className="flex-1 rounded-xl px-4 py-2 text-sm text-slate-700 outline-none"
+          className="flex-1 rounded-md border border-border-default bg-transparent px-4 py-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
         >
           <option value="">Todas as categorias</option>
 
@@ -47,33 +48,32 @@ export function CurriculumSearchForm({ onSearch }: Props) {
           ))}
         </select>
 
-        <div className="hidden w-px bg-slate-200 md:block" />
-
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value as Language | "")}
-          className="flex-1 rounded-xl px-4 py-2 text-sm text-slate-700 outline-none"
+          className="flex-1 rounded-md border border-border-default bg-transparent px-4 py-3 text-[15px] text-text-primary focus:border-accent-primary focus:outline-none"
         >
           <option value="">Todos os idiomas</option>
 
           <option value={Language.PORTUGUESE}>
-            🇧🇷 Português
+            Português
           </option>
 
           <option value={Language.ENGLISH}>
-            🇺🇸 English
+            English
           </option>
 
           <option value={Language.SPANISH}>
-            🇪🇸 Español
+            Español
           </option>
         </select>
 
         <button
           type="submit"
-          className="rounded-xl bg-blue-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+          title="Buscar"
+          className="rounded-lg p-3 text-text-secondary transition hover:text-accent-sun"
         >
-          Buscar
+          <Search size={18} strokeWidth={1.5} />
         </button>
       </div>
     </form>

@@ -27,75 +27,54 @@ function formatLanguage(language: string) {
 
 export function CurriculumCard({ curriculum }: Props) {
   return (
-    <article className="p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-sm font-semibold text-slate-800">
-            {curriculum.name}
-          </h2>
+    <Link to={`/curriculums/${curriculum.id}`}>
+      <article className="rounded-2xl border border-border-default bg-white p-6 transition hover:border-accent-horizon hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] cursor-pointer">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-[15px] font-semibold text-text-primary">
+              {curriculum.name}
+            </h2>
 
-          <p className="mt-1 text-sm text-slate-500">
-            {curriculum.role}
-          </p>
+            <p className="mt-1 text-[15px] text-text-secondary">
+              {curriculum.role}
+            </p>
+          </div>
+
+          <span className="rounded-full bg-accent-horizon/10 px-3 py-1 text-xs font-medium text-accent-horizon">
+            {formatLanguage(curriculum.language)}
+          </span>
         </div>
 
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-          {formatLanguage(curriculum.language)}
-        </span>
-      </div>
+        <div className="mt-3 flex items-center gap-1.5 text-[15px] text-text-secondary">
+          <MapPin size={14} strokeWidth={1.5} className="text-text-muted" />
+          {curriculum.location}
+        </div>
 
-      <div className="mt-3 flex items-center gap-1.5 text-sm text-slate-500">
-        <MapPin size={14} strokeWidth={1.5} className="text-slate-400" />
-        {curriculum.location}
-      </div>
+        <p className="mt-2 text-[15px] text-text-secondary">
+          {formatCategory(curriculum.category)}
+        </p>
 
-      <p className="mt-2 text-sm text-slate-500">
-        {formatCategory(curriculum.category)}
-      </p>
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="inline-flex items-center gap-1.5 text-[15px] text-text-secondary">
+            <Mail size={14} strokeWidth={1.5} className="text-text-muted" />
+            {curriculum.email}
+          </span>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-        <span className="inline-flex items-center gap-1.5 text-slate-500">
-          <Mail size={14} strokeWidth={1.5} className="text-slate-400" />
-          {curriculum.email}
-        </span>
+          {curriculum.github && (
+            <span className="inline-flex items-center gap-1.5 text-[15px] text-text-secondary">
+              <Globe size={14} strokeWidth={1.5} className="text-text-muted" />
+              GitHub
+            </span>
+          )}
 
-        {curriculum.github && (
-          <a
-            href={curriculum.github}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900"
-          >
-            <Globe size={14} strokeWidth={1.5} className="text-slate-400" />
-            GitHub
-          </a>
-        )}
-
-        {curriculum.linkedin && (
-          <a
-            href={curriculum.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900"
-          >
-            <Globe size={14} strokeWidth={1.5} className="text-slate-400" />
-            LinkedIn
-          </a>
-        )}
-      </div>
-
-      <div className="mt-6 flex items-center justify-between text-xs text-slate-500">
-        <span>
-          {new Date(curriculum.created_at).toLocaleDateString("pt-BR")}
-        </span>
-
-        <Link
-          to={`/curriculums/${curriculum.id}`}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
-        >
-          Ver currículo
-        </Link>
-      </div>
-    </article>
+          {curriculum.linkedin && (
+            <span className="inline-flex items-center gap-1.5 text-[15px] text-text-secondary">
+              <Globe size={14} strokeWidth={1.5} className="text-text-muted" />
+              LinkedIn
+            </span>
+          )}
+        </div>
+      </article>
+    </Link>
   );
 }
