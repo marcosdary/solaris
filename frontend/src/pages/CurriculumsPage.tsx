@@ -43,8 +43,8 @@ export default function CurriculumsPage() {
   const hasCurriculums = curriculums.length > 0;
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-12">
-      <nav className="mb-32 flex items-center justify-between">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+      <nav className="mb-16 flex items-center justify-between sm:mb-32">
         <Link to="/" className="font-['Caveat'] text-3xl font-bold text-accent-sun">
           Solaris
         </Link>
@@ -60,7 +60,7 @@ export default function CurriculumsPage() {
       </nav>
 
       <section className="mb-24">
-        <h2 className="text-2xl font-bold text-text-primary">
+        <h2 className="text-xl font-bold text-text-primary sm:text-2xl">
           Meus Currículos
         </h2>
       </section>
@@ -98,7 +98,7 @@ export default function CurriculumsPage() {
       )}
 
       {!loading && !hasCurriculums && lastQuery === null && (
-        <section className="py-12 text-center">
+        <section className="py-8 text-center sm:py-12">
           <Search size={48} className="mx-auto text-text-muted" strokeWidth={1.5} />
 
           <h2 className="mt-5 text-[15px] font-semibold text-text-primary">
@@ -125,7 +125,7 @@ export default function CurriculumsPage() {
       )}
 
       {!loading && !hasCurriculums && lastQuery !== null && (
-        <section className="py-12 text-center">
+        <section className="py-8 text-center sm:py-12">
           <FileX size={48} className="mx-auto text-text-muted" strokeWidth={1.5} />
 
           <h2 className="mt-5 text-[15px] font-semibold text-text-primary">
@@ -156,12 +156,12 @@ export default function CurriculumsPage() {
       )}
 
       {!loading && hasCurriculums && (
-        <section className="mb-6 flex items-center justify-between">
+        <section className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-xs font-medium tracking-wide uppercase text-text-secondary">
             Resultados
           </h2>
 
-          <span className="rounded-full bg-bg-surface px-4 py-2 text-sm font-medium text-text-secondary">
+          <span className="self-start rounded-full bg-bg-surface px-4 py-2 text-sm font-medium text-text-secondary sm:self-auto">
             {curriculums.length} currículo(s)
           </span>
         </section>

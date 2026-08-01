@@ -28,10 +28,10 @@ function formatLanguage(language: string) {
 export function CurriculumCard({ curriculum }: Props) {
   return (
     <Link to={`/curriculums/${curriculum.id}`}>
-      <article className="rounded-2xl border border-border-default bg-white p-6 transition hover:border-accent-horizon hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] cursor-pointer">
-        <div className="flex items-start justify-between gap-4">
+      <article className="rounded-2xl border border-border-default bg-white p-4 transition hover:border-accent-horizon hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] cursor-pointer sm:p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div>
-            <h2 className="text-[15px] font-semibold text-text-primary">
+            <h2 className="truncate text-[15px] font-semibold text-text-primary">
               {curriculum.name}
             </h2>
 
@@ -40,7 +40,7 @@ export function CurriculumCard({ curriculum }: Props) {
             </p>
           </div>
 
-          <span className="rounded-full bg-accent-horizon/10 px-3 py-1 text-xs font-medium text-accent-horizon">
+          <span className="self-start rounded-full bg-accent-horizon/10 px-3 py-1 text-xs font-medium text-accent-horizon sm:self-auto">
             {formatLanguage(curriculum.language)}
           </span>
         </div>
@@ -55,9 +55,9 @@ export function CurriculumCard({ curriculum }: Props) {
         </p>
 
         <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
-          <span className="inline-flex items-center gap-1.5 text-[15px] text-text-secondary">
-            <Mail size={14} strokeWidth={1.5} className="text-text-muted" />
-            {curriculum.email}
+          <span className="inline-flex min-w-0 items-center gap-1.5 text-[15px] text-text-secondary">
+            <Mail size={14} strokeWidth={1.5} className="shrink-0 text-text-muted" />
+            <span className="truncate">{curriculum.email}</span>
           </span>
 
           {curriculum.github && (

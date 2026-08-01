@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FileText, Sparkles, Globe, Zap } from "lucide-react";
+import { useAccessToken } from "../hooks/useAccessToken";
 import { settings } from "../config/settings";
 
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -44,6 +45,8 @@ function iconClasses(color: "sun" | "horizon") {
 }
 
 export default function HomePage() {
+  const accessToken = useAccessToken();
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
       <nav className="mb-32 flex items-center justify-between">
@@ -51,12 +54,21 @@ export default function HomePage() {
           Solaris
         </h1>
 
-        <Link
-          to="/login"
-          className="rounded-lg px-4 py-2 text-[15px] font-medium text-text-secondary transition hover:text-accent-horizon"
-        >
-          Entrar
-        </Link>
+        {accessToken ? (
+          <Link
+            to="/curriculums"
+            className="rounded-lg px-4 py-2 text-[15px] font-medium text-text-secondary transition hover:text-accent-horizon"
+          >
+            Meus Currículos
+          </Link>
+        ) : (
+          <Link
+            to="/login"
+            className="rounded-lg px-4 py-2 text-[15px] font-medium text-text-secondary transition hover:text-accent-horizon"
+          >
+            Entrar
+          </Link>
+        )}
       </nav>
 
       <section className="mb-32">
