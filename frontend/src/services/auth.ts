@@ -8,6 +8,10 @@ import type {
   IResetPasswordInput,
   IResetPasswordResponse,
 } from "../types/auth";
+import type {
+  IUserInfoResponse,
+} from "../types/user";
+
 import { request } from "./apiClient";
 
 export async function login(data: ILoginInput): Promise<IAuthResponse> {
@@ -31,6 +35,16 @@ export async function forgotPassword(data: IForgotPasswordInput): Promise<IForgo
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+  });
+}
+
+export async function getMe(token?: string): Promise<IUserInfoResponse>{
+  return request<IUserInfoResponse>(`${settings.baseURL}/api/v1/auth/me`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   });
 }
 

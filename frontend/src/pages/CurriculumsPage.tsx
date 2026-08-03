@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, FileX, Plus } from "lucide-react";
+import { Search, FileX, Plus, User } from "lucide-react";
 
 import { CurriculumCard } from "../components/page-curriculum/CurriculumCard";
 import { CurriculumSearchForm } from "../components/page-curriculum/CurriculumSearchForm";
@@ -40,6 +40,20 @@ export default function CurriculumsPage() {
     }
   }
 
+  useEffect(() => {
+    searchCurriculums(undefined, accessToken ?? undefined)
+      .then(setCurriculums)
+      .catch((err) => {
+        if (err instanceof AuthenticationError) {
+          sessionStorage.setItem("redirectAfterLogin", location.pathname);
+          logout();
+          return;
+        }
+        setLoading(false);
+      })
+      .finally(() => setLoading(false));
+  }, [accessToken, logout, location.pathname]);
+
   const hasCurriculums = curriculums.length > 0;
 
   return (
@@ -49,12 +63,20 @@ export default function CurriculumsPage() {
           Solaris
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <Link
             to="/curriculums/form"
-            className="rounded-lg border border-border-default px-4 py-2 text-[15px] font-medium text-accent-horizon transition hover:bg-bg-surface"
+            className="rounded-lg border border-border-default px-3 py-1.5 text-[15px] font-medium text-accent-horizon transition hover:bg-bg-surface sm:px-4 sm:py-2"
           >
             Novo Currículo
+          </Link>
+
+          <Link
+            to="/auth/me"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border-default px-3 py-1.5 text-[15px] font-medium text-accent-horizon transition hover:bg-bg-surface sm:px-4 sm:py-2"
+          >
+            <User size={18} strokeWidth={1.5} />
+            <span className="hidden sm:inline">Meu Perfil</span>
           </Link>
         </div>
       </nav>

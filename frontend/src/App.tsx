@@ -16,6 +16,7 @@ import FormCurriculumPage from "./pages/FormCurriculumPage";
 import CurriculumsPage from "./pages/CurriculumsPage";
 import CurriculumDetailsPage from "./pages/CurriculumDetailsPage";
 import EditCurriculumPage from "./pages/EditCurriculumPage";
+import MePage from "./pages/MePage";
 
 function App() {
   return (
@@ -60,6 +61,15 @@ function App() {
               element={
                 <AuthGuard>
                   <EditCurriculumPage />
+                </AuthGuard>
+              }
+            />
+
+            <Route
+              path="/auth/me"
+              element={
+                <AuthGuard>
+                  <MePage />
                 </AuthGuard>
               }
             />

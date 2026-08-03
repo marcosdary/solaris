@@ -44,6 +44,8 @@ function iconClasses(color: "sun" | "horizon") {
     : { bg: "bg-accent-horizon/10", fg: "text-accent-horizon" };
 }
 
+// /curriculums/form
+
 export default function HomePage() {
   const accessToken = useAccessToken();
 
@@ -70,7 +72,7 @@ export default function HomePage() {
           </Link>
         )}
       </nav>
-
+      
       <section className="mb-32">
         <h2 className="max-w-3xl text-5xl font-bold leading-[1.1] tracking-tight text-text-primary md:text-6xl lg:text-[56px]">
           Crie um currículo{" "}
@@ -82,9 +84,8 @@ export default function HomePage() {
           Gere currículos modernos em PDF, personalizados por IA, em português,
           inglês e espanhol.
         </p>
-
         <Link
-          to="/login"
+          to={ accessToken ? "/curriculums/form" : "/login" }
           className="mt-10 inline-block rounded-lg px-7 py-3 text-[15px] font-medium text-white transition hover:brightness-110"
           style={{
             background: "linear-gradient(135deg, #FFB200 0%, #FF8A00 100%)",
@@ -92,6 +93,7 @@ export default function HomePage() {
         >
           Criar Currículo
         </Link>
+        
       </section>
 
       <section className="mb-24 rounded-2xl border border-border-default bg-bg-surface p-8">

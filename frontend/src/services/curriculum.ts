@@ -49,16 +49,16 @@ export async function generateCurriculumPDF(
 }
 
 export async function searchCurriculums(
-    payload: SearchCurriculums,
+    payload?: SearchCurriculums,
     token?: string
 ): Promise<ICurriculumResponse[]> {
     const params = new URLSearchParams();
 
-    if (payload.category) {
+    if (payload?.category) {
         params.append("category", payload.category);
     }
 
-    if (payload.language) {
+    if (payload?.language) {
         params.append("language", payload.language);
     }
 

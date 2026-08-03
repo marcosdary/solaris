@@ -8,8 +8,6 @@ export default function LoginPage() {
   const { refresh } = useAuthContext();
   const redirect = sessionStorage.getItem("redirectAfterLogin");
 
-  console.log(redirect);
-
   function handleSuccess() {
     refresh();
     navigate(redirect ?? "/curriculums");
