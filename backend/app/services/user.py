@@ -103,6 +103,11 @@ class _UserService:
                 password_hash = self._auth.hash_password(schema.password)
                 setattr(user, key, password_hash)
                 continue
+            if key == "phone":
+                normalize_phone = self._normalize_phone(phone=value)
+                phone_format_national = normalize_phone.format_e164()
+                setattr(user, key, phone_format_national)
+                continue
 
             setattr(user, key, value)
         return await UserRepo.update(self._db, user)

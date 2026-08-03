@@ -11,12 +11,13 @@ class UserCreateSchema(BaseSchema):
 
 class UserUpdateSchema(BaseSchema):
     name: Optional[str] = None
+    phone: Optional[str] = None
     password: Optional[str] = None
 
 
 class UserResponseSchema(BaseSchema):
-    id: str
     name: str
+    phone: str
     is_active: bool
     created_at: datetime
     updated_at: datetime
