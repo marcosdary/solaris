@@ -29,7 +29,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Layout>
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={null}>
             <Routes>
 
               <Route path="/login" element={<LoginPage />} />
