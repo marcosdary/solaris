@@ -19,11 +19,6 @@ const CurriculumDetailsPage = lazy(() => import("./pages/CurriculumDetailsPage")
 const EditCurriculumPage = lazy(() => import("./pages/EditCurriculumPage"));
 const MePage = lazy(() => import("./pages/MePage"));
 
-const Loading = lazy(() =>
-  import("./components/Loading").then((module) => ({ default: module.Loading }))
-);
-
-
 function App() {
   return (
     <BrowserRouter>
