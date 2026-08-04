@@ -22,7 +22,7 @@ import { usePostHogTelemetry } from "./hooks/usePostHogTelemetry";
 import { usePageviewTracking } from "./hooks/usePageviewTracking";
 
 function TelemetryWrapper({ children }: { children: React.ReactNode }) {
-  // Executa as telemetrias de Rede, Hardware e Erros
+  // Executa as telemetrias de Rede, Hardware e Erro
   usePostHogTelemetry();
 
   // Executa o rastreamento de troca de páginas do React Router
