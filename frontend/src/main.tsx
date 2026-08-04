@@ -12,6 +12,7 @@ if (typeof window !== 'undefined') {
     defaults: '2026-06-25',
     enable_recording_console_log: true,
     ui_host: settings.posthogHost,
+    capture_exceptions: true,
   });
 }
 

@@ -2,59 +2,6 @@ import { useEffect } from "react";
 import { usePostHog } from "@posthog/react";
 
 /*
-Hook 1: Monitora oscilação de rede e status Online/Offline do navegador, enviando eventos para o PostHog.
-*/
-
-export function usePostHogNetwork() {
-  const posthog = usePostHog();
-
-  useEffect(() => {
-    if (!posthog || typeof window === "undefined") return;
-    
-    const navConnection = 
-      (navigator as any).connection ||
-      (navigator as any).mozConnection ||
-      (navigator as any).webkitConnection;
-
-    let handleConnectionChange: (() => void) | null = null
-    const handleOffline = () => posthog.capture('user_went_offline');
-    const handleOnline = () => posthog.capture('user_came_back_online');
-
-    if (navConnection) {
-      posthog.register({
-        network_type: navConnection.effectiveType,
-        network_rtt: navConnection.rtt,
-        network_save_data: navConnection.saveData,
-      })
-    }
-
-    handleConnectionChange = () => {
-      posthog.capture('network_speed_changed', {
-        new_effective_type: navConnection.effectiveType,
-          rtt: navConnection.rtt,
-      })
-    };
-
-    if (typeof navConnection.addEventListener === 'function') {
-      navConnection.addEventListener('change', handleConnectionChange);
-    }
-
-    return () => {
-      window.removeEventListener('offline', handleOffline);
-      window.removeEventListener('online', handleOnline);
-
-      if (
-        navConnection &&
-        handleConnectionChange &&
-        typeof navConnection.removeEventListener === 'function'
-      ) {
-        navConnection.removeEventListener('change', handleConnectionChange);
-      }
-    };
-  }, [posthog]);
-};
-
-/*
 Hook 2: Identifica a capacidade do Hardware (CPU e RAM)
 */
 export function usePostHogDevice() {
@@ -109,7 +56,6 @@ export function usePostHogErrorTracking() {
 Hook Mestre: Agrupa todas as telemetrias em uma única chamada
 */
 export function usePostHogTelemetry() {
-  usePostHogNetwork();
   usePostHogDevice();
   usePostHogErrorTracking();
 }
