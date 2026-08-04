@@ -3,7 +3,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 
 import { AuthProvider } from "./context/AuthContext";
 import { AuthGuard } from "./components/auth/AuthGuard";
@@ -24,60 +24,59 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Layout>
-          <Suspense fallback={null}>
-            <Routes>
+          
+          <Routes>
 
-              <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
 
-              <Route path="/register" element={<RegisterPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-              <Route path="/password-forgot" element={<PasswordForgotPage />} />
+            <Route path="/password-forgot" element={<PasswordForgotPage />} />
 
-              <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
 
-              <Route
-                path="/curriculums"
-                element={
-                  <AuthGuard>
-                    <CurriculumsPage />
-                  </AuthGuard>
-                }
-              />
+            <Route
+              path="/curriculums"
+              element={
+                <AuthGuard>
+                  <CurriculumsPage />
+                </AuthGuard>
+              }
+            />
 
-              <Route
-                path="/curriculums/form"
-                element={
-                  <AuthGuard>
-                    <FormCurriculumPage />
-                  </AuthGuard>
-                }
-              />
+            <Route
+              path="/curriculums/form"
+              element={
+                <AuthGuard>
+                  <FormCurriculumPage />
+                </AuthGuard>
+              }
+            />
 
-              <Route
-                path="/curriculums/:id"
-                element={<CurriculumDetailsPage />}
-              />
+            <Route
+              path="/curriculums/:id"
+              element={<CurriculumDetailsPage />}
+            />
 
-              <Route
-                path="/curriculums/:id/edit"
-                element={
-                  <AuthGuard>
-                    <EditCurriculumPage />
-                  </AuthGuard>
-                }
-              />
+            <Route
+              path="/curriculums/:id/edit"
+              element={
+                <AuthGuard>
+                  <EditCurriculumPage />
+                </AuthGuard>
+              }
+            />
 
-              <Route
-                path="/auth/me"
-                element={
-                  <AuthGuard>
-                    <MePage />
-                  </AuthGuard>
-                }
-              />
+            <Route
+              path="/auth/me"
+              element={
+                <AuthGuard>
+                  <MePage />
+                </AuthGuard>
+              }
+            />
 
-            </Routes>
-          </Suspense>
+          </Routes>
         </Layout>
       </AuthProvider>
     </BrowserRouter>
