@@ -53,12 +53,9 @@ export function CurriculumDetails({
               Resumo Profissional
             </h2>
 
-            <div
-              className="prose max-w-none"
-              dangerouslySetInnerHTML={{
-                __html: curriculum.resume,
-              }}
-            />
+            <div className="prose max-w-none"/>
+            <p>{curriculum.resume}</p>
+         
           </section>
 
           {/* EXPERIÊNCIAS */}
@@ -96,13 +93,11 @@ export function CurriculumDetails({
 
                   <ul className="mt-4 list-disc space-y-2 pl-6">
                     {experience.activities.map((activity) => (
-                      <li key={activity.id}>
-                        <div
-                            className="prose max-w-none"
-                            dangerouslySetInnerHTML={{
-                              __html: activity.description,
-                            }}
-                          />
+                      <li 
+                      key={activity.id}
+                      className="whitespace-pre-line text-text-primary"
+                      >
+                        {activity.description}
                       </li>
                     ))}
                   </ul>
@@ -190,13 +185,11 @@ export function CurriculumDetails({
 
                     <ul className="mt-4 list-disc pl-6 space-y-2">
                       {project.descriptions.map((description) => (
-                        <li key={description.id}>
-                          <div
-                            className="prose max-w-none"
-                            dangerouslySetInnerHTML={{
-                              __html: description.description,
-                            }}
-                          />
+                        <li 
+                        key={description.id}
+                        className="whitespace-pre-line text-text-primary"
+                        >
+                          {description.description}
                         </li>
                       ))}
                     </ul>

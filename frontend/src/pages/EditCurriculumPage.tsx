@@ -2,18 +2,22 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { CurriculumForm } from "../components/CurriculumForm";
-import { selectCurriculumByID } from "../services/curriculum";
+
 import { useAccessToken } from "../hooks/useAccessToken";
 import { useAuthContext } from "../hooks/useAuthContext";
 
+import { selectCurriculumByID } from "../services/curriculum";
+
 import type { ICurriculumResponse } from "../types/curriculumResponse";
+
+import { Loading } from "../components/Loading";
 
 // errors
 import { AuthenticationError } from "../errors";
 
 export default function EditCurriculumPage() {
   const { id } = useParams<{ id: string }>();
-  const accessToken = useAccessToken();
+  const accessToken = useAccessToken(); 
   const navigate = useNavigate();
 
   const { logout } = useAuthContext();
@@ -37,14 +41,7 @@ export default function EditCurriculumPage() {
   }, [id, accessToken, logout]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-accent-horizon/20 border-t-accent-horizon" />
-            <span className="text-text-secondary">Carregando...</span>
-        </div>
-      </div>
-      );
+    return <Loading />;
   }
 
   if (!curriculum) {

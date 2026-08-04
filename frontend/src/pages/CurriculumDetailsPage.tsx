@@ -1,10 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
 import { Eye, FileText, Clock } from "lucide-react";
 
-import { CurriculumDetails } from "../components/CurriculumDetails";
-import { CurriculumPreview } from "../components/CurriculumPreview";
-import { CurriculumFileHistory } from "../components/CurriculumFileHistory";
+const CurriculumDetails = lazy(() => 
+  import("../components/CurriculumDetails").then((module) => ({ default: module.CurriculumDetails }))
+);
+const CurriculumPreview = lazy (() => 
+  import("../components/CurriculumPreview").then((module) => ({ default: module.CurriculumPreview }))
+);
+const CurriculumFileHistory = lazy (() => 
+  import("../components/CurriculumFileHistory").then((module) => ({ default: module.CurriculumFileHistory }))
+);
+const Loading = lazy(() =>
+  import("../components/Loading").then((module) => ({ default: module.Loading }))
+);
+
 import { selectCurriculumByID, deleteCurriculum } from "../services/curriculum";
 import { useAccessToken } from "../hooks/useAccessToken";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -94,14 +104,7 @@ export default function CurriculumDetailsPage() {
     }
 
     if (loading) {
-        return (
-        <div className="flex min-h-screen items-center justify-center">
-            <div className="flex flex-col items-center gap-3">
-                <div className="h-10 w-10 animate-spin rounded-full border-4 border-accent-horizon/20 border-t-accent-horizon" />
-                <span className="text-text-secondary">Carregando...</span>
-            </div>
-        </div>
-        );
+        return <Loading />;
     }
 
     if (!curriculum) {
@@ -164,23 +167,29 @@ export default function CurriculumDetailsPage() {
         </div>
 
         {viewMode === "details" ? (
-          <CurriculumDetails
-            curriculum={curriculum}
-            onDelete={handleDelete}
-          />
+          <Suspense fallback={<Loading fullScreen={false}/>}>
+            <CurriculumDetails
+              curriculum={curriculum}
+              onDelete={handleDelete}
+            />
+          </Suspense>
         ) : viewMode === "preview" ? (
-          <div className="min-h-screen bg-bg-surface">
-            <div className="mx-auto max-w-6xl overflow-x-auto px-3 sm:px-6 py-6 sm:py-10">
-              <CurriculumPreview curriculum={curriculum} token={accessToken ?? undefined} />
+          <Suspense fallback={<Loading fullScreen={false}/>}> 
+            <div className="min-h-screen bg-bg-surface">
+              <div className="mx-auto max-w-6xl overflow-x-auto px-3 sm:px-6 py-6 sm:py-10">
+                <CurriculumPreview curriculum={curriculum} token={accessToken ?? undefined} />
+              </div>
             </div>
-          </div>
+          </Suspense>
         ) : (
           <div className="min-h-screen bg-bg-base">
             {id && (
-              <CurriculumFileHistory
-                curriculumId={id}
-                token={accessToken ?? undefined}
-              />
+              <Suspense fallback={<Loading fullScreen={false}/>}>
+                <CurriculumFileHistory
+                  curriculumId={id}
+                  token={accessToken ?? undefined}
+                />
+              </Suspense>
             )}
           </div>
         )}

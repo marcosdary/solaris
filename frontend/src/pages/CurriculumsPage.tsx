@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, FileX, Plus, User } from "lucide-react";
 
-import { CurriculumCard } from "../components/page-curriculum/CurriculumCard";
+const CurriculumCard = lazy( () => 
+  import("../components/page-curriculum/CurriculumCard").then((module) => ({ default: module.CurriculumCard }))
+);
 import { CurriculumSearchForm } from "../components/page-curriculum/CurriculumSearchForm";
 import { useAccessToken } from "../hooks/useAccessToken";
 
