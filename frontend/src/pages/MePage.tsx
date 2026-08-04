@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   User,
@@ -13,7 +13,10 @@ import {
 import { useAccessToken } from "../hooks/useAccessToken";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { getMe } from "../services/auth";
-import { UpdateUserModal } from "../components/UpdateUserModal";
+
+const UpdateUserModal = lazy(() => 
+  import("../components/UpdateUserModal").then((module) => ({ default: module.UpdateUserModal }))
+);
 
 import type { IUserInfoResponse } from "../types/user";
 
