@@ -1,5 +1,5 @@
 {
-  "name": "solaris",
+  "name": "solaris-auth-google",
   "compatibility_date": "2026-07-20",
   "assets": {
     "directory": "./dist",

@@ -1,53 +1,43 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
-import { useAccessToken } from "../hooks/useAccessToken";
-import { updateMe } from "../services/user";
-import { phoneMask } from "../utils/phoneMask";
+import { useAccessToken } from "../../hooks/useAccessToken";
+import { updateMe } from "../../services/user";
+import { phoneMask } from "../../utils/phoneMask";
 
-import type { IUserInfoResponse } from "../types/user";
+import type { IUserInfoResponse } from "../../types/user";
+import { ApiError } from "../../errors";
 
 interface UpdateUserModalProps {
-  open: boolean;
   currentName: string;
-  currentPhone: string;
+  currentPhone: string | null;
+  currentEmail: string | null;
   onClose: () => void;
   onSuccess: (updated: IUserInfoResponse) => void;
 }
 
 export function UpdateUserModal({
-  open,
   currentName,
   currentPhone,
+  currentEmail,
   onClose,
   onSuccess,
 }: UpdateUserModalProps) {
   const token = useAccessToken();
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState(currentName);
-  const [phone, setPhone] = useState(currentPhone);
+  const [phone, setPhone] = useState(currentPhone ?? "");
+  const [email, setEmail] = useState(currentEmail ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (open) {
-      setName(currentName);
-      setPhone(currentPhone);
-      setError(null);
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
-  }, [open, currentName, currentPhone]);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
-    if (open) document.addEventListener("keydown", handleKey);
+    document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [open, onClose]);
-
-  if (!open) return null;
+  }, [onClose]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -58,10 +48,14 @@ export function UpdateUserModal({
       const updated = await updateMe(token ?? undefined, {
         name: name.trim(),
         phone: phone.replace(/\D/g, ""),
+        email: email.trim() || undefined,
       });
       onSuccess(updated);
       onClose();
     } catch (err) {
+      const message =
+      err instanceof ApiError && err.detail ? err.detail[0].msg : "Erro ao atualizar perfil. Tente novamente.";
+      setError(message);
       setError("Erro ao atualizar perfil. Tente novamente.");
     } finally {
       setLoading(false);
@@ -103,7 +97,7 @@ export function UpdateUserModal({
             </label>
 
             <input
-              ref={inputRef}
+              autoFocus
               type="text"
               required
               placeholder="Seu nome"
@@ -124,6 +118,20 @@ export function UpdateUserModal({
               placeholder="(99) 99 99999-9999"
               value={phone}
               onChange={(e) => setPhone(phoneMask(e.target.value))}
+              className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
+              Email
+            </label>
+
+            <input
+              type="email"
+              placeholder="seu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
             />
           </div>

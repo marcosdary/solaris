@@ -1,6 +1,6 @@
 import { useEffect, useState, lazy } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, FileX, Plus, User } from "lucide-react";
+import { Search, FileX, Plus, User, LogOut } from "lucide-react";
 
 const CurriculumCard = lazy( () => 
   import("../components/page-curriculum/CurriculumCard").then((module) => ({ default: module.CurriculumCard }))
@@ -80,6 +80,14 @@ export default function CurriculumsPage() {
             <User size={18} strokeWidth={1.5} />
             <span className="hidden sm:inline">Meu Perfil</span>
           </Link>
+
+          <button
+            onClick={logout}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border-default px-3 py-1.5 text-[15px] font-medium text-red-600 transition hover:bg-red-50 sm:px-4 sm:py-2"
+          >
+            <LogOut size={18} strokeWidth={1.5} />
+            <span className="hidden sm:inline">Sair</span>
+          </button>
         </div>
       </nav>
 

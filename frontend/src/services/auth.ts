@@ -7,6 +7,7 @@ import type {
   IForgotPasswordResponse,
   IResetPasswordInput,
   IResetPasswordResponse,
+  IGoogleLoginInput,
 } from "../types/auth";
 import type {
   IUserInfoResponse,
@@ -51,6 +52,14 @@ export async function getMe(token?: string): Promise<IUserInfoResponse>{
 export async function resetPassword(data: IResetPasswordInput): Promise<IResetPasswordResponse> {
   return request<IResetPasswordResponse>(`${settings.baseURL}/api/v1/auth/password/reset`, {
     method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+}
+
+export async function googleLogin(data: IGoogleLoginInput): Promise<IAuthResponse> {
+  return request<IAuthResponse>(`${settings.baseURL}/api/v1/auth/google`, {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });

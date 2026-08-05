@@ -6,9 +6,10 @@ import { phoneMask } from "../../utils/phoneMask";
 
 interface LoginFormProps {
   onSuccess(): void;
+  disabled?: boolean;
 }
 
-export function LoginForm({ onSuccess }: LoginFormProps) {
+export function LoginForm({ onSuccess, disabled }: LoginFormProps) {
   const { loading, error, login, clearError } = useAuth();
 
   const [phone, setPhone] = useState("");
@@ -39,6 +40,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         <input
           type="tel"
           required
+          disabled={disabled}
           placeholder="(99) 99 99999-9999"
           value={phone}
           onChange={(e) => setPhone(phoneMask(e.target.value))}
@@ -53,6 +55,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         <input
           type="password"
           required
+          disabled={disabled}
           placeholder="Sua senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -61,14 +64,14 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       </div>
 
       <div className="text-right">
-        <Link to="/password-forgot" className="text-[15px] font-medium text-text-secondary underline underline-offset-2 transition hover:text-text-primary">
+        <Link to={disabled ? "#" : "/password-forgot"} className={`text-[15px] font-medium text-text-secondary underline underline-offset-2 transition hover:text-text-primary ${disabled ? "pointer-events-none opacity-50" : ""}`}>
           Esqueceu sua senha?
         </Link>
       </div>
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || disabled}
         className="w-full rounded-[6px] bg-accent-primary py-3 text-[15px] font-medium text-accent-text transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? "Entrando..." : "Entrar"}
@@ -76,7 +79,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
       <p className="text-center text-[15px] text-text-secondary">
         Não tem conta?{" "}
-        <Link to="/register" className="font-medium text-text-primary underline underline-offset-2 transition hover:text-accent-primary">
+        <Link to={disabled ? "#" : "/register"} className={`font-medium text-text-primary underline underline-offset-2 transition hover:text-accent-primary ${disabled ? "pointer-events-none opacity-50" : ""}`}>
           Cadastre-se
         </Link>
       </p>

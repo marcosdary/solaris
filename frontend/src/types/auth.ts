@@ -6,6 +6,7 @@ export interface ILoginInput {
 export interface IRegisterInput {
   name: string;
   phone: string;
+  email: string;
   password: string;
 }
 
@@ -30,4 +31,8 @@ export interface IResetPasswordInput {
 
 export interface IResetPasswordResponse {
   message: string;
+}
+
+export interface IGoogleLoginInput {
+  credential: string;
 }

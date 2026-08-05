@@ -22,7 +22,6 @@ export function useAuth() {
     } catch (err) {
       const message =
         err instanceof ApiError && err.detail ? err.detail[0].msg : "Erro ao fazer login.";
-      console.error(message);
       setError(message);
       return null;
     } finally {

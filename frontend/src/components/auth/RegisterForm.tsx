@@ -11,6 +11,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const { loading, error, register, clearError } = useAuth();
 
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
@@ -20,6 +21,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
     const result = await register({
       name: name.trim(),
+      email: email.trim(),
       phone: phone.replace(/\D/g, ""),
       password: password,
     });
@@ -47,6 +49,20 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           placeholder="Seu nome completo"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
+          Email
+        </label>
+        <input
+          type="email"
+          required
+          placeholder="seu@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>

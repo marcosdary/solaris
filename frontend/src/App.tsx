@@ -4,7 +4,9 @@ import {
   Route,
 } from "react-router-dom";
 import { lazy } from "react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
+import { settings } from "./config/settings";
 import { AuthProvider } from "./context/AuthContext";
 import { AuthGuard } from "./components/auth/AuthGuard";
 import Layout from "./components/Layout";
@@ -22,10 +24,11 @@ const MePage = lazy(() => import("./pages/MePage"));
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Layout>
-          
-          <Routes>
+      <GoogleOAuthProvider clientId={settings.googleClientId}>
+        <AuthProvider>
+          <Layout>
+            
+            <Routes>
 
             <Route path="/login" element={<LoginPage />} />
 
@@ -79,6 +82,7 @@ function App() {
           </Routes>
         </Layout>
       </AuthProvider>
+      </GoogleOAuthProvider>
     </BrowserRouter>
   );
 }
