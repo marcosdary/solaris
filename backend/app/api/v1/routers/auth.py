@@ -93,13 +93,13 @@ async def login(
             detail=f"Erro externo do servidor: {exc}",
         )
 
-@router.post("/google", response_model=dict)
+@router.post("/google", response_model=TokenResponseSchema)
 async def login_google(
     body: LoginGoogleRequestSchema,
     user_service: UserServiceDep,
     auth_service: AuthServiceDep,
     google_auth_service: GoogleAuthDep
-) -> dict:
+) -> TokenResponseSchema:
     try:
         google_user_info = google_auth_service.verify_token(body.credential)
     except InvalidCredentialsException as exc:
