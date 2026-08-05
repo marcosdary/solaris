@@ -110,6 +110,121 @@ export default function HomePage() {
           );
         })}
       </section>
+
+      <section className="mb-24">
+        <h2 className="mb-4 text-2xl font-bold text-text-primary">
+          Perguntas Frequentes
+        </h2>
+        <p className="mb-8 max-w-xl text-[15px] leading-relaxed text-text-secondary">
+          Respostas para as dúvidas mais comuns sobre a criação de currículos
+          no Solaris.
+        </p>
+
+        <dl className="divide-y divide-border-default rounded-2xl border border-border-default bg-white">
+          <div className="px-6 py-5">
+            <dt className="text-[15px] font-semibold text-text-primary">
+              O Solaris é gratuito?
+            </dt>
+            <dd className="mt-2 text-[15px] leading-relaxed text-text-secondary">
+              Sim, a criação e exportação de currículos em PDF é totalmente
+              gratuita.
+            </dd>
+          </div>
+
+          <div className="px-6 py-5">
+            <dt className="text-[15px] font-semibold text-text-primary">
+              Como criar um currículo profissional?
+            </dt>
+            <dd className="mt-2 text-[15px] leading-relaxed text-text-secondary">
+              Basta se cadastrar, preencher seus dados e a IA gera o conteúdo
+              automaticamente.
+            </dd>
+          </div>
+
+          <div className="px-6 py-5">
+            <dt className="text-[15px] font-semibold text-text-primary">
+              O currículo gerado é em PDF?
+            </dt>
+            <dd className="mt-2 text-[15px] leading-relaxed text-text-secondary">
+              Sim, você pode exportar seu currículo em PDF, pronto para
+              impressão e compartilhamento.
+            </dd>
+          </div>
+
+          <div className="px-6 py-5">
+            <dt className="text-[15px] font-semibold text-text-primary">
+              Quais idiomas o currículo suporta?
+            </dt>
+            <dd className="mt-2 text-[15px] leading-relaxed text-text-secondary">
+              Português, inglês e espanhol. Crie versões multilíngues com um
+              clique.
+            </dd>
+          </div>
+
+          <div className="px-6 py-5">
+            <dt className="text-[15px] font-semibold text-text-primary">
+              Posso gerenciar meus currículos?
+            </dt>
+            <dd className="mt-2 text-[15px] leading-relaxed text-text-secondary">
+              Sim. Você pode criar múltiplos currículos, editar, atualizar e
+              exportar novas versões a qualquer momento. Gerencie diferentes
+              currículos para cada vaga, tudo em um só lugar.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "O Solaris é gratuito?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Sim, a criação e exportação de currículos em PDF é totalmente gratuita.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Como criar um currículo profissional?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Basta se cadastrar, preencher seus dados e a IA gera o conteúdo automaticamente.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "O currículo gerado é em PDF?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Sim, você pode exportar seu currículo em PDF, pronto para impressão e compartilhamento.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Quais idiomas o currículo suporta?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Português, inglês e espanhol. Crie versões multilíngues com um clique.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Posso gerenciar meus currículos?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Sim. Você pode criar múltiplos currículos, editar, atualizar e exportar novas versões a qualquer momento. Gerencie diferentes currículos para cada vaga, tudo em um só lugar.",
+                },
+              },
+            ],
+          }),
+        }}
+      />
     </div>
   );
 }
