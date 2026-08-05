@@ -11,8 +11,10 @@ class UserModel(BaseModel):
 
     id: Mapped[str] = mapped_column(primary_key=True)
     
+    google_sub: Mapped[str] = mapped_column(unique=True, nullable=True)
     name: Mapped[str]
-    phone: Mapped[str] = mapped_column(unique=True)
+    email: Mapped[str] = mapped_column(unique=True, nullable=True)
+    phone: Mapped[str] = mapped_column(unique=True, nullable=True)
     password: Mapped[str]
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
@@ -27,7 +29,8 @@ class UserModel(BaseModel):
             id=f"user_{uuid4()}",
             phone=schema.phone,
             name=schema.name,
-            password=schema.password
+            email=schema.email,
+            password=schema.password,
         )
 
 

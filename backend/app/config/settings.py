@@ -29,6 +29,9 @@ class Settings(BaseSettings):
 
     SUPABASE_POSTGRES_URL: str
 
+    GOOGLE_CLIENT_ID: str
+    URL_USERINFO_GOOGLE: str
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     JWT_ALGORITHM: str
 

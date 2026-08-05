@@ -1,11 +1,16 @@
 from typing import List, Annotated, AsyncGenerator
+from uuid import uuid4
 
 from fastapi import Depends, Request
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import UserModel
-from app.schemas import UserCreateSchema, UserUpdateSchema
+from app.schemas import (
+    UserCreateSchema, 
+    UserUpdateSchema,
+    GoogleUserInfoSchema,
+)
 from app.repos.user import UserRepo
 from app.exceptions import InvalidCredentialsException, NotFoundError
 from app.config import get_settings, Settings
@@ -26,6 +31,9 @@ class _UserService:
 
     def _normalize_phone(self, phone: str) -> NormalizePhoneUtil:
         return NormalizePhoneUtil(phone)
+
+    def _random_password(self) -> str:
+        return f"password_{uuid4()}"
 
     async def create(
         self,
@@ -79,7 +87,24 @@ class _UserService:
         if not self._auth.verify_password(password, user.password):
             raise InvalidCredentialsException("Usuário não encontrado ou informações inválidas.")
         return user
-
+    
+    async def login_google(
+        self,
+        schema: GoogleUserInfoSchema
+    ) -> UserModel:
+        user = await UserRepo.get_by_email(self._db, schema.email)
+        # Caso o usuário não tenha cadastro, é cadastrado automaticamente
+        if not user:
+            password = self._random_password()
+            password_hash = self._auth.hash_password(password)
+            user = UserModel.from_schema(UserCreateSchema(
+                google_sub=schema.sub,
+                name=schema.name,
+                email=schema.email,
+                password=password_hash
+            ))
+            return await UserRepo.create(self._db, user)
+        return user
 
     async def get_all(
         self,

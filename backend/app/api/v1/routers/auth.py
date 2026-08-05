@@ -5,13 +5,15 @@ from sqlalchemy.exc import IntegrityError, DBAPIError
 
 from app.schemas import (
     TokenResponseSchema,
+    LoginGoogleRequestSchema,
     LoginRequestSchema,
     UserResponseSchema,
     UserUpdateSchema,
     UserCreateSchema,
     PasswordForgotSchema,
     PasswordResetSchema,
-    WhatsappLoginRequestSchema
+    WhatsappLoginRequestSchema,
+    ConnectAccountGoogleRequestSchema
 )
 from app.exceptions import (
     InvalidCredentialsException, 
@@ -22,7 +24,8 @@ from app.services import (
     UserServiceDep, 
     PasswordForgotDep,
     AuthServiceDep, 
-    CurrentUserDep
+    CurrentUserDep,
+    GoogleAuthDep
 )
 
 router = APIRouter()
@@ -82,7 +85,41 @@ async def login(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro externo do servidor: {exc}",
         )
+    try:
+        return auth_service.create_access_token(user.id)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
 
+@router.post("/google", response_model=dict)
+async def login_google(
+    body: LoginGoogleRequestSchema,
+    user_service: UserServiceDep,
+    auth_service: AuthServiceDep,
+    google_auth_service: GoogleAuthDep
+) -> dict:
+    try:
+        google_user_info = google_auth_service.verify_token(body.credential)
+    except InvalidCredentialsException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
+
+    try:
+        user = await user_service.login_google(google_user_info)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
     try:
         return auth_service.create_access_token(user.id)
     except Exception as exc:
@@ -99,6 +136,7 @@ async def login_whatsspp(
 ) -> TokenResponseSchema:
     try:
         user = await user_service.get_by_phone(body.phone)
+    
     except InvalidCredentialsException as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -121,6 +159,68 @@ async def login_whatsspp(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro externo do servidor: {exc}",
+        )
+
+@router.post("/me/google", response_model=UserResponseSchema)
+async def connect_account_google(
+    body: ConnectAccountGoogleRequestSchema,
+    current_user: CurrentUserDep,
+    user_service: UserServiceDep,
+    google_auth_service: GoogleAuthDep
+) -> UserResponseSchema:
+    try: 
+        user_id = await current_user.get_me()
+    except InvalidCredentialsException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro interno do servidor: {exc}",
+        )
+    
+    try:
+        google_user_info = await google_auth_service.connect_account(body.access_token)
+    except InvalidCredentialsException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro externo do servidor: {exc}",
+        )
+    
+    try:
+        return await user_service.update(
+            id=user_id, 
+            schema=UserUpdateSchema(
+                google_sub=google_user_info.sub,
+                email=google_user_info.email
+            )
+        )
+    except InvalidCredentialsException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+    except NotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Já existe um usuário cadastrado com este email.",
+        )
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Serviço indisponível no momento.",
         )
 
 @router.get("/me", response_model=UserResponseSchema)

@@ -10,8 +10,11 @@ from app.exceptions import (
 )
 
 from app.config import get_settings, Settings
-from app.integrations import EvolutionAPIIntegration
-
+from app.integrations import (
+    EvolutionAPIIntegration,
+    GoogleAuthIntegration
+)
+from app.schemas import GoogleUserInfoSchema
 
 class _AuthService:
     def __init__(self, settings: Settings):
@@ -111,6 +114,20 @@ class _PasswordForgotService:
         
         return sub
 
+class _GoogleAuthService:
+    def __init__(self, settings: Settings) -> None:
+        self._settings = settings
+        self._google_auth_integration = GoogleAuthIntegration(
+            client_google_id=self._settings.GOOGLE_CLIENT_ID,
+            url_user_info=self._settings.URL_USERINFO_GOOGLE
+        )
+    def verify_token(self, token: str) -> GoogleUserInfoSchema:
+        credentials = self._google_auth_integration.verify(token)
+        return GoogleUserInfoSchema.model_validate(credentials)
+    
+    async def connect_account(self, access_token: str) -> GoogleUserInfoSchema:
+        user_info = await self._google_auth_integration.get_userinfo(access_token)
+        return GoogleUserInfoSchema.model_validate(user_info)
 class _CurrentUser:
     def __init__(
         self, 
@@ -171,6 +188,11 @@ def get_password_forgot_service(
 ):
     return _PasswordForgotService(settings, auth_service)
 
+def get_google_auth_service(
+    settings: Annotated[Settings, Depends(get_settings)]
+):
+    return _GoogleAuthService(settings)
+
 def get_current_user_service(
     auth_service: Annotated[_AuthService, Depends(get_auth_service)],
     request: Request,
@@ -183,5 +205,6 @@ def get_current_user_service(
 AuthServiceDep = Annotated[_AuthService, Depends(get_auth_service)]
 CurrentUserDep = Annotated[_CurrentUser, Depends(get_current_user_service)]
 PasswordForgotDep = Annotated[_PasswordForgotService, Depends(get_password_forgot_service)]
+GoogleAuthDep = Annotated[_GoogleAuthService, Depends(get_google_auth_service)]
 
-__all__ = ["AuthServiceDep", "CurrentUserDep", "PasswordForgotDep"]
+__all__ = ["AuthServiceDep", "CurrentUserDep", "PasswordForgotDep", "GoogleAuthDep"]

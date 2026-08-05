@@ -47,7 +47,10 @@ from .auth import (
     TokenResponseSchema,
     PasswordForgotSchema,
     PasswordResetSchema,
-    WhatsappLoginRequestSchema
+    WhatsappLoginRequestSchema,
+    LoginGoogleRequestSchema,
+    GoogleUserInfoSchema,
+    ConnectAccountGoogleRequestSchema
 )
 
 __all__ = [
@@ -91,5 +94,8 @@ __all__ = [
     "TokenResponseSchema",
     "PasswordForgotSchema",
     "PasswordResetSchema",
-    "WhatsappLoginRequestSchema"
+    "WhatsappLoginRequestSchema",
+    "LoginGoogleRequestSchema",
+    "GoogleUserInfoSchema",
+    "ConnectAccountGoogleRequestSchema"
 ]

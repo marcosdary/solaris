@@ -1,7 +1,10 @@
 from .bucket import (
     GoogleDriveBucketService,
     SupabaseBucketService,
-    BucketIntegration
+    BucketIntegration,
+)
+from .google_auth import (
+    GoogleAuthIntegration,
 )
 from .file import FilePDFIntegration
 from .load_info_to_file import LoadInfoToFilePDFIntegration
@@ -12,5 +15,6 @@ __all__ = [
     "LoadInfoToFilePDFIntegration",
     "SupabaseBucketService",
     "BucketIntegration",
-    "EvolutionAPIIntegration"
+    "EvolutionAPIIntegration",
+    "GoogleAuthIntegration"
 ]
