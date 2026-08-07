@@ -11,6 +11,8 @@ from app.models.base import BaseModel
 from app.models.experience import ExperienceModel
 from app.models.education import EducationModel
 from app.models.project import ProjectModel
+from app.models.phone import PhoneModel
+from app.models.address import AddressModel
 from app.models.certification import CertificationModel
 from app.config import Language, CurriculumCategory
 from app.schemas import (
@@ -35,8 +37,6 @@ class CurriculumModel(BaseModel):
 
     github: Mapped[str] = mapped_column(nullable=True)
     linkedin: Mapped[str]
-
-    location: Mapped[str]
 
     resume: Mapped[str]
 
@@ -71,6 +71,18 @@ class CurriculumModel(BaseModel):
         lazy="raise",
     )
 
+    phone: Mapped[list["PhoneModel"]] = relationship(
+        back_populates="curriculums",
+        cascade="all, delete-orphan",
+        lazy="raise",
+    )
+
+    address: Mapped[list["AddressModel"]] = relationship(
+        back_populates="curriculums",
+        cascade="all, delete-orphan",
+        lazy="raise",
+    )
+
     files: Mapped[list["CurriculumFileModel"]] = relationship(
         back_populates="curriculum",
         cascade="all, delete-orphan",
@@ -89,8 +101,8 @@ class CurriculumModel(BaseModel):
             role=schema.role,
             github=schema.github,
             linkedin=schema.linkedin,
-            phone=schema.phone,
-            location=schema.location,
+            phone=PhoneModel.from_schema(schema.phone),
+            address=AddressModel.from_schema(schema.address),
             resume=schema.resume,
 
             experiences=[

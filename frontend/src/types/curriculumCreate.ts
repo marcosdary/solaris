@@ -1,5 +1,10 @@
 import { CurriculumCategory, Language } from "../config/constants";
 
+export interface IAddressInput {
+  state: string;
+  city: string;
+}
+
 export interface ICurriculumInput {
   language: Language;
   category: CurriculumCategory;
@@ -9,7 +14,7 @@ export interface ICurriculumInput {
   github: string | null;
   linkedin: string | null;
   phone: string;
-  location: string;
+  address: IAddressInput;
   resume: string;
   experiences: IExperienceInput[];
   educations: IEducationInput[];

@@ -1,10 +1,12 @@
 from datetime import date
 from uuid import uuid4
+from typing import Optional
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
+from app.models.address import AddressModel
 from app.schemas import CertificationSchema, CertificationEditSchema
 
 
@@ -15,6 +17,9 @@ class CertificationModel(BaseModel):
     id: Mapped[str] = mapped_column(primary_key=True)
 
     curriculum_id: Mapped[str] = mapped_column(ForeignKey("private.curriculum.id"))
+    address_id: Mapped[Optional[str]] = mapped_column(
+        ForeignKey("private.addresses.id"),
+    )
 
     institution: Mapped[str]
     name: Mapped[str]
@@ -23,6 +28,7 @@ class CertificationModel(BaseModel):
     start_date: Mapped[date]
     end_date: Mapped[date] = mapped_column(nullable=True)
 
+    address: Mapped[Optional["AddressModel"]] = relationship(back_populates="education")
     curriculum: Mapped["CurriculumModel"] = relationship(back_populates="certifications")
 
     @classmethod

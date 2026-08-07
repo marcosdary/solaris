@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from "react";
-import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
+import { useLocation, useParams, Link } from "react-router-dom";
 import { Eye, FileText, Clock } from "lucide-react";
 
 const CurriculumDetails = lazy(() => 
@@ -16,8 +16,10 @@ const Loading = lazy(() =>
 );
 
 import { selectCurriculumByID, deleteCurriculum } from "../services/curriculum";
+
 import { useAccessToken } from "../hooks/useAccessToken";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { usePageNavigation } from "../hooks/usePageNavigation";
 
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 
@@ -53,7 +55,7 @@ function Tab({ mode, label, Icon, current, onChange }: TabProps) {
 export default function CurriculumDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const accessToken = useAccessToken();
-    const navigate = useNavigate();
+    const navigateFor = usePageNavigation();
     const location = useLocation();
 
     const { logout } = useAuthContext();
@@ -96,7 +98,7 @@ export default function CurriculumDetailsPage() {
         try {
         await deleteCurriculum(curriculum.id);
 
-        navigate("/curriculums");
+        navigateFor("/curriculums");
         } catch (error) {
         console.error(error);
         alert("Erro ao excluir currículo.");

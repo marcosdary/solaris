@@ -9,11 +9,22 @@ class ActivitySchema(BaseSchema):
     """Uma atividade/realização dentro de uma experiência profissional."""
     description: Annotated[str, Field(min_length=1)]
 
+class PhoneSchema(BaseSchema):
+    """"""
+    ddi: Annotated[str, Field(min_length=1)]
+    number: Annotated[str, Field(min_length=1)]
+
+class AddressSchema(BaseSchema):
+    """"""
+    state: Annotated[str, Field(min_length=1)]
+    city: Annotated[str, Field(min_length=1)]
+
 class ExperienceSchema(BaseSchema):
     """Experiência profissional."""
     role: Annotated[str, Field(min_length=1)]
     company: Annotated[str, Field(min_length=1)]
-    location: Annotated[str, Field(min_length=1)]
+    address: Annotated[AddressSchema, Field(min_length=1)]
+    is_remote: Annotated[bool, Field(default=False)]
 
     start_date: date
     end_date: Optional[date] = None
@@ -35,7 +46,8 @@ class EducationSchema(BaseSchema):
     """Formação acadêmica."""
     institution: Annotated[str, Field(min_length=1)]
     degree: Annotated[str, Field(min_length=1)]
-    location: Annotated[str, Field(min_length=1)]
+    address: Annotated[AddressSchema, Field(min_length=1)]
+    is_remote: Annotated[bool, Field(default=False)]
 
     start_date: date
     end_date: Optional[date] = None
@@ -72,7 +84,8 @@ class CertificationSchema(BaseSchema):
     """Certificação."""
     institution: Annotated[str, Field(min_length=1)]
     name: Annotated[str, Field(min_length=1)]
-    location: Annotated[str, Field(min_length=1)]
+    address: Annotated[AddressSchema, Field(min_length=1)]
+    is_remote: Annotated[bool, Field(default=False)]
 
     start_date: date
     end_date: Optional[date] = None
@@ -92,7 +105,7 @@ class StructuredCurriculumSchema(BaseSchema):
     linkedin: Annotated[str, Field(min_length=1)]
 
     phone: Annotated[str, Field(min_length=1)]
-    location: Annotated[str, Field(min_length=1)]
+    address: Annotated[AddressSchema, Field(min_length=1)]
 
     resume: Annotated[str, Field(min_length=1)]
 
@@ -125,5 +138,7 @@ __all__ = [
     "ProjectTechnologySchema",
     "ProjectSchema",
     "CertificationSchema",
-    "StructuredCurriculumSchema"
+    "StructuredCurriculumSchema",
+    "PhoneSchema",
+    "AddressSchema"
 ]

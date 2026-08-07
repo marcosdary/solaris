@@ -1,14 +1,14 @@
-import { useCurriculumForm } from "../hooks/useCurriculumForm";
-import type { ICurriculumResponse } from "../types/curriculumResponse";
+import { useCurriculumForm } from "../../hooks/useCurriculumForm";
+import type { ICurriculumResponse } from "../../types/curriculumResponse";
 
-import { Loading } from "./Loading";
-import { CurriculumCard } from "./cards/CurriculumCard";
+import { Loading } from "../Loading";
+import { CurriculumCard } from "../cards/CurriculumCard";
 
-import { PersonalInfo } from "./form-curriculum/PersonalInfo";
-import { ExperienceForm } from "./form-curriculum/ExperienceForm";
-import { EducationForm } from "./form-curriculum/EducationForm";
-import { ProjectForm } from "./form-curriculum/ProjectForm";
-import { CertificationForm } from "./form-curriculum/CertificationForm";
+import { PersonalInfo } from "./PersonalInfo";
+import { ExperienceForm } from "./ExperienceForm";
+import { EducationForm } from "./EducationForm";
+import { ProjectForm } from "./ProjectForm";
+import { CertificationForm } from "./CertificationForm";
 
 interface CurriculumFormProps {
   mode: "create" | "edit";

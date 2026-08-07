@@ -1,5 +1,5 @@
 import type { ICurriculumResponse } from "../types/curriculumResponse";
-import { CurriculumForm } from "./CurriculumForm";
+import { CurriculumForm } from "./formCurriculum/FormCurriculum";
 
 interface CurriculumFormCreateProps {
   onSuccess?: (result: ICurriculumResponse) => void;

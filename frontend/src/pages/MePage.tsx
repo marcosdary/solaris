@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   User,
   Phone,
@@ -14,6 +14,8 @@ import { useGoogleLogin } from "@react-oauth/google";
 
 import { useAccessToken } from "../hooks/useAccessToken";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { usePageNavigation } from "../hooks/usePageNavigation";
+
 import { getMe } from "../services/auth";
 import { linkGoogleAccount } from "../services/user";
 import { Loading } from "../components/Loading";
@@ -46,7 +48,7 @@ function formatDateTime(iso: string) {
 
 export default function MePage() {
   const token = useAccessToken();
-  const navigate = useNavigate();
+  const navigateFor = usePageNavigation();
   const location = useLocation();
   const { logout } = useAuthContext();
 
@@ -98,7 +100,7 @@ export default function MePage() {
 
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={() => navigateFor("/curriculums")}
             className="text-[15px] text-text-secondary transition hover:text-text-primary"
           >
             ← <span className="hidden sm:inline">Voltar</span>
@@ -184,7 +186,7 @@ export default function MePage() {
 
         <button
           type="button"
-          onClick={() => navigate(-1)}
+          onClick={() => navigateFor("/curriculums")}
           className="text-[15px] text-text-secondary transition hover:text-text-primary"
         >
           ← <span className="hidden sm:inline">Voltar</span>

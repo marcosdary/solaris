@@ -11,8 +11,11 @@ from .curriculum_create import (
     ExperienceSchema,
     ProjectSchema,
     ProjectDescriptionSchema,
-    ProjectTechnologySchema
+    ProjectTechnologySchema,
+    PhoneSchema,
+    AddressSchema
 )
+
 from .curriculum_response import (
     ActivityResponseSchema,
     EducationResponseSchema,
@@ -97,5 +100,7 @@ __all__ = [
     "WhatsappLoginRequestSchema",
     "LoginGoogleRequestSchema",
     "GoogleUserInfoSchema",
-    "ConnectAccountGoogleRequestSchema"
+    "ConnectAccountGoogleRequestSchema",
+    "PhoneSchema",
+    "AddressSchema"
 ]

@@ -1,5 +1,12 @@
 import type { Language, CurriculumCategory } from "../config/constants";
 
+export interface IAddressEdit {
+  id: string;
+  state: string;
+  city: string;
+}
+
+
 export interface ICurriculumEditPayload {
   language: Language;
   category: CurriculumCategory;
@@ -9,7 +16,7 @@ export interface ICurriculumEditPayload {
   github: string | null;
   linkedin: string | null;
   phone: string;
-  location: string;
+  address: IAddressEdit;
   resume: string;
   experiences: IExperienceEditPayload[];
   educations: IEducationEditPayload[];

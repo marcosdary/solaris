@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Search, Filter, X } from "lucide-react";
 
-import { CurriculumCategory, Language } from "../../config/constants";
+import { CurriculumCategory, CurriculumCategoryLabel, Language } from "../../config/constants";
 
 interface SearchCurriculumRequest {
   category?: CurriculumCategory;
@@ -16,12 +16,6 @@ export function CurriculumSearchForm({ onSearch }: Props) {
   const [category, setCategory] = useState<CurriculumCategory | "">("");
   const [language, setLanguage] = useState<Language | "">("");
   const [isExpanded, setIsExpanded] = useState(false);
-
-  function formatCategory(category: string) {
-    return category
-      .replaceAll("_", " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-  }
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -72,7 +66,7 @@ export function CurriculumSearchForm({ onSearch }: Props) {
 
           {Object.values(CurriculumCategory).map((value) => (
             <option key={value} value={value}>
-              {formatCategory(value)}
+              {CurriculumCategoryLabel[value]}
             </option>
           ))}
         </select>

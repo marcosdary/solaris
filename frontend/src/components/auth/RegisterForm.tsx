@@ -1,29 +1,45 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { phoneMask } from "../../utils/phoneMask";
+import { PersonalPhone } from "../PersonalPhone";
 
 interface RegisterFormProps {
   onSuccess(): void;
 }
 
+interface RegisterFormState {
+  ddi: string;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+}
+
 export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const { loading, error, register, clearError } = useAuth();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState<RegisterFormState>({
+    ddi: "",
+    name: "",
+    phone: "",
+    email: "",
+    password: "",
+  });
+
+  const updateField = (key: string, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+  
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     clearError();
 
     const result = await register({
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone.replace(/\D/g, ""),
-      password: password,
+      name: form.name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.replace(/\D/g, ""),
+      password: form.password,
     });
 
     if (result) {
@@ -47,8 +63,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           type="text"
           required
           placeholder="Seu nome completo"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={form.name}
+          onChange={(e) => updateField("name", e.target.value)}
           className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>
@@ -61,8 +77,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           type="email"
           required
           placeholder="seu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={form.email}
+          onChange={(e) => updateField("email", e.target.value)}
           className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>
@@ -71,13 +87,10 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
           Telefone
         </label>
-        <input
-          type="tel"
-          required
-          placeholder="(99) 99 99999-9999"
-          value={phone}
-          onChange={(e) => setPhone(phoneMask(e.target.value))}
-          className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+        <PersonalPhone
+          form={form}
+          updateField={updateField}
+          inputStyle="w-full bg-transparent p-1 text-[15px] text-text-primary placeholder:text-text-muted focus:outline-none"
         />
       </div>
 
@@ -89,8 +102,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           type="password"
           required
           placeholder="Sua senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={form.password}
+          onChange={(e) => updateField("password", e.target.value)}
           className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>

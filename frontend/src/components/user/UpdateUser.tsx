@@ -3,7 +3,8 @@ import { X } from "lucide-react";
 
 import { useAccessToken } from "../../hooks/useAccessToken";
 import { updateMe } from "../../services/user";
-import { phoneMask } from "../../utils/phoneMask";
+
+import { PersonalPhone } from "../PersonalPhone";
 
 import type { IUserInfoResponse } from "../../types/user";
 import { ApiError } from "../../errors";
@@ -16,6 +17,13 @@ interface UpdateUserModalProps {
   onSuccess: (updated: IUserInfoResponse) => void;
 }
 
+interface UpdateUserFormState {
+  name: string;
+  email: string;
+  ddi: string;
+  phone: string;
+}
+
 export function UpdateUserModal({
   currentName,
   currentPhone,
@@ -25,9 +33,18 @@ export function UpdateUserModal({
 }: UpdateUserModalProps) {
   const token = useAccessToken();
 
-  const [name, setName] = useState(currentName);
-  const [phone, setPhone] = useState(currentPhone ?? "");
-  const [email, setEmail] = useState(currentEmail ?? "");
+  const [form, setForm] = useState<UpdateUserFormState>({
+    ddi: "",
+    name: currentName,
+    phone: currentPhone?.slice(-11),
+    email: currentEmail,
+    
+  });
+
+  const updateField = (key: string, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,9 +63,9 @@ export function UpdateUserModal({
 
     try {
       const updated = await updateMe(token ?? undefined, {
-        name: name.trim(),
-        phone: phone.replace(/\D/g, ""),
-        email: email.trim() || undefined,
+        name: form.name.trim(),
+        phone: form.phone.replace(/\D/g, ""),
+        email: form.email.trim() || undefined,
       });
       onSuccess(updated);
       onClose();
@@ -56,7 +73,6 @@ export function UpdateUserModal({
       const message =
       err instanceof ApiError && err.detail ? err.detail[0].msg : "Erro ao atualizar perfil. Tente novamente.";
       setError(message);
-      setError("Erro ao atualizar perfil. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -101,8 +117,8 @@ export function UpdateUserModal({
               type="text"
               required
               placeholder="Seu nome"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={form.name}
+              onChange={(e) => updateField("name", e.target.value)}
               className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
             />
           </div>
@@ -112,13 +128,10 @@ export function UpdateUserModal({
               Telefone
             </label>
 
-            <input
-              type="tel"
-              required
-              placeholder="(99) 99 99999-9999"
-              value={phone}
-              onChange={(e) => setPhone(phoneMask(e.target.value))}
-              className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+            <PersonalPhone
+              form={form}
+              updateField={updateField}
+              inputStyle="w-full bg-transparent p-1 text-[15px] text-text-primary placeholder:text-text-muted focus:outline-none"
             />
           </div>
 
@@ -130,8 +143,8 @@ export function UpdateUserModal({
             <input
               type="email"
               placeholder="seu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={form.email}
+              onChange={(e) => updateField("email", e.target.value)}
               className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
             />
           </div>
@@ -139,7 +152,7 @@ export function UpdateUserModal({
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:gap-3">
             <button
               type="submit"
-              disabled={loading || !name.trim() || !phone.replace(/\D/g, "")}
+              disabled={loading || !form.name.trim()}
               className="rounded-lg px-7 py-3 text-[15px] font-medium text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 w-full sm:w-auto"
               style={{
                 background:

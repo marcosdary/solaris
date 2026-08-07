@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
-import { CurriculumForm } from "../components/CurriculumForm";
+import { CurriculumForm } from "../components/formCurriculum/FormCurriculum";
 
 import { useAccessToken } from "../hooks/useAccessToken";
 import { useAuthContext } from "../hooks/useAuthContext";

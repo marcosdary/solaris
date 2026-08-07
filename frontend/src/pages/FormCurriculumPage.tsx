@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import { CurriculumForm } from "../components/CurriculumForm";
+import { CurriculumForm } from "../components/formCurriculum/FormCurriculum";
 import type { ICurriculumResponse } from "../types/curriculumResponse";
 
 export default function CurriculumFormPage() {

@@ -3,9 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import { Search, FileX, Plus, User, LogOut } from "lucide-react";
 
 const CurriculumCard = lazy( () => 
-  import("../components/page-curriculum/CurriculumCard").then((module) => ({ default: module.CurriculumCard }))
+  import("../components/pageCurriculum/CurriculumCard").then((module) => ({ default: module.CurriculumCard }))
 );
-import { CurriculumSearchForm } from "../components/page-curriculum/CurriculumSearchForm";
+import { CurriculumSearchForm } from "../components/pageCurriculum/CurriculumSearchForm";
 import { useAccessToken } from "../hooks/useAccessToken";
 
 import { searchCurriculums } from "../services/curriculum";

@@ -1,25 +1,40 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { phoneMask } from "../../utils/phoneMask";
-
+import { PersonalPhone } from "../PersonalPhone";
 
 interface LoginFormProps {
   onSuccess(): void;
   disabled?: boolean;
 }
+interface LoginFormState {
+  phone: string;
+  ddi: string;
+  password: string;
+}
 
 export function LoginForm({ onSuccess, disabled }: LoginFormProps) {
   const { loading, error, login, clearError } = useAuth();
 
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState<LoginFormState>({
+    phone: "",
+    ddi: "",
+    password: "",
+  });
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+  const updateField = (key: string, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+  
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     clearError();
-
-    const result = await login({ phone: phone.replace(/\D/g, ""), password });
+    
+    const result = await login({
+      phone: form.phone.replace(/\D/g, ""),
+      password: form.password,
+    });
+    
     if (result) {
       onSuccess();
     }
@@ -37,14 +52,10 @@ export function LoginForm({ onSuccess, disabled }: LoginFormProps) {
         <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-text-secondary">
           Telefone
         </label>
-        <input
-          type="tel"
-          required
-          disabled={disabled}
-          placeholder="(99) 99 99999-9999"
-          value={phone}
-          onChange={(e) => setPhone(phoneMask(e.target.value))}
-          className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+        <PersonalPhone
+          form={form}
+          updateField={updateField}
+          inputStyle="w-full bg-transparent p-1 text-[15px] text-text-primary placeholder:text-text-muted focus:outline-none"
         />
       </div>
 
@@ -57,8 +68,8 @@ export function LoginForm({ onSuccess, disabled }: LoginFormProps) {
           required
           disabled={disabled}
           placeholder="Sua senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={form.password}
+          onChange={(e) => updateField("password", e.target.value)}
           className="w-full rounded-md border border-border-default bg-transparent p-3 text-[15px] text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
         />
       </div>

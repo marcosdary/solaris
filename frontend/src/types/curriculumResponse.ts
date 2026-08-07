@@ -17,6 +17,7 @@ export interface ICurriculumResponse {
   created_at: string;
   updated_at: string;
   phone: string;
+  ddi: string;
   location: string;
   resume: string;
   experiences: IExperienceResponse[];

@@ -93,6 +93,7 @@ export function useCurriculumForm({
           github: (initialData as any).github ?? null,
           linkedin: (initialData as any).linkedin ?? null,
           phone: initialData.phone ?? "",
+          ddi: initialData.ddi ?? "",
           location: initialData.location ?? "",
           resume: initialData.resume ?? "",
           experiences: [],
