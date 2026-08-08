@@ -1,15 +1,19 @@
 from typing import List, Optional
 
+# SqlAlchemy
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.models import (
+# Models
+from ..models import (
     CurriculumModel,
     ExperienceModel,
     ProjectModel,
 )
-from app.config import CurriculumCategory, Language
+
+# Config
+from ..config import CurriculumCategory, Language
 
 
 class CurriculumRepo:

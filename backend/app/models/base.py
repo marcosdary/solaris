@@ -1,6 +1,7 @@
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
 
+# SqlAlchemy
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 class BaseModel(DeclarativeBase):
     """Classe base abstrata para modelos SQLAlchemy.

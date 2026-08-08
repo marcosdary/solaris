@@ -1,10 +1,12 @@
 from typing import List, Optional
 
+# SqlAlchemy
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import UserModel
-
+# Models
+from ..models import UserModel
 
 class UserRepo:
 
@@ -23,7 +25,11 @@ class UserRepo:
         session: AsyncSession,
         id: str,
     ) -> Optional[UserModel]:
-        stmt = select(UserModel).filter(UserModel.id == id)
+        stmt = select(
+            UserModel
+        ).filter(
+            UserModel.id == id
+        )
         return await session.scalar(stmt)
     
     @staticmethod

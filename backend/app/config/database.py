@@ -26,7 +26,7 @@ class PostgresAsyncDB(BaseDB):
 
     def __init__(self, url: str):
         self._engine = create_async_engine(
-            url=url.replace("psycopg2", "asyncpg"),
+            url=url,
             pool_size=10,             # Mantém até 10 conexões abertas
             max_overflow=20,          # Permite até 20 conexões extras em picos
             pool_recycle=3600,        # Recicla conexões a cada hora

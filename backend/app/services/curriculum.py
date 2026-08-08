@@ -6,28 +6,41 @@ from typing import (
     AsyncGenerator,
     Annotated
 )
+
+# FastAPI
 from fastapi import Request, Depends
 
+# SqlAlchemy
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import (
-    CurriculumCategory, 
+# Config
+from ..config import (
     Language
 )
-from app.models import (
+
+# Models
+from ..models import (
     CurriculumModel,
     ExperienceModel,
     EducationModel,
     ProjectModel,
     CertificationModel,
 )
-from app.schemas import (
-    StructuredCurriculumSchema,
-    StructuredCurriculumEditSchema,
+
+# Schemas
+from ..schemas.curriculums.create import (
+    CurriculumCreateSchema,
 )
-from app.repos.curriculum import CurriculumRepo
-from app.exceptions import NotFoundError
+from ..schemas.curriculums.edit import (
+    CurriculumEditSchema,
+)
+
+# Repos
+from ..repos.curriculum import CurriculumRepo
+
+# Exceptions
+from ..exceptions import NotFoundError
 
 async def get_session(
     request: Request,
@@ -56,7 +69,7 @@ class _DeprecietedIds:
 
 class _EditCurriculum:
 
-    def __init__(self, schema: StructuredCurriculumEditSchema, model: CurriculumModel) -> None:
+    def __init__(self, schema: CurriculumEditSchema, model: CurriculumModel) -> None:
         self._schema = schema
         self._model = model
 
@@ -159,7 +172,7 @@ class _CurriculumService:
     async def create(
         self,
         user_id: str,
-        schema: StructuredCurriculumSchema,
+        schema: CurriculumCreateSchema,
     ) -> CurriculumModel:
         curriculum = CurriculumModel.from_schema(user_id, schema)
         return await CurriculumRepo.create(self._db, curriculum)
@@ -176,7 +189,7 @@ class _CurriculumService:
     async def get_all(
         self,
         user_id: str,
-        category: Optional[CurriculumCategory] = None,
+        category: Optional[str] = None,
         language: Optional[Language] = None,
     ) -> List[CurriculumModel]:
         data = await CurriculumRepo.get_all(self._db, user_id, category, language)
@@ -194,7 +207,7 @@ class _CurriculumService:
     async def edit(
         self,
         id: str,
-        schema: StructuredCurriculumEditSchema,
+        schema: CurriculumEditSchema,
     ) -> CurriculumModel:
         curriculum = await CurriculumRepo.get_by_id(self._db, id)
         if not curriculum:
@@ -209,7 +222,7 @@ class _CurriculumService:
         id: str,
     ) -> dict:
         curriculum = await self.get_by_id(id)
-        return StructuredCurriculumSchema.model_validate(curriculum).model_dump()
+        return CurriculumCreateSchema.model_validate(curriculum).model_dump()
 
 
 def get_curriculum_service(db: Annotated[AsyncSession, Depends(get_session)]):

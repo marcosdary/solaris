@@ -1,9 +1,14 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey
 from uuid import uuid4
 
-from app.models.base import BaseModel
-from app.schemas import CurriculumFileCreateSchema
+# SqlAlchemy
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
+
+# Models
+from ..models.base import BaseModel
+
+# Schemas
+from ..schemas.curriculum_file import CurriculumFileCreateSchema
 
 
 class CurriculumFileModel(BaseModel):
@@ -14,7 +19,7 @@ class CurriculumFileModel(BaseModel):
         primary_key=True, default=lambda: f"file_{uuid4()}"
     )
     curriculum_id: Mapped[str] = mapped_column(
-        ForeignKey("private.curriculum.id"), nullable=False
+        ForeignKey("private.curriculums.id"), nullable=False
     )
     name: Mapped[str]
     mimetype: Mapped[str]

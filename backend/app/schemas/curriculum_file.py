@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import Field
 from typing import Annotated
 
-from app.schemas.base import BaseSchema
+from ..schemas.base import BaseSchema
 
 
 class CurriculumFileCreateSchema(BaseSchema):

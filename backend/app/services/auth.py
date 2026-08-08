@@ -1,20 +1,29 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
+# FastAPI
 from fastapi import Depends, Request
+
+# Authentication Jose
 from jose import JWTError, jwt
 
-from app.exceptions import (
+# Exceptions
+from ..exceptions import (
     InvalidCredentialsException,
     ExpirationError
 )
 
-from app.config import get_settings, Settings
-from app.integrations import (
+# Config
+from ..config import get_settings, Settings
+
+# Integrations
+from ..integrations import (
     EvolutionAPIIntegration,
     GoogleAuthIntegration
 )
-from app.schemas import GoogleUserInfoSchema
+
+# Schemas
+from ..schemas.auth import GoogleUserInfoSchema
 
 class _AuthService:
     def __init__(self, settings: Settings):

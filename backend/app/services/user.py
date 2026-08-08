@@ -3,18 +3,33 @@ from uuid import uuid4
 
 from fastapi import Depends, Request
 
+# SqlAlchemy
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import UserModel
-from app.schemas import (
+# Models
+from ..models import UserModel
+
+# Schemas
+from ..schemas.user import (
     UserCreateSchema, 
     UserUpdateSchema,
-    GoogleUserInfoSchema,
 )
-from app.repos.user import UserRepo
-from app.exceptions import InvalidCredentialsException, NotFoundError
-from app.config import get_settings, Settings
-from app.utils import AuthenticatorUtil, NormalizePhoneUtil
+from ..schemas.auth import (
+    GoogleUserInfoSchema,
+    LoginRequestSchema
+)
+
+# Repos
+from ..repos.user import UserRepo
+
+# Exceptions
+from ..exceptions import InvalidCredentialsException, NotFoundError
+
+# Config
+from ..config import get_settings, Settings
+
+# Utils
+from ..utils import AuthenticatorUtil, NormalizePhoneUtil
 
 async def get_session(
     request: Request,
@@ -41,13 +56,13 @@ class _UserService:
     ) -> UserModel:
         
         password_hash = self._auth.hash_password(schema.password)
-        normalize_phone = self._normalize_phone(phone=schema.phone)
-        phone_format_national = normalize_phone.format_e164()
         user = UserModel.from_schema(UserCreateSchema(
             name=schema.name,
-            phone=phone_format_national,
+            email=schema.email,
+            phone=schema.phone,
             password=password_hash
         ))
+        
         return await UserRepo.create(self._db, user)
 
     async def get_by_phone(
@@ -76,15 +91,12 @@ class _UserService:
     
     async def login(
         self,
-        phone: str,
-        password: str
+        schema: LoginRequestSchema
     ) -> UserModel:
-        normalize_phone = self._normalize_phone(phone=phone)
-        phone_format_national = normalize_phone.format_e164()
-        user = await UserRepo.get_by_phone(self._db, phone_format_national)
+        user = await UserRepo.get_by_email(self._db, schema.email)
         if not user:
             raise InvalidCredentialsException("Usuário não encontrado ou informações inválidas.")
-        if not self._auth.verify_password(password, user.password):
+        if not self._auth.verify_password(schema.password, user.password):
             raise InvalidCredentialsException("Usuário não encontrado ou informações inválidas.")
         return user
     
@@ -123,18 +135,19 @@ class _UserService:
         user = await UserRepo.get_by_id(self._db, id)
         if not user.is_active:
             raise NotFoundError("Conta desativada.")
-        for key, value in schema.model_dump(exclude_unset=True).items():
-            if key == "password":
-                password_hash = self._auth.hash_password(schema.password)
-                setattr(user, key, password_hash)
-                continue
-            if key == "phone":
-                normalize_phone = self._normalize_phone(phone=value)
-                phone_format_national = normalize_phone.format_e164()
-                setattr(user, key, phone_format_national)
-                continue
 
-            setattr(user, key, value)
+        password_hash = None
+        if schema.password:
+            password_hash = self._auth.hash_password(schema.password)
+
+        user.update(UserUpdateSchema(
+            google_sub=schema.google_sub,
+            name=schema.name,
+            email=schema.email,
+            phone=schema.phone,
+            password=password_hash
+        ))
+        
         return await UserRepo.update(self._db, user)
 
     async def deactivate(

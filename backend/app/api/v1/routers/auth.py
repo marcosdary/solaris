@@ -1,26 +1,37 @@
+from jwt import InvalidTokenError
+
+# FastAPI
 from fastapi import APIRouter, status, BackgroundTasks
 from fastapi.exceptions import HTTPException
-from jwt import InvalidTokenError
+
+# SqlAlchemy
 from sqlalchemy.exc import IntegrityError, DBAPIError
 
-from app.schemas import (
+# Schemas
+from ....schemas.auth import (
     TokenResponseSchema,
     LoginGoogleRequestSchema,
     LoginRequestSchema,
-    UserResponseSchema,
-    UserUpdateSchema,
-    UserCreateSchema,
     PasswordForgotSchema,
     PasswordResetSchema,
     WhatsappLoginRequestSchema,
     ConnectAccountGoogleRequestSchema
 )
-from app.exceptions import (
+from ....schemas.user import (
+    UserCreateSchema,
+    UserResponseSchema,
+    UserUpdateSchema
+)
+
+# Exceptions
+from ....exceptions import (
     InvalidCredentialsException, 
     NotFoundError,
     ExpirationError
 )
-from app.services import (
+
+# Services
+from ....services import (
     UserServiceDep, 
     PasswordForgotDep,
     AuthServiceDep, 
@@ -69,7 +80,7 @@ async def login(
     auth_service: AuthServiceDep,
 ) -> TokenResponseSchema:
     try:
-        user = await user_service.login(body.phone, body.password)
+        user = await user_service.login(body)
     except InvalidCredentialsException as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -266,10 +277,10 @@ async def update_me(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
         )
-    except IntegrityError:
+    except IntegrityError as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Já existe um usuário cadastrado com este email.",
+            detail=f"Já existe um usuário cadastrado com este email ou telefone.: {exc}",
         )
     except DBAPIError:
         raise HTTPException(

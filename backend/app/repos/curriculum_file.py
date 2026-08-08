@@ -1,9 +1,11 @@
 from typing import List, Optional
+
+# SqlAlchemy
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import CurriculumFileModel
-
+# Models
+from ..models import CurriculumFileModel
 
 class CurriculumFileRepo:
 

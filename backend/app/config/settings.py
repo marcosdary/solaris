@@ -44,6 +44,8 @@ class Settings(BaseSettings):
     EVOLUTION_API_INSTANCE: str
     EVOLUTION_API_APIKEY: str
 
+    LOCALHOST_POSTGRES_URL: str
+
     PASSWORD_RESET_URL: str
     PASSWORD_RESET_EXPIRE_MINUTES: int
 

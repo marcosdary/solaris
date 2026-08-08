@@ -1,9 +1,9 @@
 from pydantic import Field, ConfigDict, BaseModel
 from typing import Annotated
-from app.schemas.base import BaseSchema
+from ..schemas.base import BaseSchema
 
 class LoginRequestSchema(BaseSchema):
-    phone: Annotated[str, Field(min_length=1)]
+    email: Annotated[str, Field(min_length=1)]
     password: Annotated[str, Field(min_length=1)]
 
 class WhatsappLoginRequestSchema(BaseSchema):
@@ -16,7 +16,7 @@ class ConnectAccountGoogleRequestSchema(BaseSchema):
     access_token: Annotated[str, Field(min_length=1)]
 
 class PasswordForgotSchema(BaseSchema):
-    phone: Annotated[str, Field(min_length=1)]
+    email: Annotated[str, Field(min_length=1)]
 
 class PasswordResetSchema(BaseSchema):
     password: Annotated[str, Field(min_length=1)]

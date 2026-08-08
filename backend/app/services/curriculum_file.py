@@ -1,19 +1,32 @@
 from typing import List, Annotated, AsyncGenerator
+
+# FastaAPI
 from fastapi import Request, Depends
+
+# SqlAlchemy
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import CurriculumFileModel
-from app.schemas import (
+# Models
+from ..models import CurriculumFileModel
+from ..schemas.curriculum_file import (
     CurriculumFileCreateSchema,
     DownloadCurriculumResponseSchema,
 )
-from app.repos import CurriculumFileRepo
-from app.integrations import BucketIntegration, FilePDFIntegration, LoadInfoToFilePDFIntegration
-from app.config import DirPaths
-from app.config.database import PostgresAsyncDB
-from app.exceptions import NotFoundError
 
+# Repos
+from ..repos import CurriculumFileRepo
 
+# Integrations
+from ..integrations import BucketIntegration, FilePDFIntegration, LoadInfoToFilePDFIntegration
+
+# Config
+from ..config import DirPaths
+from ..config.database import PostgresAsyncDB
+
+# Exceptions
+from ..exceptions import NotFoundError
+
+# Session DB
 async def get_session(
     request: Request,
 ) -> AsyncGenerator[AsyncSession, None]:

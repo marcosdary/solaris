@@ -1,9 +1,15 @@
 from uuid import uuid4
+
+# SqlAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
-from app.schemas import ProjectDescriptionSchema, ProjectDescriptionEditSchema
+# Models
+from ..models.base import BaseModel
+
+# Schemas
+from ..schemas.curriculums.create import ProjectDescriptionCreateSchema
+from ..schemas.curriculums.edit import ProjectDescriptionEditSchema 
 
 class ProjectDescriptionModel(BaseModel):
     __tablename__ = "project_descriptions"
@@ -24,7 +30,7 @@ class ProjectDescriptionModel(BaseModel):
     @classmethod
     def from_schema(
         cls,
-        schema: ProjectDescriptionSchema,
+        schema: ProjectDescriptionCreateSchema,
     ) -> "ProjectDescriptionModel":
         return cls(
             id=f"pro_desc_{uuid4()}",

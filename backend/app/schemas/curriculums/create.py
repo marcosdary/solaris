@@ -2,34 +2,30 @@ from datetime import date
 from typing import Annotated, List, Optional
 from pydantic import Field, computed_field
 
-from app.config import Language, CurriculumCategory
-from app.schemas.base import BaseSchema
+from ...schemas.base import BaseSchema
+from ...schemas.phone import PhoneCreateSchema
+from ...config import Language
 
-class ActivitySchema(BaseSchema):
+class ActivityCreateSchema(BaseSchema):
     """Uma atividade/realização dentro de uma experiência profissional."""
     description: Annotated[str, Field(min_length=1)]
 
-class PhoneSchema(BaseSchema):
-    """"""
-    ddi: Annotated[str, Field(min_length=1)]
-    number: Annotated[str, Field(min_length=1)]
-
-class AddressSchema(BaseSchema):
-    """"""
+class AddressCreateSchema(BaseSchema):
+    """Endereço onde o currículo foi criado."""
     state: Annotated[str, Field(min_length=1)]
     city: Annotated[str, Field(min_length=1)]
 
-class ExperienceSchema(BaseSchema):
+class ExperienceCreateSchema(BaseSchema):
     """Experiência profissional."""
     role: Annotated[str, Field(min_length=1)]
     company: Annotated[str, Field(min_length=1)]
-    address: Annotated[AddressSchema, Field(min_length=1)]
+    address: Annotated[AddressCreateSchema, Field(min_length=1)]
     is_remote: Annotated[bool, Field(default=False)]
 
     start_date: date
     end_date: Optional[date] = None
 
-    activities: Annotated[List[ActivitySchema], Field(min_length=1)]
+    activities: Annotated[List[ActivityCreateSchema], Field(min_length=1)]
 
     @computed_field
     @property
@@ -42,28 +38,28 @@ class ExperienceSchema(BaseSchema):
         end = self.end_date.strftime("%m/%Y")
         return f"{start} - {end}"
 
-class EducationSchema(BaseSchema):
+class EducationCreateSchema(BaseSchema):
     """Formação acadêmica."""
     institution: Annotated[str, Field(min_length=1)]
     degree: Annotated[str, Field(min_length=1)]
-    address: Annotated[AddressSchema, Field(min_length=1)]
+    address: Annotated[AddressCreateSchema, Field(min_length=1)]
     is_remote: Annotated[bool, Field(default=False)]
 
     start_date: date
     end_date: Optional[date] = None
 
 
-class ProjectDescriptionSchema(BaseSchema):
+class ProjectDescriptionCreateSchema(BaseSchema):
     """Descrição de um projeto."""
     description: Annotated[str, Field(min_length=1)]
 
 
-class ProjectTechnologySchema(BaseSchema):
+class ProjectTechnologyCreateSchema(BaseSchema):
     """Tecnologia utilizada em um projeto."""
     technology: Annotated[str, Field(min_length=1)]
 
 
-class ProjectSchema(BaseSchema):
+class ProjectCreateSchema(BaseSchema):
     """Projeto."""
     name: Annotated[str, Field(min_length=1)]
     github: Annotated[str, Field(min_length=1)]
@@ -73,29 +69,29 @@ class ProjectSchema(BaseSchema):
     end_date: Optional[date] = None
 
     descriptions: Annotated[
-        List[ProjectDescriptionSchema],
+        List[ProjectDescriptionCreateSchema],
         Field(min_length=1)
     ]
 
-    technologies: Optional[List[ProjectTechnologySchema]] = None
+    technologies: Optional[List[ProjectTechnologyCreateSchema]] = None
 
 
-class CertificationSchema(BaseSchema):
+class CertificationCreateSchema(BaseSchema):
     """Certificação."""
     institution: Annotated[str, Field(min_length=1)]
     name: Annotated[str, Field(min_length=1)]
-    address: Annotated[AddressSchema, Field(min_length=1)]
+    address: Annotated[AddressCreateSchema, Field(min_length=1)]
     is_remote: Annotated[bool, Field(default=False)]
 
     start_date: date
     end_date: Optional[date] = None
 
 
-class StructuredCurriculumSchema(BaseSchema):
+class CurriculumCreateSchema(BaseSchema):
     """Currículo estruturado."""
 
-    language: Language = Language.portuguese
-    category: CurriculumCategory = CurriculumCategory.backend_developer
+    language: Language
+    category: str
 
     name: Annotated[str, Field(min_length=1)]
     email: Annotated[str, Field(min_length=1)]
@@ -104,41 +100,40 @@ class StructuredCurriculumSchema(BaseSchema):
     github: Optional[str] = None
     linkedin: Annotated[str, Field(min_length=1)]
 
-    phone: Annotated[str, Field(min_length=1)]
-    address: Annotated[AddressSchema, Field(min_length=1)]
+    phone: PhoneCreateSchema
+    address: Annotated[AddressCreateSchema, Field(min_length=1)]
 
     resume: Annotated[str, Field(min_length=1)]
 
     experiences: Annotated[
-        Optional[List[ExperienceSchema]],
+        Optional[List[ExperienceCreateSchema]],
         Field(default=None)
     ]
 
     educations: Annotated[
-        Optional[List[EducationSchema]],
+        Optional[List[EducationCreateSchema]],
         Field(default=None)
     ]
 
     projects: Annotated[
-        Optional[List[ProjectSchema]],
+        Optional[List[ProjectCreateSchema]],
         Field(default=None)
     ] 
 
     certifications: Annotated[
-        Optional[List[CertificationSchema]],
+        Optional[List[CertificationCreateSchema]],
         Field(default=None)
     ] 
 
 
 __all__ = [
-    "ActivitySchema",
-    "ExperienceSchema",
-    "EducationSchema",
-    "ProjectDescriptionSchema",
-    "ProjectTechnologySchema",
-    "ProjectSchema",
-    "CertificationSchema",
-    "StructuredCurriculumSchema",
-    "PhoneSchema",
-    "AddressSchema"
+    "ActivityCreateSchema",
+    "ExperienceCreateSchema",
+    "EducationCreateSchema",
+    "ProjectDescriptionCreateSchema",
+    "ProjectTechnologyCreateSchema",
+    "ProjectCreateSchema",
+    "CertificationCreateSchema",
+    "CurriculumCreateSchema",
+    "AddressCreateSchema"
 ]

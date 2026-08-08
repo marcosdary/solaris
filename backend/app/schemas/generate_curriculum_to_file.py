@@ -2,7 +2,7 @@ from pydantic import Field
 from typing import Annotated
 
 from datetime import datetime
-from app.schemas.base import BaseSchema
+from ..schemas.base import BaseSchema
 
 
 class GenerateCurriculumToFileSchema(BaseSchema):

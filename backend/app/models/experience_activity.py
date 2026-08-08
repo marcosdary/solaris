@@ -1,9 +1,15 @@
 from uuid import uuid4
+
+# SqlAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
-from app.schemas import ActivitySchema, ActivityEditSchema
+# Models
+from ..models.base import BaseModel
+
+# Schemas
+from ..schemas.curriculums.create import ActivityCreateSchema
+from ..schemas.curriculums.edit import ActivityEditSchema
 
 class ExperienceActivityModel(BaseModel):
     __tablename__ = "experience_activities"
@@ -22,7 +28,7 @@ class ExperienceActivityModel(BaseModel):
     )
 
     @classmethod
-    def from_schema(cls, schema: ActivitySchema) -> "ExperienceActivityModel":
+    def from_schema(cls, schema: ActivityCreateSchema) -> "ExperienceActivityModel":
         return cls(
             id=f"exp_act_{uuid4()}",
             description=schema.description,

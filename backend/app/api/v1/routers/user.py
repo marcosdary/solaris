@@ -1,10 +1,15 @@
+# FastAPI
 from fastapi import APIRouter, status
 from fastapi.exceptions import HTTPException
+
+# SqlAlchemy
 from sqlalchemy.exc import DBAPIError
 
-from app.schemas import UserResponseSchema
-from app.services import UserServiceDep, CurrentUserDep
+# Schemas
+from ....schemas.user import UserResponseSchema
 
+# Services
+from ....services import UserServiceDep, CurrentUserDep
 
 router = APIRouter()
 

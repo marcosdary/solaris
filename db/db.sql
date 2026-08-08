@@ -1,208 +1,221 @@
 -- =============================================
--- 2. Schemas
+-- 2. schemas
 -- =============================================
 
-CREATE SCHEMA IF NOT EXISTS private;
+create schema if not exists private;
 
 -- =============================================
--- 3. Tabelas (schema private — acesso exclusivo do backend)
+-- 3. tabelas (schema private — acesso exclusivo do backend)
 -- =============================================
 
-CREATE TABLE private.addresses (
-    id VARCHAR(255) PRIMARY KEY,
-    state VARCHAR(255) NOT NULL,
-    city VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+create table private.addresses (
+    id varchar(255) primary key,
+    state varchar(255) not null,
+    city varchar(255) not null,
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.phone (
-    id VARCHAR(255) PRIMARY KEY,
-    ddi VARCHAR(10) NOT NULL,
-    number VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+create table private.phone (
+    id varchar(255) primary key,
+    ddi varchar(10) not null,
+    number varchar(100) not null,
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.users (
-    id VARCHAR(255) PRIMARY KEY,
-    google_sub VARCHAR(255) UNIQUE,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE,
-    phone VARCHAR(255) UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+create table private.users (
+    id varchar(255) primary key,
+    google_sub varchar(255) unique,
+    name varchar(255) not null,
+    email varchar(255) unique,
+    password varchar(255) not null,
+    is_active boolean not null default true,
+
+    phone_id varchar(255)
+        references private.phone(id)
+        on delete set null,
+
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.curriculums (
-    id VARCHAR(255) PRIMARY KEY,
+create table private.curriculums (
+    id varchar(255) primary key,
 
-    language VARCHAR(255) NOT NULL,
-    category VARCHAR(500) NOT NULL,
+    language varchar(255) not null,
+    category varchar(500) not null,
 
-    name VARCHAR(255) NOT NULL,
-    role VARCHAR(255),
+    name varchar(255) not null,
+    role varchar(255),
 
-    email VARCHAR(255) NOT NULL,
+    email varchar(255) not null,
 
-    github VARCHAR(255),
-    linkedin VARCHAR(255) NOT NULL,
+    github varchar(255),
+    linkedin varchar(255) not null,
 
-    resume TEXT NOT NULL,
+    resume text not null,
 
-    user_id VARCHAR(255) REFERENCES private.users(id) ON DELETE SET NULL,
-    address_id  VARCHAR(255) REFERENCES private.addresses(id),
-    phone_id  VARCHAR(255) REFERENCES private.phone(id),
+    user_id varchar(255)
+        references private.users(id)
+        on delete set null,
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    address_id varchar(255)
+        references private.addresses(id),
+
+    phone_id varchar(255)
+        references private.phone(id),
+
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.experiences (
-    id VARCHAR(255) PRIMARY KEY,
+create table private.experiences (
+    id varchar(255) primary key,
 
-    curriculum_id VARCHAR(255) NOT NULL
-        REFERENCES private.curriculums(id)
-        ON DELETE CASCADE,
+    curriculum_id varchar(255) not null
+        references private.curriculums(id)
+        on delete cascade,
 
-    role VARCHAR(255) NOT NULL,
-    company VARCHAR(255) NOT NULL,
+    role varchar(255) not null,
+    company varchar(255) not null,
 
-    start_date DATE NOT NULL,
-    end_date DATE NULL,
-    is_remote BOOLEAN DEFAULT false,
+    start_date date not null,
+    end_date date null,
+    is_remote boolean default false,
 
-    address_id  VARCHAR(255) REFERENCES private.addresses(id),
+    address_id varchar(255)
+        references private.addresses(id),
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.experience_activities (
-    id VARCHAR(255) PRIMARY KEY,
+create table private.experience_activities (
+    id varchar(255) primary key,
 
-    experience_id VARCHAR(255) NOT NULL
-        REFERENCES private.experiences(id)
-        ON DELETE CASCADE,
+    experience_id varchar(255) not null
+        references private.experiences(id)
+        on delete cascade,
 
-    description TEXT NOT NULL,
+    description text not null,
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.educations (
-    id VARCHAR(255) PRIMARY KEY,
+create table private.educations (
+    id varchar(255) primary key,
 
-    curriculum_id VARCHAR(255) NOT NULL
-        REFERENCES private.curriculums(id)
-        ON DELETE CASCADE,
+    curriculum_id varchar(255) not null
+        references private.curriculums(id)
+        on delete cascade,
 
-    institution VARCHAR(255) NOT NULL,
-    degree VARCHAR(255) NOT NULL,
-    address_id  VARCHAR(255) REFERENCES private.addresses(id),
+    institution varchar(255) not null,
+    degree varchar(255) not null,
 
-    start_date DATE NOT NULL,
-    end_date DATE NULL,
+    address_id varchar(255)
+        references private.addresses(id),
 
-    is_remote BOOLEAN DEFAULT false,
+    start_date date not null,
+    end_date date null,
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    is_remote boolean default false,
+
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.projects (
-    id VARCHAR(255) PRIMARY KEY,
+create table private.projects (
+    id varchar(255) primary key,
 
-    curriculum_id VARCHAR(255) NOT NULL
-        REFERENCES private.curriculums(id)
-        ON DELETE CASCADE,
+    curriculum_id varchar(255) not null
+        references private.curriculums(id)
+        on delete cascade,
 
-    name VARCHAR(255) NOT NULL,
-    github VARCHAR(255) NOT NULL,
-    demo_url VARCHAR(255),
+    name varchar(255) not null,
+    github varchar(255) not null,
+    demo_url varchar(255),
 
-    start_date DATE NOT NULL,
-    end_date DATE NULL,
+    start_date date not null,
+    end_date date null,
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.project_descriptions (
-    id VARCHAR(255) PRIMARY KEY,
+create table private.project_descriptions (
+    id varchar(255) primary key,
 
-    project_id VARCHAR(255) NOT NULL
-        REFERENCES private.projects(id)
-        ON DELETE CASCADE,
+    project_id varchar(255) not null
+        references private.projects(id)
+        on delete cascade,
 
-    description TEXT NOT NULL,
+    description text not null,
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.project_technologies (
-    id VARCHAR(255) PRIMARY KEY,
+create table private.project_technologies (
+    id varchar(255) primary key,
 
-    project_id VARCHAR(255) NOT NULL
-        REFERENCES private.projects(id)
-        ON DELETE CASCADE,
+    project_id varchar(255) not null
+        references private.projects(id)
+        on delete cascade,
 
-    technology VARCHAR(255) NOT NULL,
+    technology varchar(255) not null,
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.certifications (
-    id VARCHAR(255) PRIMARY KEY,
+create table private.certifications (
+    id varchar(255) primary key,
 
-    curriculum_id VARCHAR(255) NOT NULL
-        REFERENCES private.curriculums(id)
-        ON DELETE CASCADE,
+    curriculum_id varchar(255) not null
+        references private.curriculums(id)
+        on delete cascade,
 
-    institution VARCHAR(255) NOT NULL,
-    name VARCHAR(255) NOT NULL,
+    institution varchar(255) not null,
+    name varchar(255) not null,
 
-    start_date DATE NOT NULL,
-    end_date DATE NULL,
+    start_date date not null,
+    end_date date null,
 
-    address_id  VARCHAR(255) REFERENCES private.addresses(id),
+    address_id varchar(255)
+        references private.addresses(id),
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
-CREATE TABLE private.curriculum_files (
-    id VARCHAR(255) PRIMARY KEY,
+create table private.curriculum_files (
+    id varchar(255) primary key,
 
-    curriculum_id VARCHAR(255) NOT NULL
-        REFERENCES private.curriculums(id)
-        ON DELETE CASCADE,
+    name varchar(255) not null,
+    distpath varchar(255) not null,
+    mimetype varchar(255) not null,
+    template varchar(255),
 
-    name VARCHAR(255) NOT NULL,
-    distpath VARCHAR(255) NOT NULL,
-    mimetype VARCHAR(255) NOT NULL,
-    url VARCHAR(255) NOT NULL,
-    template VARCHAR(255),
+    curriculum_id varchar(255) not null
+        references private.curriculums(id)
+        on delete cascade,
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now()
 );
 
 -- =============================================
--- 4. Views (schema public — exposto via Supabase / PostgREST)
+-- 4. views (schema public — exposto via supabase / postgrest)
 -- =============================================
 
-CREATE VIEW users AS
-SELECT id, name, created_at
-FROM private.users;
+create view users as
+select id, name, created_at
+from private.users;
 
-CREATE VIEW curriculum AS
-SELECT
+create view curriculum as
+select
     id,
     language,
     category,
@@ -214,58 +227,67 @@ SELECT
     resume,
     created_at,
     updated_at
-FROM private.curriculum;
+from private.curriculum;
 
-CREATE VIEW experiences AS
-SELECT * FROM private.experiences;
+create view experiences as
+select *
+from private.experiences;
 
-CREATE VIEW experience_activities AS
-SELECT * FROM private.experience_activities;
+create view experience_activities as
+select *
+from private.experience_activities;
 
-CREATE VIEW educations AS
-SELECT * FROM private.educations;
+create view educations as
+select *
+from private.educations;
 
-CREATE VIEW projects AS
-SELECT * FROM private.projects;
+create view projects as
+select *
+from private.projects;
 
-CREATE VIEW project_descriptions AS
-SELECT * FROM private.project_descriptions;
+create view project_descriptions as
+select *
+from private.project_descriptions;
 
-CREATE VIEW project_technologies AS
-SELECT * FROM private.project_technologies;
+create view project_technologies as
+select *
+from private.project_technologies;
 
-CREATE VIEW certifications AS
-SELECT * FROM private.certifications;
+create view certifications as
+select *
+from private.certifications;
 
-CREATE VIEW curriculum_files AS
-SELECT * FROM private.curriculum_files;
-
--- =============================================
--- 5. Índices (schema private)
--- =============================================
-
-CREATE INDEX idx_curriculum_user_id ON private.curriculum(user_id);
-
-CREATE INDEX idx_experiences_curriculum_id ON private.experiences(curriculum_id);
-CREATE INDEX idx_educations_curriculum_id ON private.educations(curriculum_id);
-CREATE INDEX idx_projects_curriculum_id ON private.projects(curriculum_id);
-CREATE INDEX idx_certifications_curriculum_id ON private.certifications(curriculum_id);
-CREATE INDEX idx_curriculum_files_curriculum_id ON private.curriculum_files(curriculum_id);
-
-CREATE INDEX idx_experience_activities_experience_id ON private.experience_activities(experience_id);
-CREATE INDEX idx_project_descriptions_project_id ON private.project_descriptions(project_id);
-CREATE INDEX idx_project_technologies_project_id ON private.project_technologies(project_id);
+create view curriculum_files as
+select *
+from private.curriculum_files;
 
 -- =============================================
--- 6. Permissões
+-- 5. índices (schema private)
 -- =============================================
 
--- app_user (FastAPI): acesso total ao schema private
-GRANT USAGE ON SCHEMA private TO app_user;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA private TO app_user;
+create index idx_curriculum_user_id
+    on private.curriculum(user_id);
 
--- app_user também pode ler as views públicas
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO app_user;
+create index idx_experiences_curriculum_id
+    on private.experiences(curriculum_id);
 
--- anon / authenticated (frontend / Supabase): só leitura nas views do public
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+create index idx_educations_curriculum_id
+    on private.educations(curriculum_id);
+
+create index idx_projects_curriculum_id
+    on private.projects(curriculum_id);
+
+create index idx_certifications_curriculum_id
+    on private.certifications(curriculum_id);
+
+create index idx_curriculum_files_curriculum_id
+    on private.curriculum_files(curriculum_id);
+
+create index idx_experience_activities_experience_id
+    on private.experience_activities(experience_id);
+
+create index idx_project_descriptions_project_id
+    on private.project_descriptions(project_id);
+
+create index idx_project_technologies_project_id
+    on private.project_technologies(project_id);

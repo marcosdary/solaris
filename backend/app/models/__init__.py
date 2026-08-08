@@ -8,6 +8,8 @@ from .project_technology import ProjectTechnologyModel
 from .education import EducationModel
 from .user import UserModel
 from .curriculum_file import CurriculumFileModel
+from .phone import PhoneModel
+from .address import AddressModel
 
 __all__ = [
     "CurriculumModel",
@@ -20,4 +22,6 @@ __all__ = [
     "EducationModel",
     "UserModel",
     "CurriculumFileModel",
+    "PhoneModel",
+    "AddressModel"
 ]

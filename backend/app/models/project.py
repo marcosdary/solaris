@@ -1,13 +1,16 @@
 from datetime import date
 from uuid import uuid4
 
+# SqlAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
-from app.models.project_description import ProjectDescriptionModel
-from app.models.project_technology import ProjectTechnologyModel
-from app.schemas import ProjectSchema, ProjectEditSchema
+# Models
+from ..models.base import BaseModel
+from ..models.project_description import ProjectDescriptionModel
+from ..models.project_technology import ProjectTechnologyModel
+from ..schemas.curriculums.create import ProjectCreateSchema
+from ..schemas.curriculums.edit import ProjectEditSchema
 
 class ProjectModel(BaseModel):
     __tablename__ = "projects"
@@ -15,7 +18,7 @@ class ProjectModel(BaseModel):
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
-    curriculum_id: Mapped[str] = mapped_column(ForeignKey("private.curriculum.id"))
+    curriculum_id: Mapped[str] = mapped_column(ForeignKey("private.curriculums.id"))
 
     name: Mapped[str]
     github: Mapped[str]
@@ -39,7 +42,7 @@ class ProjectModel(BaseModel):
     )
 
     @classmethod
-    def from_schema(cls, schema: ProjectSchema) -> "ProjectModel":
+    def from_schema(cls, schema: ProjectCreateSchema) -> "ProjectModel":
         return cls(
             id=f"pro_{uuid4()}",
             name=schema.name,

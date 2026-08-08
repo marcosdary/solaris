@@ -1,18 +1,29 @@
 from typing import List
 
+# FastAPI
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
+
+# SqlAlchemy
 from sqlalchemy.exc import DBAPIError
 
-from app.config import get_settings
-from app.schemas import (
+# Config
+from ....config import get_settings
+
+# Schemas
+from ....schemas.curriculum_file import (
     CurriculumFileResponseSchema,
     DownloadCurriculumResponseSchema,
 )
-from app.services import CurriculumFileServiceDep
-from app.integrations import SupabaseBucketService
-from app.exceptions import NotFoundError
 
+# Services
+from ....services import CurriculumFileServiceDep
+
+# Integrations
+from ....integrations import SupabaseBucketService
+
+# Exceptions
+from ....exceptions import NotFoundError
 
 async def get_supabase_bucket(
     settings = Depends(get_settings)

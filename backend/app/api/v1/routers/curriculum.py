@@ -1,29 +1,46 @@
 from uuid import uuid4
 
+# FastAPI
 from fastapi import APIRouter, BackgroundTasks, Depends, Request, status
 from fastapi.exceptions import HTTPException
 
+# SqlAlchemy
 from sqlalchemy.exc import IntegrityError, DBAPIError
 
-from app.config import get_settings, TemplateFile, CurriculumCategory, Language
-from app.schemas import (
-    GenerateCurriculumToFileSchema,
-    StructuredCurriculumSchema,
-    StructuredCurriculumEditSchema,
-    ListStructuredCurriculumResponse,
-    StructuredCurriculumSummarySchema,
-    StructuredCurriculumResponseSchema,
+# Config
+from ....config import get_settings, TemplateFile, CurriculumCategory, Language
+
+# Schemas
+from ....schemas.curriculums.create import (
+    CurriculumCreateSchema,
 )
-from app.services import (
+from ....schemas.curriculums.response import (
+    CurriculumResponseSchema,
+    CurriculumSummaryResponseSchema,
+    ListCurriculumsResponse,
+)
+from ....schemas.curriculums.edit import (
+    CurriculumEditSchema
+)
+from ....schemas.generate_curriculum_to_file import (
+    GenerateCurriculumToFileSchema
+)
+
+# Services
+from ....services import (
     CurriculumServiceDep,
     CurriculumFileServiceDep,
     CurrentUserDep
 )
-from app.integrations import (
+
+# Integrations
+from ....integrations import (
     LoadInfoToFilePDFIntegration,
     SupabaseBucketService,
 )
-from app.exceptions import InvalidCredentialsException, NotFoundError
+
+# Exceptions
+from ....exceptions import InvalidCredentialsException, NotFoundError
 
 async def get_supabase_bucket(
     settings = Depends(get_settings)
@@ -33,17 +50,16 @@ async def get_supabase_bucket(
 
 router = APIRouter()
 
-
 @router.post(
     "",
     status_code=status.HTTP_201_CREATED,
-    response_model=StructuredCurriculumSummarySchema,
+    response_model=CurriculumSummaryResponseSchema,
 )
 async def create_curriculum(
-    schema: StructuredCurriculumSchema,
+    schema: CurriculumCreateSchema,
     curriculum_service: CurriculumServiceDep,
     current_user: CurrentUserDep,
-) -> StructuredCurriculumSummarySchema:
+) -> CurriculumSummaryResponseSchema:
     try:
         user_id = await current_user.get_me()
         return await curriculum_service.create(user_id, schema)
@@ -77,14 +93,14 @@ async def create_curriculum(
 @router.get(
     "/users",
     status_code=status.HTTP_200_OK,
-    response_model=ListStructuredCurriculumResponse,
+    response_model=ListCurriculumsResponse,
 )
 async def list_curriculums_to_user(
     current_user: CurrentUserDep,
     curriculum_service: CurriculumServiceDep,
     category: CurriculumCategory = None,
     language: Language = None,
-) -> ListStructuredCurriculumResponse:
+) -> ListCurriculumsResponse:
     try:
         user_id = await current_user.get_me()
         return await curriculum_service.get_all(user_id, category, language)
@@ -179,13 +195,13 @@ async def generate_curriculum_pdf(
 @router.get(
     "/{id}",
     status_code=status.HTTP_200_OK,
-    response_model=StructuredCurriculumResponseSchema,
+    response_model=CurriculumResponseSchema,
 )
 async def get_curriculum(
     id: str,
     current_user: CurrentUserDep,
     curriculum_service: CurriculumServiceDep,
-) -> StructuredCurriculumResponseSchema:
+) -> CurriculumResponseSchema:
     try:
         await current_user.get_me()
         return await curriculum_service.get_by_id(id)
@@ -253,13 +269,13 @@ async def delete_curriculum(
 @router.put(
     "/{id}",
     status_code=status.HTTP_200_OK,
-    response_model=StructuredCurriculumResponseSchema,
+    response_model=CurriculumResponseSchema,
 )
 async def edit_curriculum(
     id: str,
-    schema: StructuredCurriculumEditSchema,
+    schema: CurriculumEditSchema,
     curriculum_service: CurriculumServiceDep,
-) -> StructuredCurriculumResponseSchema:
+) -> CurriculumResponseSchema:
     try:
         return await curriculum_service.edit(id, schema)
     except InvalidCredentialsException as exc:

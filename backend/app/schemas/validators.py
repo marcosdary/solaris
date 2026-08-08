@@ -1,5 +1,5 @@
 from math import isnan
-from app.config import TemplateFile, MimeTypes
+from ..config import TemplateFile, MimeTypes
 
 class Validators:
 

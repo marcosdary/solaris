@@ -1,33 +1,36 @@
+from uuid import uuid4
+from typing import Optional
+
+# SqlAlchemy
 from sqlalchemy.orm import (
     Mapped, 
     mapped_column, 
     relationship
 )
-from sqlalchemy import Enum, ForeignKey
-from uuid import uuid4
-from typing import Optional
+from sqlalchemy import ForeignKey
 
-from app.models.base import BaseModel
-from app.models.experience import ExperienceModel
-from app.models.education import EducationModel
-from app.models.project import ProjectModel
-from app.models.phone import PhoneModel
-from app.models.address import AddressModel
-from app.models.certification import CertificationModel
-from app.config import Language, CurriculumCategory
-from app.schemas import (
-    StructuredCurriculumSchema
+# Models
+from ..models.base import BaseModel
+from ..models.experience import ExperienceModel
+from ..models.education import EducationModel
+from ..models.project import ProjectModel
+from ..models.phone import PhoneModel
+from ..models.address import AddressModel
+from ..models.certification import CertificationModel
+
+from ..schemas.curriculums.create import (
+    CurriculumCreateSchema
 )
 
 
 class CurriculumModel(BaseModel):
-    __tablename__ = "curriculum"
+    __tablename__ = "curriculums"
     __table_args__ = {"schema": "private"}
 
     id: Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
 
-    language: Mapped[Language] = mapped_column(Enum(Language, name="language_enum"))
-    category: Mapped[CurriculumCategory] = mapped_column(Enum(CurriculumCategory, name="cv_category_enum"))
+    language: Mapped[str]
+    category: Mapped[str] 
 
     name: Mapped[str]
     role: Mapped[str]
@@ -41,6 +44,8 @@ class CurriculumModel(BaseModel):
     resume: Mapped[str]
 
     user_id: Mapped[Optional[str]] = mapped_column(ForeignKey("private.users.id"), nullable=True)
+    address_id: Mapped[str] = mapped_column(ForeignKey("private.addresses.id"))
+    phone_id: Mapped[str] = mapped_column(ForeignKey("private.phones.id"))
 
     user: Mapped[Optional["UserModel"]] = relationship(
         back_populates="curriculums",
@@ -71,15 +76,12 @@ class CurriculumModel(BaseModel):
         lazy="raise",
     )
 
-    phone: Mapped[list["PhoneModel"]] = relationship(
-        back_populates="curriculums",
-        cascade="all, delete-orphan",
-        lazy="raise",
+    phone: Mapped["PhoneModel"] = relationship(
+        back_populates="curriculum",
     )
 
-    address: Mapped[list["AddressModel"]] = relationship(
-        back_populates="curriculums",
-        cascade="all, delete-orphan",
+    address: Mapped["AddressModel"] = relationship(
+        back_populates="curriculum",
         lazy="raise",
     )
 
@@ -90,20 +92,22 @@ class CurriculumModel(BaseModel):
     )
 
     @classmethod
-    def from_schema(cls, user_id: str, schema: StructuredCurriculumSchema) -> "CurriculumModel":
+    def from_schema(cls, user_id: str, schema: CurriculumCreateSchema) -> "CurriculumModel":
         return cls(
             user_id=user_id,
             id=f"cv_{uuid4()}",
-            language=schema.language,
+            language=schema.language.value,
             category=schema.category,
             name=schema.name,
             email=schema.email,
             role=schema.role,
             github=schema.github,
             linkedin=schema.linkedin,
-            phone=PhoneModel.from_schema(schema.phone),
-            address=AddressModel.from_schema(schema.address),
             resume=schema.resume,
+
+            phone=PhoneModel.from_schema(schema.phone),
+
+            address=AddressModel.from_schema(schema.address),
 
             experiences=[
                 ExperienceModel.from_schema(experience)

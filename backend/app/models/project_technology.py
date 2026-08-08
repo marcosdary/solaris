@@ -1,9 +1,15 @@
 from uuid import uuid4
+
+# SqlAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
-from app.schemas import ProjectTechnologySchema, ProjectTechnologyEditSchema
+# Models
+from ..models.base import BaseModel
+
+# Schemas
+from ..schemas.curriculums.create import ProjectTechnologyCreateSchema
+from ..schemas.curriculums.edit import ProjectTechnologyEditSchema
 
 class ProjectTechnologyModel(BaseModel):
     __tablename__ = "project_technologies"
@@ -25,7 +31,7 @@ class ProjectTechnologyModel(BaseModel):
     @classmethod
     def from_schema(
         cls,
-        schema: ProjectTechnologySchema,
+        schema: ProjectTechnologyCreateSchema,
     ) -> "ProjectTechnologyModel":
         return cls(
             id=f"proj_tech_{uuid4()}",

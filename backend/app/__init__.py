@@ -18,14 +18,14 @@ from app.config import initialize_directories, get_settings, PostgresAsyncDB
 from app.services import ValidationException
 
 # Schemas
-from app.schemas import IndexSchema
+from app.schemas.index import IndexSchema
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Chama a função/classe diretamente, sem Depends
     settings = get_settings() 
     
-    postgres_db = PostgresAsyncDB(settings.SUPABASE_POSTGRES_URL)
+    postgres_db = PostgresAsyncDB(settings.LOCALHOST_POSTGRES_URL)
     
     yield {"postgres_db": postgres_db}
     
